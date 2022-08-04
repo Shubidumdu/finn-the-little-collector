@@ -1,17 +1,5 @@
-export const layer1Canvas: HTMLCanvasElement = document.getElementById(
+export const layer1Canvas = document.getElementById(
   'layer1',
-) as HTMLCanvasElement;
-
-export const layer2Canvas = document.getElementById(
-  'layer2',
-) as HTMLCanvasElement;
-
-export const layer3Canvas: HTMLCanvasElement = document.getElementById(
-  'layer3',
-) as HTMLCanvasElement;
-
-export const layer4Canvas: HTMLCanvasElement = document.getElementById(
-  'layer4',
 ) as HTMLCanvasElement;
 
 const setViewPort = () => {
@@ -42,12 +30,6 @@ const setViewPort = () => {
 export function resizeCanvas() {
   layer1Canvas.width = window.innerWidth;
   layer1Canvas.height = window.innerHeight;
-  layer2Canvas.width = window.innerWidth;
-  layer2Canvas.height = window.innerHeight;
-  layer3Canvas.width = window.innerWidth;
-  layer3Canvas.height = window.innerHeight;
-  layer4Canvas.width = window.innerWidth;
-  layer4Canvas.height = window.innerHeight;
   setViewPort();
 }
 
@@ -79,25 +61,10 @@ function reset(canvas: HTMLCanvasElement) {
 
 export const drawLayer1 = draw(layer1Canvas);
 
-export const drawLayer2 = draw(layer2Canvas);
-
-export const drawLayer3 = draw(layer3Canvas);
-
-export const drawLayer4 = draw(layer4Canvas);
-
 export const resetLayer1 = reset(layer1Canvas);
 
-export const resetLayer2 = reset(layer2Canvas);
-
-export const resetLayer3 = reset(layer3Canvas);
-
-export const resetLayer4 = reset(layer4Canvas);
-
-export const resetAllCanvas = () => {
+export const resetAllLayers = () => {
   resetLayer1();
-  resetLayer2();
-  resetLayer3();
-  resetLayer4();
 };
 
 function init() {

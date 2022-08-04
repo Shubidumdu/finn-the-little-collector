@@ -1,7 +1,6 @@
 // @ts-nocheck
-
-import { zzfxP } from '../zzfx';
-import zzfxM from '../zzfxM';
+import { zzfxP } from './libs/zzfx';
+import zzfxM from './libs/zzfxM';
 
 const battleMusic = [
   [
