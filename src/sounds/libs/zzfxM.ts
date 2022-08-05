@@ -2,7 +2,9 @@
 
 import { zzfxG, zzfxR } from './zzfx';
 
-const zzfxM = (n, f, t, e = 125) => {
+declare function zzfxM(...args: any): any;
+
+const zzfxM = (n: any[], f: any[], t: any, e = 125) => {
   let l,
     o,
     z,

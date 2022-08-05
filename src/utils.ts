@@ -21,3 +21,8 @@ export const getTimings = ({ time, start, duration }: GetTimingProps) => {
 };
 
 export const getRandomInt = (size: number) => Math.floor(Math.random() * size);
+
+export const getFont = (
+  size: number = 32,
+  type: string = 'Arial Black, Arial, sans-serif',
+) => `bold ${size}pt ${type}`;

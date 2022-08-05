@@ -6,7 +6,6 @@ const setViewPort = () => {
   const viewportMeta = document.querySelector(
     "meta[name='viewport']",
   ) as HTMLMetaElement;
-  const controller = document.querySelector('#c') as HTMLDivElement;
   const width = Math.round(visualViewport.scale * visualViewport.width);
   const height = Math.round(visualViewport.scale * visualViewport.height);
   if (width <= 460 || height <= 460) {
