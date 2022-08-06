@@ -1,30 +1,27 @@
-import { drawLayer1 } from "../canvas";
+import { GameObject } from '.';
+import { drawLayer1 } from '../canvas';
 
-const INITIAL_PLAYER_STATE = Object.freeze({
-  speed: 10,
+type PlayerState = {
+  speed: number;
   position: {
-    x: 50,
-    y: 50,
-  },
-});
+    x: number;
+    y: number;
+  };
+};
 
-export default class Player {
+export default class Player implements GameObject {
   speed: number;
   position: {
     x: number;
     y: number;
   };
 
-  constructor(state = INITIAL_PLAYER_STATE) {
-    this.init();
-    this.#addEvents();
-  }
-
-  init = (state = INITIAL_PLAYER_STATE) => {
+  init = (state: PlayerState) => {
     const { position, speed } = state;
     this.speed = speed;
     this.position = position;
-  }
+    this.#addEvents();
+  };
 
   remove = () => {
     this.#removeEvents();
@@ -39,7 +36,7 @@ export default class Player {
       const { x, y } = this.position;
       context.setTransform(1, 0, 0, 1, x, y);
       context.fillRect(0, 0, 20, 20);
-    })
+    });
   }
 
   #moveEvent = (e: KeyboardEvent) => {

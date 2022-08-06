@@ -1,7 +1,7 @@
-import { Scene } from ".";
-import Player from "../objects/player";
-import Music from "../sounds/music";
-import gameMusic from "../sounds/musics/game";
+import { Scene } from '.';
+import Player from '../objects/player';
+import Music from '../sounds/music';
+import gameMusic from '../sounds/musics/game';
 
 export default class GameScene implements Scene {
   player: Player;
@@ -13,6 +13,13 @@ export default class GameScene implements Scene {
   }
 
   start = () => {
+    this.player.init({
+      speed: 10,
+      position: {
+        x: 50,
+        y: 50,
+      },
+    });
     this.music.play(true);
   };
 
@@ -20,5 +27,8 @@ export default class GameScene implements Scene {
     this.player.update(time);
   };
 
-  end = () => {};
+  end = () => {
+    this.player.remove();
+    this.music.stop();
+  };
 }
