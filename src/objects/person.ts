@@ -1,6 +1,6 @@
 import { GameObject } from '.';
 import { drawLayer1 } from '../canvas';
-import { getTimings } from '../utils';
+import { degreeToRadian } from '../utils';
 
 type PersonState = {
   position: {
@@ -26,54 +26,11 @@ export default class Person implements GameObject, PersonState {
   init = (state: PersonState) => {
     const { position } = state;
     this.position = position;
-    this.move = {
-      speed: 3000,
-      position: {
-        // 목적지 좌표
-        x: 200,
-        y: 0,
-        z: 0,
-      },
-    };
   };
 
   // 얘는 매 프레임 실행됨
   update = (time: number) => {
     this.draw(time);
-    const { isProgressing: isMoving, progress: movingProgress, isEnded: isMovingEnded, isReserved: isMovingReserved } = getTimings({
-      time,
-      start: 1000, // 1초에 시작
-      duration: this.move.speed, // 3초 동안 지속
-    });
-    if (isMovingReserved) {
-      this.move = {
-        speed: 4000,
-        position: {
-          x: 400,
-          y: 400,
-          z: 0,
-        }
-      }
-    }
-    if (isMoving) {
-      this.position = {
-        x:
-          this.position.x + // 최초 위치
-          // 이동 해야 할 거리
-          (this.move.position.x - this.position.x) * movingProgress, // 0 ~ 1,
-        y:
-          this.position.y +
-          (this.move.position.y - this.position.y) * movingProgress,
-        z: this.position.z,
-      };
-    }
-    if (isMovingEnded) {
-      this.position = {
-        x: this.move.position.x,
-        y: this.move.position.y,
-        z: 0,
-      }
-    }
   };
 
   remove = () => {
@@ -81,10 +38,87 @@ export default class Person implements GameObject, PersonState {
   };
 
   draw = (time: number) => {
-    drawLayer1((context) => {
-      const { x, y, z } = this.position;
-      context.setTransform(1, 0, 0, 1, x, y);
-      context.fillRect(0, 0, 20, 20);
+    drawLayer1((context, canvas) => {
+      const isMoving = false;
+      if (isMoving) {
+        context.setTransform(1, 0, 0, 1, canvas.width / 2 + -2 , canvas.height / 2 + 26 + Math.sin(time / 64) * 2);
+        context.rotate(degreeToRadian(Math.sin(time / 128) * -8));
+        this.#drawArm(context);
+        context.setTransform(1, 0, 0, 1, canvas.width / 2, canvas.height / 2 + 24 + Math.sin(time / 128) * 2);
+        this.#drawUpperBody(context);
+        context.setTransform(1, 0, 0, 1, canvas.width / 2, canvas.height / 2 + 63 + Math.sin(time / 128) * 2);
+        this.#drawLowerBody(context);
+        context.setTransform(1, 0, 0, 1.1, canvas.width / 2, canvas.height / 2 + 70);
+        context.rotate(degreeToRadian(-2 + Math.sin(time / 128) * 14));
+        this.#drawLeg(context);
+        context.setTransform(1, 0, 0, 1.1, canvas.width / 2 + 14, canvas.height / 2 + 70);
+        context.rotate(degreeToRadian(5 + Math.sin(time / 128) * -14));
+        this.#drawLeg(context);
+                context.setTransform(1, 0, 0, 1, canvas.width / 2, canvas.height / 2 + Math.sin(time / 128) * 2);
+        this.#drawHead(context);
+        context.setTransform(1, 0, 0, 1, canvas.width / 2 + 18 , canvas.height / 2 + 26 + Math.sin(time / 64) * 2);
+        context.rotate(degreeToRadian(Math.sin(time / 128) * 8));
+        this.#drawArm(context);
+      } else {
+        context.setTransform(1, 0, 0, 1, canvas.width / 2 - 4, canvas.height / 2 + 26 + Math.sin(time / 128) * 1);
+        this.#drawArm(context);
+        context.setTransform(1, 0, 0, 1, canvas.width / 2, canvas.height / 2 + 24 + Math.sin(time / 128) * 1);
+        this.#drawUpperBody(context);
+        context.setTransform(1, 0, 0, 1, canvas.width / 2, canvas.height / 2 + 62);
+        this.#drawLowerBody(context);
+        context.setTransform(1, 0, 0, 1, canvas.width / 2, canvas.height / 2 + 73);
+        this.#drawLeg(context);
+        context.setTransform(1, 0, 0, 1, canvas.width / 2 + 14, canvas.height / 2 + 73);
+        this.#drawLeg(context);
+        context.setTransform(1, 0, 0, 1, canvas.width / 2 + 20, canvas.height / 2 + 26 + Math.sin(time / 128) * 1);
+        this.#drawArm(context);
+        context.setTransform(1, 0, 0, 1, canvas.width / 2, canvas.height / 2 + Math.sin(time / 128) * 2);
+        this.#drawHead(context);
+      }
     });
   };
+
+  #drawHead = (context: CanvasRenderingContext2D) => {
+    const skinColor = '#ffefdb';
+    const eyeColor = '#00aeff';
+    const hairColor = '#ffcc00';
+    context.fillStyle = skinColor;
+    context.fillRect(0, 0, 24, 24);
+    context.fillStyle = eyeColor;
+    context.fillRect(4, 8, 4, 4);
+    context.fillRect(12, 8, 4, 4);
+    context.fillStyle = hairColor;
+    context.fillRect(-4, -8, 28, 12);
+    context.fillRect(20, -4, 6, 20);
+  }
+
+  #drawArm = (context: CanvasRenderingContext2D) => {
+    const handColor = '#ffefdb';
+    const armColor = '#de0034';
+    context.fillStyle = armColor;
+    context.fillRect(0, 0, 8, 38);
+    context.fillStyle = handColor;
+    context.fillRect(0, 38, 8, 8);
+  }
+
+  #drawUpperBody = (context: CanvasRenderingContext2D) => {
+    const bodyColor = '#de0034';
+    context.fillStyle = bodyColor;
+    context.fillRect(0, 0, 24, 40);
+  }
+
+  #drawLowerBody = (context: CanvasRenderingContext2D) => {
+    const lowerBodyColor = '#075aa3';
+    context.fillStyle = lowerBodyColor;
+    context.fillRect(0, 0, 24, 12);
+  }
+
+  #drawLeg = (context: CanvasRenderingContext2D) => {
+    const legColor = '#075aa3';
+    const shoesColor = '#000';
+    context.fillStyle = legColor;
+    context.fillRect(0, 0, 10, 24);
+    context.fillStyle = shoesColor;
+    context.fillRect(-2, 23, 12, 8);
+  }
 }
