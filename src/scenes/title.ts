@@ -1,5 +1,6 @@
 import { Scene } from '.';
-import { drawLayer1 } from '../canvas';
+import { drawLayer } from './../canvas';
+import store from '../store';
 import { getFont } from '../utils';
 
 export default class TitleScene implements Scene {
@@ -39,7 +40,10 @@ export default class TitleScene implements Scene {
   };
 
   #drawTitle = () => {
-    drawLayer1((context, canvas) => {
+    const layer = store.get('layer1');
+    const draw = drawLayer(layer);
+
+    draw((context, canvas) => {
       context.setTransform(
         1,
         0,
@@ -54,7 +58,10 @@ export default class TitleScene implements Scene {
   };
 
   #drawSubTitle = (time: number) => {
-    drawLayer1((context, canvas) => {
+    const layer = store.get('layer1');
+    const draw = drawLayer(layer);
+
+    draw((context, canvas) => {
       context.setTransform(
         1,
         0,

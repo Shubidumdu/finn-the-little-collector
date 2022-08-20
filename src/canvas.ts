@@ -1,6 +1,10 @@
-export const layer1Canvas = document.getElementById(
-  'layer1',
-) as HTMLCanvasElement;
+import store from './store';
+
+type CanvasOptions = {
+  id: string,
+  width?: number,
+  height?: number,
+};
 
 const setViewPort = () => {
   const viewportMeta = document.querySelector(
@@ -8,6 +12,7 @@ const setViewPort = () => {
   ) as HTMLMetaElement;
   const width = Math.round(visualViewport.scale * visualViewport.width);
   const height = Math.round(visualViewport.scale * visualViewport.height);
+
   if (width <= 460 || height <= 460) {
     viewportMeta.setAttribute(
       'content',
@@ -26,13 +31,33 @@ const setViewPort = () => {
   }
 };
 
-export function resizeCanvas() {
-  layer1Canvas.width = window.innerWidth;
-  layer1Canvas.height = window.innerHeight;
-  setViewPort();
-}
+export const createCanvas = ({
+  id,
+}: CanvasOptions) => {
+  if (store.has(id)) return store.get(id);
 
-function draw(canvas: HTMLCanvasElement) {
+  const canvas = Object.assign(
+    document.createElement('canvas'),
+    { id },
+  ) as HTMLCanvasElement;
+
+  store.set(id, canvas);
+
+  document.body.appendChild(canvas);
+
+  resizeCanvas(canvas);
+  window.addEventListener('resize', () => resizeCanvas(canvas));
+
+  return canvas;
+};
+
+export const resizeCanvas = (canvas: HTMLCanvasElement) => {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+  setViewPort();
+};
+
+export const drawLayer = (canvas: HTMLCanvasElement) => {
   const context = canvas.getContext('2d');
 
   return (
@@ -47,28 +72,17 @@ function draw(canvas: HTMLCanvasElement) {
     context.closePath();
     context.restore();
   };
-}
+};
 
-function reset(canvas: HTMLCanvasElement) {
+export const resetLayer = (canvas: HTMLCanvasElement) => {
   const context = canvas.getContext('2d');
 
   return () => {
     context.setTransform(1, 0, 0, 1, 0, 0);
     context.clearRect(0, 0, canvas.width, canvas.height);
   };
-}
-
-export const drawLayer1 = draw(layer1Canvas);
-
-export const resetLayer1 = reset(layer1Canvas);
-
-export const resetAllLayers = () => {
-  resetLayer1();
 };
 
-function init() {
-  resizeCanvas();
-  window.addEventListener('resize', resizeCanvas);
-}
-
-init();
+export const resetAllLayers = () => {
+  [...store.values()].map((canvas) => resetLayer(canvas)());
+};

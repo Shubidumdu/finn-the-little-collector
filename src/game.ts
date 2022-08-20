@@ -1,4 +1,4 @@
-import { resetAllLayers } from './canvas';
+import { createCanvas, resetAllLayers } from './canvas';
 import { GameScene, Scene, SceneType } from './scenes';
 import TitleScene from './scenes/title';
 
@@ -17,6 +17,8 @@ export default class Game {
       game: new GameScene(),
       title: new TitleScene(),
     };
+
+    createCanvas({ id: 'layer1' });
   }
 
   start = () => {
