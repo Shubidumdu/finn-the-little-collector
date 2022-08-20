@@ -12,7 +12,7 @@ export default class Game {
   scenes: { [name in SceneType]: Scene };
 
   constructor() {
-    this.activeScene = 'title';
+    this.activeScene = 'game';
     this.scenes = {
       game: new GameScene(),
       title: new TitleScene(),
@@ -32,6 +32,7 @@ export default class Game {
   };
 
   #update = (time: number) => {
+    console.log(time);
     resetAllLayers();
     this.scenes[this.activeScene].update(time);
     requestAnimationFrame(this.#update);
