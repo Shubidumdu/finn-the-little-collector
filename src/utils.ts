@@ -26,3 +26,5 @@ export const getFont = (
   size: number = 32,
   type: string = 'Arial Black, Arial, sans-serif',
 ) => `bold ${size}pt ${type}`;
+
+export const getRandomInteger = (min: number, max:number) => Math.random() * (max - min) + min;

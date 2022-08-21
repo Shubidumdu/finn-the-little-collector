@@ -12,8 +12,8 @@ export default class GameScene implements Scene {
   start = () => {
     this.person.init({
       position: {
-        x: 0,
-        y: 0,
+        x: 300,
+        y: 300,
         z: 0,
       },
     });
