@@ -1,11 +1,21 @@
 import { createCanvas, resetAllLayers } from './canvas';
-import { GameScene, Scene, SceneType } from './scenes';
-import TitleScene from './scenes/title';
+import { PlayScene, TitleScene, Scene, SceneType } from './scenes';
 
-export type ObservableEventType = {
-  type: 'change-scene';
-  payload: SceneType;
+type ChangeScene = {
+  type: 'change-scene',
+  payload: SceneType,
 };
+
+type ClickEvent = {
+  type: 'click-canvas',
+  payload: {
+    id: string,
+    x: number,
+    y: number,
+  },
+};
+
+export type ObservableEventType = ChangeScene | ClickEvent;
 
 export default class Game {
   activeScene: SceneType;
@@ -14,11 +24,11 @@ export default class Game {
   constructor() {
     this.activeScene = 'title';
     this.scenes = {
-      game: new GameScene(),
+      play: new PlayScene(),
       title: new TitleScene(),
     };
 
-    createCanvas({ id: 'layer1' });
+    createCanvas('layer1');
   }
 
   start = () => {
@@ -33,6 +43,11 @@ export default class Game {
     this.scenes[this.activeScene].start();
   };
 
+  #click = (payload: ClickEvent['payload']) => {
+    console.log('canvas click');
+    console.log(payload);
+  };
+
   #update = (time: number) => {
     resetAllLayers();
     this.scenes[this.activeScene].update(time);
@@ -45,10 +60,12 @@ export default class Game {
       (event: MessageEvent<ObservableEventType>) => {
         if (!event.data) return;
         const { type, payload } = event.data;
+
         switch (type) {
-          case 'change-scene': {
-            this.#changeScene(payload);
-          }
+          case 'change-scene': this.#changeScene(payload);
+          break;
+          case 'click-canvas': this.#click(payload);
+          break;
         }
       },
     );

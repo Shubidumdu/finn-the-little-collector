@@ -1,11 +1,5 @@
 import store from './store';
 
-type CanvasOptions = {
-  id: string,
-  width?: number,
-  height?: number,
-};
-
 const setViewPort = () => {
   const viewportMeta = document.querySelector(
     "meta[name='viewport']",
@@ -31,21 +25,35 @@ const setViewPort = () => {
   }
 };
 
-export const createCanvas = ({
-  id,
-}: CanvasOptions) => {
-  if (store.has(id)) return store.get(id);
+export const createCanvas = (id: string) => {
+  if (store.canvas.has(id)) return store.canvas.get(id);
 
   const canvas = Object.assign(
     document.createElement('canvas'),
     { id },
   ) as HTMLCanvasElement;
 
-  store.set(id, canvas);
+  store.canvas.set(id, canvas);
 
   document.body.appendChild(canvas);
 
   resizeCanvas(canvas);
+
+  canvas.addEventListener('click', (event: PointerEvent) => {
+    event.stopPropagation();
+
+    window.postMessage(
+      {
+        type: 'click-canvas',
+        payload: {
+          id,
+          x: event.clientX,
+          y: event.clientY,
+        },
+      },
+      window.origin,
+    );
+  });
   window.addEventListener('resize', () => resizeCanvas(canvas));
 
   return canvas;
@@ -84,5 +92,5 @@ export const resetLayer = (canvas: HTMLCanvasElement) => {
 };
 
 export const resetAllLayers = () => {
-  [...store.values()].map((canvas) => resetLayer(canvas)());
+  [...store.canvas.values()].map((canvas) => resetLayer(canvas)());
 };
