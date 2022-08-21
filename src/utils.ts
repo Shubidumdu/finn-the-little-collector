@@ -26,3 +26,11 @@ export const getFont = (
   size: number = 32,
   type: string = 'Arial Black, Arial, sans-serif',
 ) => `bold ${size}pt ${type}`;
+
+export const getRandomColor = () =>
+  `#${Math.floor(Math.random() * 16777215).toString(16).padEnd(6, '0')}`;
+
+export const pickRandomOption = <T, >(options: T[]) => {
+  const randomIndex = getRandomInt(options.length);
+  return options[randomIndex];
+};
