@@ -13,7 +13,7 @@ export default class GameScene implements Scene {
 
   start = () => {
     this.persons = [...new Array(100)].map(() => new Person());
-    this.persons.forEach((person, index) => {
+    this.persons.forEach((person) => {
       person.init({
         position: {
           x: getRandomInt(layer1Canvas.width),

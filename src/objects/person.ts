@@ -54,7 +54,7 @@ export default class Person implements GameObject, PersonState {
 
   draw = (time: number) => {
     drawLayer1((context, canvas) => {
-      const isMoving = true;
+      const isMoving = false;
       if (isMoving) {
         context.setTransform(
           1,
@@ -184,7 +184,7 @@ export default class Person implements GameObject, PersonState {
           0,
           1,
           this.position.x,
-          this.position.y + Math.sin(time / 128) * 2,
+          this.position.y + Math.sin(time / 128),
         );
         this.#drawHead(context);
       }
