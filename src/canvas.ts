@@ -26,27 +26,40 @@ const setViewPort = () => {
   }
 };
 
-export const createCanvas = (id: string, style?: CSSStyleDeclaration) => {
+type CanvasAttribues = {
+  width: number,
+  height: number,
+};
+
+type CreateCanvasOptions = CanvasAttribues & {
+  style: CSSStyleDeclaration,
+};
+
+export const createCanvas = (
+  id: string,
+  options: Partial<CreateCanvasOptions> = {},
+) => {
   if (store.canvas.has(id)) return store.canvas.get(id);
 
+  const { width, height, style } = options;
   const stringifiedStyle = getStringifiedStyle(style);
+
   const canvas = Object.assign(
     document.createElement('canvas'),
     {
       id,
+      ...options,
       style: stringifiedStyle,
     },
   ) as HTMLCanvasElement;
 
-  store.canvas.set(id, canvas);
-
   document.body.appendChild(canvas);
 
-  resizeCanvas(canvas);
+  store.canvas.set(id, canvas);
+
+  resizeCanvas(canvas, { width, height });
 
   canvas.addEventListener('click', (event: PointerEvent) => {
-    event.stopPropagation();
-
     window.postMessage(
       {
         type: 'click-canvas',
@@ -59,7 +72,8 @@ export const createCanvas = (id: string, style?: CSSStyleDeclaration) => {
       window.origin,
     );
   });
-  window.addEventListener('resize', () => resizeCanvas(canvas));
+
+  window.addEventListener('resize', () => resizeCanvas(canvas, { width, height }));
 
   return canvas;
 };
@@ -70,9 +84,15 @@ export const removeCanvas = (id: string) => {
   store.canvas.delete(id);
 };
 
-export const resizeCanvas = (canvas: HTMLCanvasElement) => {
-  canvas.width = window.innerWidth;
-  canvas.height = window.innerHeight;
+export const resizeCanvas = (
+  canvas: HTMLCanvasElement,
+  attributes: Partial<CanvasAttribues> = {},
+) => {
+  const { width, height } = attributes;
+
+  canvas.width = width ?? window.innerWidth;
+  canvas.height = height ?? window.innerHeight;
+
   setViewPort();
 };
 
