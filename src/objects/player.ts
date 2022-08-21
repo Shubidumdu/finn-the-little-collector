@@ -33,7 +33,7 @@ export default class Player implements GameObject {
   };
 
   #draw(time: number) {
-    const layer = store.get('layer1');
+    const layer = store.canvas.get('layer1');
     const draw = drawLayer(layer);
 
     draw((context) => {
