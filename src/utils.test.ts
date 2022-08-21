@@ -12,4 +12,10 @@ describe('getStringifiedStyle', () => {
       getStringifiedStyle(styleObj),
     ).toBe('width:200px;height:auto;overflow:hidden');
   });
+
+  it('인자를 넘기지 않으면 빈 문자를 반환한다.', () => {
+    expect(
+      getStringifiedStyle(),
+    ).toBe('');
+  });
 });

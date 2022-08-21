@@ -19,7 +19,7 @@ export default class PlayInfo implements Layer {
   }: PlayInfoState) => {
     this.stage = stage;
     this.timeout = timeout;
-    this.layer = createCanvas('playInfo');
+    this.layer = createCanvas('playInfo', { height: 100, style: { height: 'auto', 'z-index': 10 } });
   };
 
   remove = () => {
@@ -30,10 +30,27 @@ export default class PlayInfo implements Layer {
   update = (time: number) => {
     if (!this.startTime) {
       this.startTime = time;
-      console.log(time);
     }
 
+    this.#drawStage();
     this.#drawTimer(time);
+  };
+
+  #drawStage = () => {
+    const draw = drawLayer(this.layer);
+
+    draw((context, canvas) => {
+      context.setTransform(
+        1,
+        0,
+        0,
+        1,
+        0,
+        0,
+      );
+      context.font = getFont(24);
+      context.fillText(`Stage ${this.stage}`, 40, 56);
+    });
   };
 
   #drawTimer = (time: number) => {
