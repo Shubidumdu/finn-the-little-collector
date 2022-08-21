@@ -50,8 +50,6 @@ export default class TitleScene implements Scene {
     window.removeEventListener('keydown', this.#actionEvent);
   };
 
-  #getScene = () => this.menus[this.activeMenuIndex];
-
   #changeMenuIndexEvent = (e: KeyboardEvent) => {
     if (e.code === 'ArrowDown') {
       this.activeMenuIndex = Math.min(this.activeMenuIndex + 1, this.menus.length - 1);
@@ -65,7 +63,8 @@ export default class TitleScene implements Scene {
   #actionEvent = (e: KeyboardEvent) => {
     if (e.code !== 'Space') return;
 
-    this.menus[this.activeMenuIndex].action();
+    const currentMenu = this.menus[this.activeMenuIndex];
+    currentMenu.action();
   };
   
   #changeScene = (sceneType: SceneType) => {
@@ -79,10 +78,10 @@ export default class TitleScene implements Scene {
   };
 
   #drawTitle = () => {
-    const layer = store.canvas.get('layer1');
-    const draw = drawLayer(layer);
+    const layer1 = store.canvas.get('layer1');
+    const drawLayer1 = drawLayer(layer1);
 
-    draw((context, canvas) => {
+    drawLayer1((context, canvas) => {
       context.setTransform(
         1,
         0,
@@ -98,10 +97,10 @@ export default class TitleScene implements Scene {
   };
 
   #drawMenus = () => {
-    const layer = store.canvas.get('layer1');
-    const draw = drawLayer(layer);
+    const layer1 = store.canvas.get('layer1');
+    const drawLayer1 = drawLayer(layer1);
 
-    draw((context, canvas) => {
+    drawLayer1((context, canvas) => {
       context.setTransform(
         1,
         0,
@@ -151,10 +150,10 @@ export default class TitleScene implements Scene {
   };
 
   #drawSubTitle = (time: number) => {
-    const layer = store.canvas.get('layer1');
-    const draw = drawLayer(layer);
+    const layer1 = store.canvas.get('layer1');
+    const drawLayer1 = drawLayer(layer1);
 
-    draw((context, canvas) => {
+    drawLayer1((context, canvas) => {
       context.setTransform(
         1,
         0,
