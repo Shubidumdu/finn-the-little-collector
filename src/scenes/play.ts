@@ -1,18 +1,28 @@
 import { Scene } from '.';
 import Player from '../objects/player';
+import { PlayInfo } from '../layers';
 import Music from '../sounds/music';
 import gameMusic from '../sounds/musics/game';
 
 export default class PlayScene implements Scene {
-  player: Player;
+  info: PlayInfo;
   music: Music;
+  player: Player;
+  stage: number = 0;
+  timeout: number = 10;
 
   constructor() {
+    this.info = new PlayInfo();
     this.player = new Player();
     this.music = new Music(gameMusic);
   }
 
   start = () => {
+    this.info.init({
+      stage: this.stage,
+      timeout: this.timeout,
+    });
+
     this.player.init({
       speed: 10,
       position: {
@@ -24,6 +34,7 @@ export default class PlayScene implements Scene {
   };
 
   update = (time: number) => {
+    this.info.update(time);
     this.player.update(time);
   };
 
