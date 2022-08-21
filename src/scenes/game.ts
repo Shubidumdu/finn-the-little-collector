@@ -1,14 +1,17 @@
 import { Scene } from '.';
 import { layer1Canvas } from '../canvas';
+import Magnifier from '../objects/magnifier';
 import Person, { EYE_COLORS, SKIN_COLORS } from '../objects/person';
 import gameMusic from '../sounds/musics/game';
 import { getRandomColor, getRandomInt, pickRandomOption } from '../utils';
 
 export default class GameScene implements Scene {
   persons: Person[];
+  magnifier: Magnifier;
 
   constructor() {
     this.persons = [];
+    this.magnifier = new Magnifier();
   }
 
   start = () => {
@@ -30,10 +33,32 @@ export default class GameScene implements Scene {
         },
       });
     });
+    this.magnifier.init({
+      position: { x: 0, y: 0 },
+      range: 50,
+    });
   };
 
   update = (time: number) => {
-    this.persons.forEach((person) => person.update(time));
+    this.persons.forEach((person) => {
+      const {
+        range: magnifierRange,
+        position: { x: magnifierX, y: magnifierY },
+      } = this.magnifier;
+      const { x: personX, y: personY } = person.position;
+      if (
+        personX >= magnifierX - magnifierRange &&
+        personX <= magnifierX + magnifierRange &&
+        personY >= magnifierY - magnifierRange &&
+        personY <= magnifierY + magnifierRange
+      ) {
+        person.isEnlarged = true;
+      } else {
+        person.isEnlarged = false;
+      }
+      person.update(time);
+    });
+    this.magnifier.update(time);
   };
 
   end = () => {
