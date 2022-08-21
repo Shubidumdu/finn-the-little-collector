@@ -3,7 +3,7 @@ import Player from '../objects/player';
 import Music from '../sounds/music';
 import gameMusic from '../sounds/musics/game';
 
-export default class GameScene implements Scene {
+export default class PlayScene implements Scene {
   player: Player;
   music: Music;
 
@@ -20,7 +20,7 @@ export default class GameScene implements Scene {
         y: 50,
       },
     });
-    this.music.play(true);
+    // this.music.play(true);
   };
 
   update = (time: number) => {

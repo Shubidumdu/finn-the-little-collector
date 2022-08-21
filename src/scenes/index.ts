@@ -1,6 +1,7 @@
-import GameScene from './game';
+import PlayScene from './play';
+import TitleScene from './title';
 
-export type SceneType = 'game' | 'title';
+export type SceneType = 'play' | 'title';
 
 export interface Scene {
   start: () => void;
@@ -8,4 +9,7 @@ export interface Scene {
   end: () => void;
 }
 
-export { GameScene };
+export {
+  PlayScene,
+  TitleScene,
+};
