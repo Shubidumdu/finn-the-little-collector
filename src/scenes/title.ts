@@ -1,6 +1,7 @@
 import { Scene, SceneType } from '.';
 import { drawLayer } from '../canvas';
 import store from '../store';
+import { setIsSoundOn } from '../store/mutation';
 import { getFont } from '../utils';
 
 export default class TitleScene implements Scene {
@@ -12,16 +13,12 @@ export default class TitleScene implements Scene {
     },
     {
       key: 'sound',
-      action: () => store.state.set(
-        'soundActive',
-        !store.state.get('soundActive'),
-      ),
+      action: () => {
+        const { isSoundOn } = store;
+        setIsSoundOn(!isSoundOn);
+      },
     },
   ];
-
-  constructor() {
-    store.state.set('soundActive', true);
-  }
 
   start = () => {
     this.activeMenuIndex = 0;
@@ -122,12 +119,12 @@ export default class TitleScene implements Scene {
       );
       context.font = getFont(12);
 
-      const soundActive = store.state.get('soundActive') ? 'on' : 'off';
+      const isSoundOn = store.isSoundOn ? 'on' : 'off';
 
       if (this.activeMenuIndex === 1) {
-        context.fillText(`Sound [ ${soundActive} ]`, 0, 0);
+        context.fillText(`Sound [ ${isSoundOn} ]`, 0, 0);
       } else {
-        context.fillText(`Sound ${soundActive}`, 0, 0);
+        context.fillText(`Sound ${isSoundOn}`, 0, 0);
       }
 
       // triangle
