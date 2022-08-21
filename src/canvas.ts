@@ -1,4 +1,5 @@
 import store from './store';
+import { getStringifiedStyle } from './utils';
 
 const setViewPort = () => {
   const viewportMeta = document.querySelector(
@@ -25,12 +26,16 @@ const setViewPort = () => {
   }
 };
 
-export const createCanvas = (id: string) => {
+export const createCanvas = (id: string, style?: CSSStyleDeclaration) => {
   if (store.canvas.has(id)) return store.canvas.get(id);
 
+  const stringifiedStyle = getStringifiedStyle(style);
   const canvas = Object.assign(
     document.createElement('canvas'),
-    { id },
+    {
+      id,
+      style: stringifiedStyle,
+    },
   ) as HTMLCanvasElement;
 
   store.canvas.set(id, canvas);
@@ -57,6 +62,12 @@ export const createCanvas = (id: string) => {
   window.addEventListener('resize', () => resizeCanvas(canvas));
 
   return canvas;
+};
+
+export const removeCanvas = (id: string) => {
+  if (!store.canvas.has(id)) return;
+
+  store.canvas.delete(id);
 };
 
 export const resizeCanvas = (canvas: HTMLCanvasElement) => {
