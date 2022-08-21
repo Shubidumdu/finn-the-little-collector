@@ -9,7 +9,7 @@ type ColorState = {
   top: string;
   bottom: string;
   shoe: string;
-}
+};
 
 type PersonState = {
   position: {
@@ -21,7 +21,13 @@ type PersonState = {
 };
 
 export const EYE_COLORS = ['#634e34', '#2e536f', '#1c7847'];
-export const SKIN_COLORS = ['#8d5524', '#c68642', '#e0ac69', '#f1c27d', '#ffdbac'];
+export const SKIN_COLORS = [
+  '#8d5524',
+  '#c68642',
+  '#e0ac69',
+  '#f1c27d',
+  '#ffdbac',
+];
 
 export default class Person implements GameObject, PersonState {
   position: { x: number; y: number; z: number };
@@ -33,14 +39,20 @@ export default class Person implements GameObject, PersonState {
       z: number;
     };
   };
+  isEnlarged: boolean;
   colors: ColorState;
 
   constructor() {}
+
+  get sizeRatio() {
+    return this.isEnlarged ? 1: 0.5;
+  }
 
   init = (state: PersonState) => {
     const { position, colors } = state;
     this.position = position;
     this.colors = colors;
+    this.isEnlarged = false;
   };
 
   // 얘는 매 프레임 실행됨
@@ -54,137 +66,137 @@ export default class Person implements GameObject, PersonState {
 
   draw = (time: number) => {
     drawLayer1((context, canvas) => {
-      const isMoving = false;
+      const isMoving = true;
       if (isMoving) {
         context.setTransform(
-          1,
+          this.sizeRatio,
           0,
           0,
-          1,
-          this.position.x + -2,
-          this.position.y + 26 + Math.sin(time / 64) * 2,
+          this.sizeRatio,
+          this.position.x + -2 * this.sizeRatio,
+          this.position.y + (26 + Math.sin(time / 64) * 2) * this.sizeRatio,
         );
         context.rotate(degreeToRadian(Math.sin(time / 128) * -8));
         this.#drawArm(context);
         context.setTransform(
-          1,
+          this.sizeRatio,
           0,
           0,
-          1,
+          this.sizeRatio,
           this.position.x,
-          this.position.y + 24 + Math.sin(time / 128) * 2,
+          this.position.y + (24 + Math.sin(time / 128) * 2) * this.sizeRatio,
         );
         this.#drawUpperBody(context);
         context.setTransform(
-          1,
+          this.sizeRatio,
           0,
           0,
-          1,
+          this.sizeRatio,
           this.position.x,
-          this.position.y + 63 + Math.sin(time / 128) * 2,
+          this.position.y + (63 + Math.sin(time / 128) * 2) * this.sizeRatio,
         );
         this.#drawLowerBody(context);
         context.setTransform(
-          1,
+          this.sizeRatio,
           0,
           0,
-          1.1,
+          this.sizeRatio,
           this.position.x,
-          this.position.y + 70,
+          this.position.y + 70 * this.sizeRatio,
         );
         context.rotate(degreeToRadian(-2 + Math.sin(time / 128) * 14));
         this.#drawLeg(context);
         context.setTransform(
-          1,
+          this.sizeRatio,
           0,
           0,
-          1.1,
-          this.position.x + 14,
-          this.position.y + 70,
+          this.sizeRatio,
+          this.position.x + 14 * this.sizeRatio,
+          this.position.y + 70 * this.sizeRatio,
         );
         context.rotate(degreeToRadian(5 + Math.sin(time / 128) * -14));
         this.#drawLeg(context);
         context.setTransform(
-          1,
+          this.sizeRatio,
           0,
           0,
-          1,
+          this.sizeRatio,
           this.position.x,
-          this.position.y + Math.sin(time / 128) * 2,
+          this.position.y + (Math.sin(time / 128) * 2) * this.sizeRatio,
         );
         this.#drawHead(context);
         context.setTransform(
-          1,
+          this.sizeRatio,
           0,
           0,
-          1,
-          this.position.x + 18,
-          this.position.y + 26 + Math.sin(time / 64) * 2,
+          this.sizeRatio,
+          this.position.x + 18 * this.sizeRatio,
+          this.position.y + (26 + Math.sin(time / 64) * 2) * this.sizeRatio,
         );
         context.rotate(degreeToRadian(Math.sin(time / 128) * 8));
         this.#drawArm(context);
       } else {
         context.setTransform(
-          1,
+          this.sizeRatio,
           0,
           0,
-          1,
-          this.position.x - 4,
-          this.position.y + 26 + Math.sin(time / 128) * 1,
+          this.sizeRatio,
+          this.position.x - 4 * this.sizeRatio,
+          this.position.y + (26 + Math.sin(time / 128)) * this.sizeRatio,
         );
         this.#drawArm(context);
         context.setTransform(
-          1,
+          this.sizeRatio,
           0,
           0,
-          1,
+          this.sizeRatio,
           this.position.x,
-          this.position.y + 24 + Math.sin(time / 128) * 1,
+          this.position.y + (24 + Math.sin(time / 128)) * this.sizeRatio,
         );
         this.#drawUpperBody(context);
         context.setTransform(
-          1,
+          this.sizeRatio,
           0,
           0,
-          1,
+          this.sizeRatio,
           this.position.x,
-          this.position.y + 62,
+          this.position.y + 62 * this.sizeRatio,
         );
         this.#drawLowerBody(context);
         context.setTransform(
-          1,
+          this.sizeRatio,
           0,
           0,
-          1,
+          this.sizeRatio,
           this.position.x,
-          this.position.y + 73,
+          this.position.y + 73 * this.sizeRatio,
         );
         this.#drawLeg(context);
         context.setTransform(
-          1,
+          this.sizeRatio,
           0,
           0,
-          1,
-          this.position.x + 14,
-          this.position.y + 73,
+          this.sizeRatio,
+          this.position.x + 14 * this.sizeRatio,
+          this.position.y + 73 * this.sizeRatio,
         );
         this.#drawLeg(context);
         context.setTransform(
-          1,
+          this.sizeRatio,
           0,
           0,
-          1,
-          this.position.x + 20,
-          this.position.y + 26 + Math.sin(time / 128) * 1,
+          this.sizeRatio,
+          this.position.x + 20 * this.sizeRatio,
+          this.position.y + (26 + Math.sin(time / 128)) * this.sizeRatio,
         );
         this.#drawArm(context);
         context.setTransform(
-          1,
+          this.sizeRatio,
           0,
           0,
-          1,
+          this.sizeRatio,
           this.position.x,
-          this.position.y + Math.sin(time / 128),
+          this.position.y + Math.sin(time / 128) * this.sizeRatio,
         );
         this.#drawHead(context);
       }
