@@ -1,6 +1,9 @@
 export const layer1Canvas = document.getElementById(
   'layer1',
 ) as HTMLCanvasElement;
+export const layer2Canvas = document.getElementById(
+  'layer2',
+) as HTMLCanvasElement;
 
 const setViewPort = () => {
   const viewportMeta = document.querySelector(
@@ -29,6 +32,8 @@ const setViewPort = () => {
 export function resizeCanvas() {
   layer1Canvas.width = window.innerWidth;
   layer1Canvas.height = window.innerHeight;
+  layer2Canvas.width = window.innerWidth;
+  layer2Canvas.height = window.innerHeight;
   setViewPort();
 }
 
@@ -62,8 +67,13 @@ export const drawLayer1 = draw(layer1Canvas);
 
 export const resetLayer1 = reset(layer1Canvas);
 
+export const drawLayer2 = draw(layer2Canvas);
+
+export const resetLayer2 = reset(layer2Canvas);
+
 export const resetAllLayers = () => {
   resetLayer1();
+  resetLayer2();
 };
 
 function init() {

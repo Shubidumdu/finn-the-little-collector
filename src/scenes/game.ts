@@ -41,21 +41,6 @@ export default class GameScene implements Scene {
 
   update = (time: number) => {
     this.persons.forEach((person) => {
-      const {
-        range: magnifierRange,
-        position: { x: magnifierX, y: magnifierY },
-      } = this.magnifier;
-      const { x: personX, y: personY } = person.position;
-      if (
-        personX >= magnifierX - magnifierRange &&
-        personX <= magnifierX + magnifierRange &&
-        personY >= magnifierY - magnifierRange &&
-        personY <= magnifierY + magnifierRange
-      ) {
-        person.isEnlarged = true;
-      } else {
-        person.isEnlarged = false;
-      }
       person.update(time);
     });
     this.magnifier.update(time);

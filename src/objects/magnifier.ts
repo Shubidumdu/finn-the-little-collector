@@ -1,5 +1,5 @@
 import { GameObject } from '.';
-import { drawLayer1 } from '../canvas';
+import { drawLayer1, drawLayer2 } from '../canvas';
 
 type MagnifierState = {
   position: {
@@ -33,8 +33,17 @@ export default class Magnifier implements GameObject, MagnifierState {
       context.setTransform(1, 0, 0, 1, this.position.x, this.position.y);
       context.strokeStyle = '#000';
       context.beginPath();
+      context.globalCompositeOperation = 'destination-in';
       context.arc(0, 0, this.range, 0, Math.PI * 2, true);
-      context.stroke();
+      context.fill();
+    })
+    drawLayer2((context, canvas) => {
+      context.setTransform(1, 0, 0, 1, this.position.x, this.position.y);
+      context.strokeStyle = '#000';
+      context.beginPath();
+      context.globalCompositeOperation = 'destination-out';
+      context.arc(0, 0, this.range, 0, Math.PI * 2, true);
+      context.fill();
     })
   };
 

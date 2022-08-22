@@ -1,5 +1,5 @@
 import { GameObject } from '.';
-import { drawLayer1 } from '../canvas';
+import { drawLayer1, drawLayer2 } from '../canvas';
 import { degreeToRadian } from '../utils';
 
 type ColorState = {
@@ -66,142 +66,149 @@ export default class Person implements GameObject, PersonState {
 
   draw = (time: number) => {
     drawLayer1((context, canvas) => {
-      const isMoving = true;
-      if (isMoving) {
-        context.setTransform(
-          this.sizeRatio,
-          0,
-          0,
-          this.sizeRatio,
-          this.position.x + -2 * this.sizeRatio,
-          this.position.y + (26 + Math.sin(time / 64) * 2) * this.sizeRatio,
-        );
-        context.rotate(degreeToRadian(Math.sin(time / 128) * -8));
-        this.#drawArm(context);
-        context.setTransform(
-          this.sizeRatio,
-          0,
-          0,
-          this.sizeRatio,
-          this.position.x,
-          this.position.y + (24 + Math.sin(time / 128) * 2) * this.sizeRatio,
-        );
-        this.#drawUpperBody(context);
-        context.setTransform(
-          this.sizeRatio,
-          0,
-          0,
-          this.sizeRatio,
-          this.position.x,
-          this.position.y + (63 + Math.sin(time / 128) * 2) * this.sizeRatio,
-        );
-        this.#drawLowerBody(context);
-        context.setTransform(
-          this.sizeRatio,
-          0,
-          0,
-          this.sizeRatio,
-          this.position.x,
-          this.position.y + 70 * this.sizeRatio,
-        );
-        context.rotate(degreeToRadian(-2 + Math.sin(time / 128) * 14));
-        this.#drawLeg(context);
-        context.setTransform(
-          this.sizeRatio,
-          0,
-          0,
-          this.sizeRatio,
-          this.position.x + 14 * this.sizeRatio,
-          this.position.y + 70 * this.sizeRatio,
-        );
-        context.rotate(degreeToRadian(5 + Math.sin(time / 128) * -14));
-        this.#drawLeg(context);
-        context.setTransform(
-          this.sizeRatio,
-          0,
-          0,
-          this.sizeRatio,
-          this.position.x,
-          this.position.y + (Math.sin(time / 128) * 2) * this.sizeRatio,
-        );
-        this.#drawHead(context);
-        context.setTransform(
-          this.sizeRatio,
-          0,
-          0,
-          this.sizeRatio,
-          this.position.x + 18 * this.sizeRatio,
-          this.position.y + (26 + Math.sin(time / 64) * 2) * this.sizeRatio,
-        );
-        context.rotate(degreeToRadian(Math.sin(time / 128) * 8));
-        this.#drawArm(context);
-      } else {
-        context.setTransform(
-          this.sizeRatio,
-          0,
-          0,
-          this.sizeRatio,
-          this.position.x - 4 * this.sizeRatio,
-          this.position.y + (26 + Math.sin(time / 128)) * this.sizeRatio,
-        );
-        this.#drawArm(context);
-        context.setTransform(
-          this.sizeRatio,
-          0,
-          0,
-          this.sizeRatio,
-          this.position.x,
-          this.position.y + (24 + Math.sin(time / 128)) * this.sizeRatio,
-        );
-        this.#drawUpperBody(context);
-        context.setTransform(
-          this.sizeRatio,
-          0,
-          0,
-          this.sizeRatio,
-          this.position.x,
-          this.position.y + 62 * this.sizeRatio,
-        );
-        this.#drawLowerBody(context);
-        context.setTransform(
-          this.sizeRatio,
-          0,
-          0,
-          this.sizeRatio,
-          this.position.x,
-          this.position.y + 73 * this.sizeRatio,
-        );
-        this.#drawLeg(context);
-        context.setTransform(
-          this.sizeRatio,
-          0,
-          0,
-          this.sizeRatio,
-          this.position.x + 14 * this.sizeRatio,
-          this.position.y + 73 * this.sizeRatio,
-        );
-        this.#drawLeg(context);
-        context.setTransform(
-          this.sizeRatio,
-          0,
-          0,
-          this.sizeRatio,
-          this.position.x + 20 * this.sizeRatio,
-          this.position.y + (26 + Math.sin(time / 128)) * this.sizeRatio,
-        );
-        this.#drawArm(context);
-        context.setTransform(
-          this.sizeRatio,
-          0,
-          0,
-          this.sizeRatio,
-          this.position.x,
-          this.position.y + Math.sin(time / 128) * this.sizeRatio,
-        );
-        this.#drawHead(context);
-      }
+      this.#drawPerson(time, context, 1);
+    })
+    drawLayer2((context, canvas) => {
+      this.#drawPerson(time, context, 0.5);
     });
   };
+
+  #drawPerson = (time: number, context: CanvasRenderingContext2D, sizeRatio: number) => {
+    const isMoving = true;
+    if (isMoving) {
+      context.setTransform(
+        sizeRatio,
+        0,
+        0,
+        sizeRatio,
+        this.position.x + -2 * sizeRatio,
+        this.position.y + (26 + Math.sin(time / 64) * 2) * sizeRatio,
+      );
+      context.rotate(degreeToRadian(Math.sin(time / 128) * -8));
+      this.#drawArm(context);
+      context.setTransform(
+        sizeRatio,
+        0,
+        0,
+        sizeRatio,
+        this.position.x,
+        this.position.y + (24 + Math.sin(time / 128) * 2) * sizeRatio,
+      );
+      this.#drawUpperBody(context);
+      context.setTransform(
+        sizeRatio,
+        0,
+        0,
+        sizeRatio,
+        this.position.x,
+        this.position.y + (63 + Math.sin(time / 128) * 2) * sizeRatio,
+      );
+      this.#drawLowerBody(context);
+      context.setTransform(
+        sizeRatio,
+        0,
+        0,
+        sizeRatio,
+        this.position.x,
+        this.position.y + 70 * sizeRatio,
+      );
+      context.rotate(degreeToRadian(-2 + Math.sin(time / 128) * 14));
+      this.#drawLeg(context);
+      context.setTransform(
+        sizeRatio,
+        0,
+        0,
+        sizeRatio,
+        this.position.x + 14 * sizeRatio,
+        this.position.y + 70 * sizeRatio,
+      );
+      context.rotate(degreeToRadian(5 + Math.sin(time / 128) * -14));
+      this.#drawLeg(context);
+      context.setTransform(
+        sizeRatio,
+        0,
+        0,
+        sizeRatio,
+        this.position.x,
+        this.position.y + (Math.sin(time / 128) * 2) * sizeRatio,
+      );
+      this.#drawHead(context);
+      context.setTransform(
+        sizeRatio,
+        0,
+        0,
+        sizeRatio,
+        this.position.x + 18 * sizeRatio,
+        this.position.y + (26 + Math.sin(time / 64) * 2) * sizeRatio,
+      );
+      context.rotate(degreeToRadian(Math.sin(time / 128) * 8));
+      this.#drawArm(context);
+    } else {
+      context.setTransform(
+        sizeRatio,
+        0,
+        0,
+        sizeRatio,
+        this.position.x - 4 * sizeRatio,
+        this.position.y + (26 + Math.sin(time / 128)) * sizeRatio,
+      );
+      this.#drawArm(context);
+      context.setTransform(
+        sizeRatio,
+        0,
+        0,
+        sizeRatio,
+        this.position.x,
+        this.position.y + (24 + Math.sin(time / 128)) * sizeRatio,
+      );
+      this.#drawUpperBody(context);
+      context.setTransform(
+        sizeRatio,
+        0,
+        0,
+        sizeRatio,
+        this.position.x,
+        this.position.y + 62 * sizeRatio,
+      );
+      this.#drawLowerBody(context);
+      context.setTransform(
+        sizeRatio,
+        0,
+        0,
+        sizeRatio,
+        this.position.x,
+        this.position.y + 73 * sizeRatio,
+      );
+      this.#drawLeg(context);
+      context.setTransform(
+        sizeRatio,
+        0,
+        0,
+        sizeRatio,
+        this.position.x + 14 * sizeRatio,
+        this.position.y + 73 * sizeRatio,
+      );
+      this.#drawLeg(context);
+      context.setTransform(
+        sizeRatio,
+        0,
+        0,
+        sizeRatio,
+        this.position.x + 20 * sizeRatio,
+        this.position.y + (26 + Math.sin(time / 128)) * sizeRatio,
+      );
+      this.#drawArm(context);
+      context.setTransform(
+        sizeRatio,
+        0,
+        0,
+        sizeRatio,
+        this.position.x,
+        this.position.y + Math.sin(time / 128) * sizeRatio,
+      );
+      this.#drawHead(context);
+    }
+  }
 
   #drawHead = (context: CanvasRenderingContext2D) => {
     context.fillStyle = this.colors.skin;
