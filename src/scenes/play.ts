@@ -1,34 +1,28 @@
 import { Scene } from '.';
-import Player from '../objects/player';
-import Music from '../sounds/music';
-import gameMusic from '../sounds/musics/game';
+import Person from '../objects/person';
 
 export default class PlayScene implements Scene {
-  player: Player;
-  music: Music;
+  person: Person;
 
   constructor() {
-    this.player = new Player();
-    this.music = new Music(gameMusic);
+    this.person = new Person();
   }
 
   start = () => {
-    this.player.init({
-      speed: 10,
+    this.person.init({
       position: {
-        x: 50,
-        y: 50,
+        x: 0,
+        y: 0,
+        z: 0,
       },
     });
-    // this.music.play(true);
   };
 
   update = (time: number) => {
-    this.player.update(time);
+    this.person.update(time);
   };
 
   end = () => {
-    this.player.remove();
-    this.music.stop();
+    this.person.remove();
   };
 }

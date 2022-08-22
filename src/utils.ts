@@ -7,11 +7,11 @@ interface GetTimingProps {
 }
 
 export const getTimings = ({ time, start, duration }: GetTimingProps) => {
-  const isReserved = (time - start) / duration < 0;
-  const isEnded = (time - start) / duration > 1;
+  const isReserved = (time - start) / duration < 0; // 실행될 예정 - bool
+  const isEnded = (time - start) / duration > 1; // 실행되었음 - bool
   const progress =
-    (time - start) / duration < 0 ? 0 : (time - start) / duration;
-  const isProgressing = progress < 1 && progress > 0;
+    (time - start) / duration < 0 ? 0 : (time - start) / duration; // 진행 중인 애니메이션의 진척도 - 0 ~ 1
+  const isProgressing = progress < 1 && progress > 0; // 진행 여부 - bool
   return {
     isProgressing,
     progress,
