@@ -1,5 +1,5 @@
 import { GameObject } from '.';
-import { drawLayer1 } from '../canvas';
+import canvas, { drawLayer } from '../canvas';
 
 type PlayerState = {
   speed: number;
@@ -32,6 +32,9 @@ export default class Player implements GameObject {
   };
 
   #draw(time: number) {
+    const layer1 = canvas.get('layer1');
+    const drawLayer1 = drawLayer(layer1);
+
     drawLayer1((context) => {
       const { x, y } = this.position;
       context.setTransform(1, 0, 0, 1, x, y);

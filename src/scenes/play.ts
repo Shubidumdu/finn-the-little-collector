@@ -1,5 +1,5 @@
 import { Scene } from '.';
-import { layer1Canvas } from '../canvas';
+import canvasMap from '../canvas';
 import Magnifier from '../objects/magnifier';
 import Person, { EYE_COLORS, SKIN_COLORS } from '../objects/person';
 import gameMusic from '../sounds/musics/game';
@@ -8,9 +8,11 @@ import { getRandomColor, getRandomInt, pickRandomOption } from '../utils';
 export default class GameScene implements Scene {
   persons: Person[];
   magnifier: Magnifier;
+  layer1: HTMLCanvasElement;
 
   constructor() {
     this.persons = [];
+    this.layer1 = canvasMap.get('layer1');
     this.magnifier = new Magnifier();
   }
 
@@ -19,8 +21,8 @@ export default class GameScene implements Scene {
     this.persons.forEach((person) => {
       person.init({
         position: {
-          x: getRandomInt(layer1Canvas.width),
-          y: getRandomInt(layer1Canvas.height),
+          x: getRandomInt(this.layer1.width),
+          y: getRandomInt(this.layer1.height),
           z: 0,
         },
         colors: {
