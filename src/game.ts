@@ -27,8 +27,6 @@ export default class Game {
       play: new PlayScene(),
       title: new TitleScene(),
     };
-
-    createCanvas('layer1');
   }
 
   start = () => {
