@@ -19,7 +19,7 @@ export default class PlayInfo implements Layer {
   }: PlayInfoState) => {
     this.stage = stage;
     this.timeout = timeout;
-    this.layer = createCanvas('playInfo', { height: 100, style: { height: 'auto', 'z-index': 10 } });
+    this.layer = createCanvas('playInfo', { height: 100, style: { height: 'auto', zIndex: '10' } });
   };
 
   remove = () => {
@@ -39,7 +39,7 @@ export default class PlayInfo implements Layer {
   #drawStage = () => {
     const draw = drawLayer(this.layer);
 
-    draw((context, canvas) => {
+    draw((context) => {
       context.setTransform(
         1,
         0,

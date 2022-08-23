@@ -32,7 +32,7 @@ type CanvasAttribues = {
 };
 
 type CreateCanvasOptions = CanvasAttribues & {
-  style: CSSStyleDeclaration,
+  style: Partial<CSSStyleDeclaration>,
 };
 
 export const createCanvas = (
