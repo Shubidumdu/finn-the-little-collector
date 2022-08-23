@@ -97,10 +97,6 @@ export const resetLayer = (canvas: HTMLCanvasElement) => {
   };
 };
 
-export const drawLayer2 = draw(layer2Canvas);
-
-export const resetLayer2 = reset(layer2Canvas);
-
 export const resetAllLayers = () => {
   [...canvasMap.values()].map((canvas) => resetLayer(canvas)());
 };

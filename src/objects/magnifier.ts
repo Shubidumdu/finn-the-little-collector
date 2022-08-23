@@ -1,5 +1,5 @@
 import { GameObject } from '.';
-import { drawLayer1, drawLayer2 } from '../canvas';
+import canvasMap, { drawLayer } from '../canvas';
 
 type MagnifierState = {
   position: {
@@ -15,8 +15,12 @@ export default class Magnifier implements GameObject, MagnifierState {
     y: number;
   };
   range: number;
+  layer1: HTMLCanvasElement;
+  layer2: HTMLCanvasElement;
   
   constructor() {
+    this.layer1 = canvasMap.get('layer1');
+    this.layer2 = canvasMap.get('layer2');
   }
 
   init = ({
@@ -29,6 +33,8 @@ export default class Magnifier implements GameObject, MagnifierState {
   };
 
   update = (time: number) => {
+    const drawLayer1 = drawLayer(this.layer1);
+    const drawLayer2 = drawLayer(this.layer2);
     drawLayer1((context, canvas) => {
       context.setTransform(1, 0, 0, 1, this.position.x, this.position.y);
       context.strokeStyle = '#000';
