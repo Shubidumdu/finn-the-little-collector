@@ -1,9 +1,15 @@
-import store from './store';
+/**
+ * @key id로 설정한 string
+ * @value 생성된 canvas 인스턴스
+ */
+const canvasMap = new Map<string, HTMLCanvasElement>();
+
+export default canvasMap;
 import { getStringifiedStyle } from './utils';
 
 const setViewPort = () => {
   const viewportMeta = document.querySelector(
-    "meta[name='viewport']",
+    'meta[name="viewport"]',
   ) as HTMLMetaElement;
   const width = Math.round(visualViewport.scale * visualViewport.width);
   const height = Math.round(visualViewport.scale * visualViewport.height);
@@ -39,7 +45,7 @@ export const createCanvas = (
   id: string,
   options: Partial<CreateCanvasOptions> = {},
 ) => {
-  if (store.canvas.has(id)) return store.canvas.get(id);
+  if (canvasMap.has(id)) return canvasMap.get(id);
 
   const { width, height, style } = options;
   const stringifiedStyle = getStringifiedStyle(style);
@@ -53,9 +59,9 @@ export const createCanvas = (
     },
   ) as HTMLCanvasElement;
 
-  document.body.appendChild(canvas);
+  canvasMap.set(id, canvas);
 
-  store.canvas.set(id, canvas);
+  document.body.appendChild(canvas);
 
   resizeCanvas(canvas, { width, height });
 
@@ -79,9 +85,9 @@ export const createCanvas = (
 };
 
 export const removeCanvas = (id: string) => {
-  if (!store.canvas.has(id)) return;
+  if (!canvasMap.has(id)) return;
 
-  store.canvas.delete(id);
+  canvasMap.delete(id);
 };
 
 export const resizeCanvas = (
@@ -123,5 +129,5 @@ export const resetLayer = (canvas: HTMLCanvasElement) => {
 };
 
 export const resetAllLayers = () => {
-  [...store.canvas.values()].map((canvas) => resetLayer(canvas)());
+  [...canvasMap.values()].map((canvas) => resetLayer(canvas)());
 };

@@ -1,20 +1,21 @@
 import { Scene } from '.';
-import Player from '../objects/player';
+import canvasMap from '../canvas';
 import { PlayInfo } from '../layers';
-import Music from '../sounds/music';
+import Person, { EYE_COLORS, SKIN_COLORS } from '../objects/person';
 import gameMusic from '../sounds/musics/game';
+import { getRandomColor, getRandomInt, pickRandomOption } from '../utils';
 
 export default class PlayScene implements Scene {
   info: PlayInfo;
-  music: Music;
-  player: Player;
+  layer1: HTMLCanvasElement;
+  persons: Person[];
   stage: number = 0;
   timeout: number = 10;
 
   constructor() {
     this.info = new PlayInfo();
-    this.player = new Player();
-    this.music = new Music(gameMusic);
+    this.persons = [];
+    this.layer1 = canvasMap.get('layer1');
   }
 
   start = () => {
@@ -23,22 +24,33 @@ export default class PlayScene implements Scene {
       timeout: this.timeout,
     });
 
-    this.player.init({
-      speed: 10,
-      position: {
-        x: 50,
-        y: 50,
-      },
+    this.persons = [...new Array(100)].map(() => new Person());
+    this.persons.forEach((person) => {
+      person.init({
+        position: {
+          x: getRandomInt(this.layer1.width),
+          y: getRandomInt(this.layer1.height),
+          z: 0,
+        },
+        colors: {
+          hair: getRandomColor(),
+          eye: pickRandomOption(EYE_COLORS),
+          skin: pickRandomOption(SKIN_COLORS),
+          top: getRandomColor(),
+          bottom: getRandomColor(),
+          shoe: getRandomColor(),
+        },
+      });
     });
   };
 
   update = (time: number) => {
     this.info.update(time);
-    this.player.update(time);
+    this.persons.forEach((person) => person.update(time));
   };
 
   end = () => {
-    this.player.remove();
-    this.music.stop();
+    this.info.remove();
+    this.persons.forEach((person) => person.remove());
   };
 }
