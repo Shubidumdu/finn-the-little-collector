@@ -47,7 +47,6 @@ export default class Game {
   };
 
   #update = (time: number) => {
-    console.log(time);
     resetAllLayers();
     this.scenes[this.activeScene].update(time);
     requestAnimationFrame(this.#update);
