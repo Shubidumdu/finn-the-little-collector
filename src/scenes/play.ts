@@ -1,8 +1,7 @@
 import { Scene } from '.';
 import Person from '../objects/person';
-import gameMusic from '../sounds/musics/game';
 
-export default class GameScene implements Scene {
+export default class PlayScene implements Scene {
   person: Person;
 
   constructor() {
