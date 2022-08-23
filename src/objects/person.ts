@@ -1,6 +1,15 @@
 import { GameObject } from '.';
-import { drawLayer1 } from '../canvas';
+import canvas, { drawLayer } from '../canvas';
 import { degreeToRadian, getRandomInteger, getTimings } from '../utils';
+
+type ColorState = {
+  hair: string;
+  eye: string;
+  skin: string;
+  top: string;
+  bottom: string;
+  shoe: string;
+};
 
 type PersonState = {
   position: {
@@ -8,7 +17,17 @@ type PersonState = {
     y: number;
     z: number;
   };
+  colors: ColorState;
 };
+
+export const EYE_COLORS = ['#634e34', '#2e536f', '#1c7847'];
+export const SKIN_COLORS = [
+  '#8d5524',
+  '#c68642',
+  '#e0ac69',
+  '#f1c27d',
+  '#ffdbac',
+];
 
 const PADDING = 10;
 const SPEED_MAX_MULTIPLE = 0.4;
@@ -41,13 +60,19 @@ export default class Person implements GameObject, PersonState {
   randomY: number;
   isMoving: boolean;
   defaultSpeed: number;
+  isEnlarged: boolean;
+  colors: ColorState;
 
   constructor(defaultSpeed: number = DEFAULT_SPEED) {
     this.defaultSpeed = defaultSpeed;
   }
 
+  get sizeRatio() {
+    return this.isEnlarged ? 1 : 0.5;
+  }
+
   init = (state: PersonState) => {
-    const { position } = state;
+    const { position, colors } = state;
     this.position = position;
     this.move = {
       position: {
@@ -61,6 +86,8 @@ export default class Person implements GameObject, PersonState {
         z: 1,
       },
     };
+    this.colors = colors;
+    this.isEnlarged = false;
 
     this.intervals = [
       getRandomInteger(1000, 3000),
@@ -165,9 +192,10 @@ export default class Person implements GameObject, PersonState {
   };
 
   draw = (time: number) => {
-    drawLayer1((context, canvas) => {
-      const { x, y, z } = this.position;
+    const layer1 = canvas.get('layer1');
+    const drawLayer1 = drawLayer(layer1);
 
+    drawLayer1((context, canvas) => {
       if (this.isMoving) {
         this.#drawMovement(context, canvas, time, this.position);
       } else {
@@ -288,46 +316,37 @@ export default class Person implements GameObject, PersonState {
   }
 
   #drawHead = (context: CanvasRenderingContext2D) => {
-    const skinColor = '#ffefdb';
-    const eyeColor = '#00aeff';
-    const hairColor = '#ffcc00';
-    context.fillStyle = skinColor;
+    context.fillStyle = this.colors.skin;
     context.fillRect(0, 0, 24, 24);
-    context.fillStyle = eyeColor;
+    context.fillStyle = this.colors.eye;
     context.fillRect(4, 8, 4, 4);
     context.fillRect(12, 8, 4, 4);
-    context.fillStyle = hairColor;
+    context.fillStyle = this.colors.hair;
     context.fillRect(-4, -8, 28, 12);
     context.fillRect(20, -4, 6, 20);
   };
 
   #drawArm = (context: CanvasRenderingContext2D) => {
-    const handColor = '#ffefdb';
-    const armColor = '#de0034';
-    context.fillStyle = armColor;
+    context.fillStyle = this.colors.top;
     context.fillRect(0, 0, 8, 38);
-    context.fillStyle = handColor;
+    context.fillStyle = this.colors.skin;
     context.fillRect(0, 38, 8, 8);
   };
 
   #drawUpperBody = (context: CanvasRenderingContext2D) => {
-    const bodyColor = '#de0034';
-    context.fillStyle = bodyColor;
+    context.fillStyle = this.colors.top;
     context.fillRect(0, 0, 24, 40);
   };
 
   #drawLowerBody = (context: CanvasRenderingContext2D) => {
-    const lowerBodyColor = '#075aa3';
-    context.fillStyle = lowerBodyColor;
+    context.fillStyle = this.colors.bottom;
     context.fillRect(0, 0, 24, 12);
   };
 
   #drawLeg = (context: CanvasRenderingContext2D) => {
-    const legColor = '#075aa3';
-    const shoesColor = '#000';
-    context.fillStyle = legColor;
+    context.fillStyle = this.colors.bottom;
     context.fillRect(0, 0, 10, 24);
-    context.fillStyle = shoesColor;
+    context.fillStyle = this.colors.shoe;
     context.fillRect(-2, 23, 12, 8);
   };
 
