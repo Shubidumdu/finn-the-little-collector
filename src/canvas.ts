@@ -1,8 +1,14 @@
-import store from './store';
+/**
+ * @key id로 설정한 string
+ * @value 생성된 canvas 인스턴스
+ */
+const canvasMap = new Map<string, HTMLCanvasElement>();
+
+export default canvasMap;
 
 const setViewPort = () => {
   const viewportMeta = document.querySelector(
-    "meta[name='viewport']",
+    'meta[name="viewport"]',
   ) as HTMLMetaElement;
   const width = Math.round(visualViewport.scale * visualViewport.width);
   const height = Math.round(visualViewport.scale * visualViewport.height);
@@ -26,14 +32,14 @@ const setViewPort = () => {
 };
 
 export const createCanvas = (id: string) => {
-  if (store.canvas.has(id)) return store.canvas.get(id);
+  if (canvasMap.has(id)) return canvasMap.get(id);
 
   const canvas = Object.assign(
     document.createElement('canvas'),
     { id },
   ) as HTMLCanvasElement;
 
-  store.canvas.set(id, canvas);
+  canvasMap.set(id, canvas);
 
   document.body.appendChild(canvas);
 
@@ -92,5 +98,5 @@ export const resetLayer = (canvas: HTMLCanvasElement) => {
 };
 
 export const resetAllLayers = () => {
-  [...store.canvas.values()].map((canvas) => resetLayer(canvas)());
+  [...canvasMap.values()].map((canvas) => resetLayer(canvas)());
 };

@@ -1,5 +1,5 @@
 import { Scene, SceneType } from '.';
-import { drawLayer } from '../canvas';
+import canvas, { drawLayer } from '../canvas';
 import store from '../store';
 import { setIsSoundOn } from '../store/mutation';
 import { getFont } from '../utils';
@@ -75,7 +75,7 @@ export default class TitleScene implements Scene {
   };
 
   #drawTitle = () => {
-    const layer1 = store.canvas.get('layer1');
+    const layer1 = canvas.get('layer1');
     const drawLayer1 = drawLayer(layer1);
 
     drawLayer1((context, canvas) => {
@@ -94,7 +94,7 @@ export default class TitleScene implements Scene {
   };
 
   #drawMenus = () => {
-    const layer1 = store.canvas.get('layer1');
+    const layer1 = canvas.get('layer1');
     const drawLayer1 = drawLayer(layer1);
 
     drawLayer1((context, canvas) => {
@@ -147,7 +147,7 @@ export default class TitleScene implements Scene {
   };
 
   #drawSubTitle = (time: number) => {
-    const layer1 = store.canvas.get('layer1');
+    const layer1 = canvas.get('layer1');
     const drawLayer1 = drawLayer(layer1);
 
     drawLayer1((context, canvas) => {

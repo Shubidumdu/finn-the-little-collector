@@ -1,6 +1,5 @@
 import { GameObject } from '.';
-import { drawLayer } from '../canvas';
-import store from '../store';
+import canvas, { drawLayer } from '../canvas';
 import { degreeToRadian } from '../utils';
 
 type PersonState = {
@@ -39,7 +38,7 @@ export default class Person implements GameObject, PersonState {
   };
 
   draw = (time: number) => {
-    const layer1 = store.canvas.get('layer1');
+    const layer1 = canvas.get('layer1');
     const drawLayer1 = drawLayer(layer1);
 
     drawLayer1((context, canvas) => {

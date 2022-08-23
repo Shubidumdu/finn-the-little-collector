@@ -1,6 +1,5 @@
 import { GameObject } from '.';
-import { drawLayer } from '../canvas';
-import store from '../store';
+import canvas, { drawLayer } from '../canvas';
 
 type PlayerState = {
   speed: number;
@@ -33,7 +32,7 @@ export default class Player implements GameObject {
   };
 
   #draw(time: number) {
-    const layer1 = store.canvas.get('layer1');
+    const layer1 = canvas.get('layer1');
     const drawLayer1 = drawLayer(layer1);
 
     drawLayer1((context) => {

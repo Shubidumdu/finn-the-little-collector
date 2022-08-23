@@ -1,9 +1,4 @@
-import { default as canvas } from './modules/canvas';
 import { default as state } from './state';
-
-const namespaces = {
-  canvas,
-};
 
 /**
  * @readonly
@@ -14,11 +9,8 @@ const namespaces = {
  */
 const store = new Proxy({
   ...state,
-  ...namespaces,
 }, {
   set: (target, key, value) => {
-    if (key in namespaces) return true;
-
     Object.assign(
       target,
       { [key]: value },
