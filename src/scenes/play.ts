@@ -1,12 +1,11 @@
 import { Scene } from '.';
 import Player from '../objects/player';
-import { PlayInfo, PlayPointer } from '../layers';
+import { PlayInfo } from '../layers';
 import Music from '../sounds/music';
 import gameMusic from '../sounds/musics/game';
 
 export default class PlayScene implements Scene {
   info: PlayInfo;
-  pointer: PlayPointer;
   music: Music;
   player: Player;
   stage: number = 0;
@@ -14,7 +13,6 @@ export default class PlayScene implements Scene {
 
   constructor() {
     this.info = new PlayInfo();
-    this.pointer = new PlayPointer();
     this.player = new Player();
     this.music = new Music(gameMusic);
   }
@@ -25,10 +23,6 @@ export default class PlayScene implements Scene {
       timeout: this.timeout,
     });
 
-    this.pointer.init({
-      sight: 100,
-    });
-
     this.player.init({
       speed: 10,
       position: {
@@ -36,18 +30,15 @@ export default class PlayScene implements Scene {
         y: 50,
       },
     });
-    // this.music.play(true);
   };
 
   update = (time: number) => {
     this.info.update(time);
-    this.pointer.update(time);
     this.player.update(time);
   };
 
   end = () => {
     this.player.remove();
-    this.pointer.remove();
     this.music.stop();
   };
 }
