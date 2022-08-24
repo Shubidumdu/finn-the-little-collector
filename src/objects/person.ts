@@ -60,15 +60,10 @@ export default class Person implements GameObject, PersonState {
   randomY: number;
   isMoving: boolean;
   defaultSpeed: number;
-  isEnlarged: boolean;
   colors: ColorState;
 
   constructor(defaultSpeed: number = DEFAULT_SPEED) {
     this.defaultSpeed = defaultSpeed;
-  }
-
-  get sizeRatio() {
-    return this.isEnlarged ? 1 : 0.5;
   }
 
   init = (state: PersonState) => {
@@ -87,7 +82,6 @@ export default class Person implements GameObject, PersonState {
       },
     };
     this.colors = colors;
-    this.isEnlarged = false;
 
     this.intervals = [
       getRandomInteger(1000, 3000),
@@ -192,14 +186,23 @@ export default class Person implements GameObject, PersonState {
   };
 
   draw = (time: number) => {
-    const layer1 = canvas.get('layer1');
+    const layer1 = canvas.get('layer1'); // 확대
     const drawLayer1 = drawLayer(layer1);
+    const layer2 = canvas.get('layer2'); // 축소
+    const drawLayer2 = drawLayer(layer2);
 
     drawLayer1((context, canvas) => {
       if (this.isMoving) {
-        this.#drawMovement(context, canvas, time, this.position);
+        this.#drawMovement(context, canvas, time, this.position, 1);
       } else {
-        this.#drawIdle(context, canvas, time, this.position);
+        this.#drawIdle(context, canvas, time, this.position, 1);
+      }
+    });
+    drawLayer2((context, canvas) => {
+      if (this.isMoving) {
+        this.#drawMovement(context, canvas, time, this.position, 0.5);
+      } else {
+        this.#drawIdle(context, canvas, time, this.position, 0.5);
       }
     });
   };
@@ -209,47 +212,69 @@ export default class Person implements GameObject, PersonState {
     canvas: HTMLCanvasElement,
     time: number,
     position: { x: number; y: number },
+    sizeRatio: number,
   ) {
     context.setTransform(
-      1,
+      -sizeRatio * this.move.direction.x,
       0,
       0,
-      1,
-      position.x - 4,
-      position.y + 26 + Math.sin(time / 128) * 1,
+      sizeRatio,
+      position.x - 1 * sizeRatio,
+      position.y + (26 + Math.sin(time / 128)) * sizeRatio,
     );
     this.#drawArm(context);
     context.setTransform(
-      1,
+      -sizeRatio * this.move.direction.x,
       0,
       0,
-      1,
+      sizeRatio,
       position.x,
-      position.y + 24 + Math.sin(time / 128) * 1,
+      position.y + (24 + Math.sin(time / 128)) * sizeRatio,
     );
     this.#drawUpperBody(context);
-    context.setTransform(1, 0, 0, 1, position.x, position.y + 62);
+    context.setTransform(
+      -sizeRatio * this.move.direction.x,
+      0,
+      0,
+      sizeRatio,
+      position.x,
+      position.y + 62 * sizeRatio,
+    );
     this.#drawLowerBody(context);
-    context.setTransform(1, 0, 0, 1, position.x, position.y + 73);
-    this.#drawLeg(context);
-    context.setTransform(1, 0, 0, 1, position.x + 14, position.y + 73);
+    context.setTransform(
+      -sizeRatio * this.move.direction.x,
+      0,
+      0,
+      sizeRatio,
+      position.x,
+      position.y + 73 * sizeRatio,
+    );
     this.#drawLeg(context);
     context.setTransform(
-      1,
+      -sizeRatio * this.move.direction.x,
       0,
       0,
-      1,
-      position.x + 20,
-      position.y + 26 + Math.sin(time / 128) * 1,
+      sizeRatio,
+      position.x + 14 * sizeRatio,
+      position.y + 73 * sizeRatio,
+    );
+    this.#drawLeg(context);
+    context.setTransform(
+      -sizeRatio * this.move.direction.x,
+      0,
+      0,
+      sizeRatio,
+      position.x + 20 * sizeRatio,
+      position.y + (26 + Math.sin(time / 128)) * sizeRatio,
     );
     this.#drawArm(context);
     context.setTransform(
-      1,
+      -sizeRatio * this.move.direction.x,
       0,
       0,
-      1,
+      sizeRatio,
       position.x,
-      position.y + Math.sin(time / 128) * 2,
+      position.y + Math.sin(time / 128) * 2 * sizeRatio,
     );
     this.#drawHead(context);
   }
@@ -259,57 +284,72 @@ export default class Person implements GameObject, PersonState {
     canvas: HTMLCanvasElement,
     time: number,
     position: { x: number; y: number },
+    sizeRatio: number,
   ) {
     context.setTransform(
-      1,
+      -sizeRatio * this.move.direction.x,
       0,
       0,
-      1,
-      position.x + -2,
-      position.y + 26 + Math.sin(time / 64) * 2,
+      sizeRatio,
+      position.x + (-2 + 4 * Number(this.move.direction.x === 1)) * sizeRatio,
+      position.y + (26 + Math.sin(time / 64) * 2) * sizeRatio,
     );
     context.rotate(degreeToRadian(Math.sin(time / 128) * -8));
     this.#drawArm(context);
     context.setTransform(
-      1,
+      -sizeRatio * this.move.direction.x,
       0,
       0,
-      1,
+      sizeRatio,
       position.x,
-      position.y + 24 + Math.sin(time / 128) * 2,
+      position.y + (24 + Math.sin(time / 128) * 2) * sizeRatio,
     );
     this.#drawUpperBody(context);
     context.setTransform(
-      1,
+      -sizeRatio * this.move.direction.x,
       0,
       0,
-      1,
+      sizeRatio,
       position.x,
-      position.y + 63 + Math.sin(time / 128) * 2,
+      position.y + (63 + Math.sin(time / 128) * 2) * sizeRatio,
     );
     this.#drawLowerBody(context);
-    context.setTransform(1, 0, 0, 1.1, position.x, position.y + 70);
+    context.setTransform(
+      -sizeRatio * this.move.direction.x,
+      0,
+      0,
+      sizeRatio,
+      position.x,
+      position.y + 70 * sizeRatio,
+    );
     context.rotate(degreeToRadian(-2 + Math.sin(time / 128) * 14));
     this.#drawLeg(context);
-    context.setTransform(1, 0, 0, 1.1, position.x + 14, position.y + 70);
+    context.setTransform(
+      -sizeRatio * this.move.direction.x,
+      0,
+      0,
+      sizeRatio,
+      position.x + (14 + -28 * Number(this.move.direction.x === 1)) * sizeRatio,
+      position.y + 70 * sizeRatio,
+    );
     context.rotate(degreeToRadian(5 + Math.sin(time / 128) * -14));
     this.#drawLeg(context);
     context.setTransform(
-      1,
+      -sizeRatio * this.move.direction.x,
       0,
       0,
-      1,
+      sizeRatio,
       position.x,
-      position.y + Math.sin(time / 128) * 2,
+      position.y + Math.sin(time / 128) * 2 * sizeRatio,
     );
     this.#drawHead(context);
     context.setTransform(
-      1,
+      -sizeRatio * this.move.direction.x,
       0,
       0,
-      1,
-      position.x + 18,
-      position.y + 26 + Math.sin(time / 64) * 2,
+      sizeRatio,
+      position.x + (18 + -36 * Number(this.move.direction.x === 1)) * sizeRatio,
+      position.y + (26 + Math.sin(time / 64) * 2) * sizeRatio,
     );
     context.rotate(degreeToRadian(Math.sin(time / 128) * 8));
     this.#drawArm(context);
@@ -317,37 +357,37 @@ export default class Person implements GameObject, PersonState {
 
   #drawHead = (context: CanvasRenderingContext2D) => {
     context.fillStyle = this.colors.skin;
-    context.fillRect(0, 0, 24, 24);
+    context.fillRect(-12, 0, 24, 24);
     context.fillStyle = this.colors.eye;
-    context.fillRect(4, 8, 4, 4);
-    context.fillRect(12, 8, 4, 4);
+    context.fillRect(-8, 8, 4, 4);
+    context.fillRect(0, 8, 4, 4);
     context.fillStyle = this.colors.hair;
-    context.fillRect(-4, -8, 28, 12);
-    context.fillRect(20, -4, 6, 20);
+    context.fillRect(-16, -8, 28, 12);
+    context.fillRect(8, -4, 6, 20);
   };
 
   #drawArm = (context: CanvasRenderingContext2D) => {
     context.fillStyle = this.colors.top;
-    context.fillRect(0, 0, 8, 38);
+    context.fillRect(-12, 0, 8, 38);
     context.fillStyle = this.colors.skin;
-    context.fillRect(0, 38, 8, 8);
+    context.fillRect(-12, 38, 8, 8);
   };
 
   #drawUpperBody = (context: CanvasRenderingContext2D) => {
     context.fillStyle = this.colors.top;
-    context.fillRect(0, 0, 24, 40);
+    context.fillRect(-12, 0, 24, 40);
   };
 
   #drawLowerBody = (context: CanvasRenderingContext2D) => {
     context.fillStyle = this.colors.bottom;
-    context.fillRect(0, 0, 24, 12);
+    context.fillRect(-12, 0, 24, 12);
   };
 
   #drawLeg = (context: CanvasRenderingContext2D) => {
     context.fillStyle = this.colors.bottom;
-    context.fillRect(0, 0, 10, 24);
+    context.fillRect(-12, 0, 10, 24);
     context.fillStyle = this.colors.shoe;
-    context.fillRect(-2, 23, 12, 8);
+    context.fillRect(-14, 23, 12, 8);
   };
 
   #moveY(delta: number) {
