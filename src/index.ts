@@ -4,6 +4,7 @@ import { createCanvas } from './canvas';
 
 createCanvas('layer1');
 createCanvas('layer2');
+createCanvas('layer3');
 
 const game = new Game();
 

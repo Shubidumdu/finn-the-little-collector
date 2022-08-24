@@ -37,7 +37,7 @@ export default class GameScene implements Scene {
     });
     this.magnifier.init({
       position: { x: 0, y: 0 },
-      range: 50,
+      range: 100,
     });
   };
 

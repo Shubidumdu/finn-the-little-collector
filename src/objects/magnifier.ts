@@ -7,7 +7,7 @@ type MagnifierState = {
     y: number;
   };
   range: number;
-}
+};
 
 export default class Magnifier implements GameObject, MagnifierState {
   position: {
@@ -17,16 +17,15 @@ export default class Magnifier implements GameObject, MagnifierState {
   range: number;
   layer1: HTMLCanvasElement;
   layer2: HTMLCanvasElement;
-  
+  layer3: HTMLCanvasElement;
+
   constructor() {
     this.layer1 = canvasMap.get('layer1');
     this.layer2 = canvasMap.get('layer2');
+    this.layer3 = canvasMap.get('layer3');
   }
 
-  init = ({
-    position,
-    range
-  }: MagnifierState) => {
+  init = ({ position, range }: MagnifierState) => {
     this.position = position;
     this.range = range;
     window.addEventListener('mousemove', this.#handleMouseMove);
@@ -35,6 +34,7 @@ export default class Magnifier implements GameObject, MagnifierState {
   update = (time: number) => {
     const drawLayer1 = drawLayer(this.layer1);
     const drawLayer2 = drawLayer(this.layer2);
+    const drawLayer3 = drawLayer(this.layer3);
     drawLayer1((context, canvas) => {
       context.setTransform(1, 0, 0, 1, this.position.x, this.position.y);
       context.strokeStyle = '#000';
@@ -42,7 +42,7 @@ export default class Magnifier implements GameObject, MagnifierState {
       context.globalCompositeOperation = 'destination-in';
       context.arc(0, 0, this.range, 0, Math.PI * 2, true);
       context.fill();
-    })
+    });
     drawLayer2((context, canvas) => {
       context.setTransform(1, 0, 0, 1, this.position.x, this.position.y);
       context.strokeStyle = '#000';
@@ -50,7 +50,15 @@ export default class Magnifier implements GameObject, MagnifierState {
       context.globalCompositeOperation = 'destination-out';
       context.arc(0, 0, this.range, 0, Math.PI * 2, true);
       context.fill();
-    })
+    });
+    drawLayer3((context, canvas) => {
+      context.setTransform(1, 0, 0, 1, this.position.x, this.position.y);
+      context.lineWidth = 2;
+      context.strokeStyle = '#000';
+      context.beginPath();
+      context.arc(0, 0, this.range, 0, Math.PI * 2, true);
+      context.stroke();
+    });
   };
 
   remove = () => {
