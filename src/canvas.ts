@@ -32,12 +32,24 @@ const setViewPort = () => {
   }
 };
 
-type CanvasAttribues = {
+const handleResize = () => {
+  [...canvasMap.values()].map((canvas) => {
+    const { fixedWidth, fixedHeight } = canvas.dataset;
+    resizeCanvas(canvas, { width: +fixedWidth || undefined, height: +fixedHeight || undefined });
+  });
+
+  setViewPort();
+};
+
+window.addEventListener('resize', handleResize);
+
+
+type CanvasAttributes = {
   width: number,
   height: number,
 };
 
-type CreateCanvasOptions = CanvasAttribues & {
+type CreateCanvasOptions = CanvasAttributes & {
   style: Partial<CSSStyleDeclaration>,
 };
 
@@ -59,6 +71,10 @@ export const createCanvas = (
     },
   ) as HTMLCanvasElement;
 
+  // 별도 크기 지정이 없을 경우 viewport의 크기를 바인딩 하므로, 크기 지정을 한 경우 data attribute에 저장
+  width && canvas.setAttribute('data-fixed-width', width + '');
+  height && canvas.setAttribute('data-fixed-height', height + '');
+
   canvasMap.set(id, canvas);
 
   document.body.appendChild(canvas);
@@ -79,8 +95,6 @@ export const createCanvas = (
     );
   });
 
-  window.addEventListener('resize', () => resizeCanvas(canvas, { width, height }));
-
   return canvas;
 };
 
@@ -92,14 +106,12 @@ export const removeCanvas = (id: string) => {
 
 export const resizeCanvas = (
   canvas: HTMLCanvasElement,
-  attributes: Partial<CanvasAttribues> = {},
+  attributes: Partial<CanvasAttributes> = {},
 ) => {
   const { width, height } = attributes;
 
   canvas.width = width ?? window.innerWidth;
   canvas.height = height ?? window.innerHeight;
-
-  setViewPort();
 };
 
 export const drawLayer = (canvas: HTMLCanvasElement) => {

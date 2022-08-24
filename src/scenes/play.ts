@@ -1,6 +1,6 @@
 import { Scene } from '.';
 import canvasMap from '../canvas';
-import { PlayInfo } from '../layers';
+import PlayInfo from '../objects/playInfo';
 import Person, { EYE_COLORS, SKIN_COLORS } from '../objects/person';
 import gameMusic from '../sounds/musics/game';
 import { getRandomColor, getRandomInt, pickRandomOption } from '../utils';
@@ -10,7 +10,7 @@ export default class PlayScene implements Scene {
   layer1: HTMLCanvasElement;
   persons: Person[];
   stage: number = 0;
-  timeout: number = 10;
+  timeout: number = 10000;
 
   constructor() {
     this.info = new PlayInfo();

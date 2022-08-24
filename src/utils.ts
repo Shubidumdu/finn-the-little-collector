@@ -37,10 +37,10 @@ export const pickRandomOption = <T>(options: T[]) => {
   return options[randomIndex];
 };
 
-export const kebabize = (str: string): string =>
-  !str ? '' : str.replace(/(^[a-z]*)([A-Z]{1})(\w*)/, (_, $1, $2, $3) => `${$1}-${$2.toLowerCase()}${kebabize($3)}`);
+export const camelToKebab = (str: string): string =>
+  !str ? '' : str.replace(/(^[a-z]*)([A-Z]{1})(\w*)/, (_, $1, $2, $3) => `${$1}-${$2.toLowerCase()}${camelToKebab($3)}`);
 
 export const getStringifiedStyle = (style: Partial<CSSStyleDeclaration> = {}) =>
   Object.entries(style)
-    .map(([key, value]) => [kebabize(key), value].join(':'))
+    .map(([key, value]) => [camelToKebab(key), value].join(':'))
     .join(';');

@@ -1,23 +1,23 @@
-import { getStringifiedStyle, kebabize } from './utils';
+import { getStringifiedStyle, camelToKebab } from './utils';
 
-describe('kebabize', () => {
+describe('camelToKebab', () => {
   it('kebab-case로 문자열을 변환한다.', () => {
     expect(
-      kebabize('normal case'),
+      camelToKebab('normal case'),
     ).toBe('normal case');
 
     expect(
-      kebabize('camelCase'),
+      camelToKebab('camelCase'),
     ).toBe('camel-case');
 
     expect(
-      kebabize('camelCaseCase'),
+      camelToKebab('camelCaseCase'),
     ).toBe('camel-case-case');
   });
 
   it('인자를 넘기지 않으면 빈 문자를 반환한다.', () => {
     expect(
-      kebabize(undefined),
+      camelToKebab(undefined),
     ).toBe('');
   });
 });
