@@ -193,16 +193,40 @@ export default class Person implements GameObject, PersonState {
 
     drawLayer1((context, canvas) => {
       if (this.isMoving) {
-        this.#drawMovement(context, canvas, time, this.position, 1);
+        this.#drawMovement(
+          context,
+          canvas,
+          time,
+          this.position,
+          0.6 + 0.4 * (this.position.z / canvas.height),
+        );
       } else {
-        this.#drawIdle(context, canvas, time, this.position, 1);
+        this.#drawIdle(
+          context,
+          canvas,
+          time,
+          this.position,
+          0.6 + 0.4 * (this.position.z / canvas.height),
+        );
       }
     });
     drawLayer2((context, canvas) => {
       if (this.isMoving) {
-        this.#drawMovement(context, canvas, time, this.position, 0.5);
+        this.#drawMovement(
+          context,
+          canvas,
+          time,
+          this.position,
+          0.3 + 0.2 * (this.position.z / canvas.height),
+        );
       } else {
-        this.#drawIdle(context, canvas, time, this.position, 0.5);
+        this.#drawIdle(
+          context,
+          canvas,
+          time,
+          this.position,
+          0.3 + 0.2 * (this.position.z / canvas.height),
+        );
       }
     });
   };
@@ -292,7 +316,7 @@ export default class Person implements GameObject, PersonState {
       0,
       sizeRatio,
       position.x + (-2 + 4 * Number(this.move.direction.x === 1)) * sizeRatio,
-      position.y + (26 + Math.sin(time / 64) * 2) * sizeRatio,
+      position.y + (-28 + Math.sin(time / 64) * 2) * sizeRatio,
     );
     context.rotate(degreeToRadian(Math.sin(time / 128) * -8));
     this.#drawArm(context);
@@ -320,7 +344,7 @@ export default class Person implements GameObject, PersonState {
       0,
       sizeRatio,
       position.x,
-      position.y + 70 * sizeRatio,
+      position.y + 16 * sizeRatio,
     );
     context.rotate(degreeToRadian(-2 + Math.sin(time / 128) * 14));
     this.#drawLeg(context);
@@ -330,7 +354,7 @@ export default class Person implements GameObject, PersonState {
       0,
       sizeRatio,
       position.x + (14 + -28 * Number(this.move.direction.x === 1)) * sizeRatio,
-      position.y + 70 * sizeRatio,
+      position.y + 16 * sizeRatio,
     );
     context.rotate(degreeToRadian(5 + Math.sin(time / 128) * -14));
     this.#drawLeg(context);
@@ -349,7 +373,7 @@ export default class Person implements GameObject, PersonState {
       0,
       sizeRatio,
       position.x + (18 + -36 * Number(this.move.direction.x === 1)) * sizeRatio,
-      position.y + (26 + Math.sin(time / 64) * 2) * sizeRatio,
+      position.y + (-28 + Math.sin(time / 64) * 2) * sizeRatio,
     );
     context.rotate(degreeToRadian(Math.sin(time / 128) * 8));
     this.#drawArm(context);
@@ -357,13 +381,13 @@ export default class Person implements GameObject, PersonState {
 
   #drawHead = (context: CanvasRenderingContext2D) => {
     context.fillStyle = this.colors.skin;
-    context.fillRect(-12, 0, 24, 24);
+    context.fillRect(-12, -54, 24, 24);
     context.fillStyle = this.colors.eye;
-    context.fillRect(-8, 8, 4, 4);
-    context.fillRect(0, 8, 4, 4);
+    context.fillRect(-8, -46, 4, 4);
+    context.fillRect(0, -46, 4, 4);
     context.fillStyle = this.colors.hair;
-    context.fillRect(-16, -8, 28, 12);
-    context.fillRect(8, -4, 6, 20);
+    context.fillRect(-16, -62, 28, 12);
+    context.fillRect(8, -58, 6, 20);
   };
 
   #drawArm = (context: CanvasRenderingContext2D) => {
@@ -375,12 +399,12 @@ export default class Person implements GameObject, PersonState {
 
   #drawUpperBody = (context: CanvasRenderingContext2D) => {
     context.fillStyle = this.colors.top;
-    context.fillRect(-12, 0, 24, 40);
+    context.fillRect(-12, -54, 24, 40);
   };
 
   #drawLowerBody = (context: CanvasRenderingContext2D) => {
     context.fillStyle = this.colors.bottom;
-    context.fillRect(-12, 0, 24, 12);
+    context.fillRect(-12, -54, 24, 12);
   };
 
   #drawLeg = (context: CanvasRenderingContext2D) => {
@@ -392,6 +416,7 @@ export default class Person implements GameObject, PersonState {
 
   #moveY(delta: number) {
     this.position.y = this.position.y + delta * this.move.direction.y;
+    this.position.z = this.position.y;
   }
 
   #moveX(delta: number) {
