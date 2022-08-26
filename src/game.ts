@@ -1,4 +1,4 @@
-import { createCanvas, resetAllLayers } from './canvas';
+import { resetAllLayers } from './canvas';
 import { PlayScene, TitleScene, Scene, SceneType } from './scenes';
 
 type ChangeScene = {
