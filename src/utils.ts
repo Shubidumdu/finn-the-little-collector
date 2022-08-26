@@ -36,3 +36,6 @@ export const pickRandomOption = <T>(options: T[]) => {
   const randomIndex = getRandomInt(options.length);
   return options[randomIndex];
 };
+
+export const camelToKebab = (str: string): string =>
+  !str ? '' : str.replace(/(^[a-z]*)([A-Z]{1})(\w*)/, (_, $1, $2, $3) => `${$1}-${$2.toLowerCase()}${camelToKebab($3)}`);

@@ -1,22 +1,32 @@
 import { Scene } from '.';
 import canvasMap from '../canvas';
+import PlayInfo from '../objects/playInfo';
 import Magnifier from '../objects/magnifier';
 import Person, { EYE_COLORS, SKIN_COLORS } from '../objects/person';
 import gameMusic from '../sounds/musics/game';
 import { getRandomColor, getRandomInt, pickRandomOption } from '../utils';
 
-export default class GameScene implements Scene {
-  persons: Person[];
+export default class PlayScene implements Scene {
+  info: PlayInfo;
   magnifier: Magnifier;
   layer1: HTMLCanvasElement;
+  persons: Person[];
+  stage: number = 0;
+  timeout: number = 10000;
 
   constructor() {
+    this.info = new PlayInfo();
     this.persons = [];
     this.layer1 = canvasMap.get('layer1');
     this.magnifier = new Magnifier();
   }
 
   start = () => {
+    this.info.init({
+      stage: this.stage,
+      timeout: this.timeout,
+    });
+
     this.persons = [...new Array(100)].map(() => new Person());
     this.persons.forEach((person) => {
       person.init({
@@ -42,6 +52,7 @@ export default class GameScene implements Scene {
   };
 
   update = (time: number) => {
+    this.info.update(time);
     this.persons.forEach((person) => {
       person.update(time);
     });
@@ -49,6 +60,7 @@ export default class GameScene implements Scene {
   };
 
   end = () => {
+    this.info.remove();
     this.persons.forEach((person) => person.remove());
   };
 }

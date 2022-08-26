@@ -31,6 +31,16 @@ const setViewPort = () => {
   }
 };
 
+const handleResize = () => {
+  [...canvasMap.values()].map((canvas) => {
+    resizeCanvas(canvas);
+  });
+
+  setViewPort();
+};
+
+window.addEventListener('resize', handleResize);
+
 export const createCanvas = (id: string) => {
   if (canvasMap.has(id)) return canvasMap.get(id);
 
@@ -46,8 +56,6 @@ export const createCanvas = (id: string) => {
   resizeCanvas(canvas);
 
   canvas.addEventListener('click', (event: PointerEvent) => {
-    event.stopPropagation();
-
     window.postMessage(
       {
         type: 'click-canvas',
@@ -60,15 +68,19 @@ export const createCanvas = (id: string) => {
       window.origin,
     );
   });
-  window.addEventListener('resize', () => resizeCanvas(canvas));
 
   return canvas;
+};
+
+export const removeCanvas = (id: string) => {
+  if (!canvasMap.has(id)) return;
+
+  canvasMap.delete(id);
 };
 
 export const resizeCanvas = (canvas: HTMLCanvasElement) => {
   canvas.width = window.innerWidth;
   canvas.height = window.innerHeight;
-  setViewPort();
 };
 
 export const drawLayer = (canvas: HTMLCanvasElement) => {
