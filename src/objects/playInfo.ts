@@ -33,7 +33,7 @@ export default class PlayInfo implements GameObject, PlayInfoState {
   };
 
   #drawStage = () => {
-    const playInfoLayer = canvas.get('layer1');
+    const playInfoLayer = canvas.get('layer3');
     const draw = drawLayer(playInfoLayer);
 
     draw((context) => {
@@ -51,7 +51,7 @@ export default class PlayInfo implements GameObject, PlayInfoState {
   };
 
   #drawTimer = (time: number) => {
-    const playInfoLayer = canvas.get('layer1');
+    const playInfoLayer = canvas.get('layer3');
     const draw = drawLayer(playInfoLayer);
 
     draw((context, canvas) => {

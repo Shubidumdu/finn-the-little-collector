@@ -1,12 +1,13 @@
 import { Scene } from '.';
 import canvasMap from '../canvas';
 import PlayInfo from '../objects/playInfo';
+import Magnifier from '../objects/magnifier';
 import Person, { EYE_COLORS, SKIN_COLORS } from '../objects/person';
-import gameMusic from '../sounds/musics/game';
 import { getRandomColor, getRandomInt, pickRandomOption } from '../utils';
 
 export default class PlayScene implements Scene {
   info: PlayInfo;
+  magnifier: Magnifier;
   layer1: HTMLCanvasElement;
   persons: Person[];
   stage: number = 0;
@@ -16,6 +17,7 @@ export default class PlayScene implements Scene {
     this.info = new PlayInfo();
     this.persons = [];
     this.layer1 = canvasMap.get('layer1');
+    this.magnifier = new Magnifier();
   }
 
   start = () => {
@@ -42,11 +44,18 @@ export default class PlayScene implements Scene {
         },
       });
     });
+    this.magnifier.init({
+      position: { x: 0, y: 0 },
+      range: 100,
+    });
   };
 
   update = (time: number) => {
     this.info.update(time);
-    this.persons.forEach((person) => person.update(time));
+    this.persons.forEach((person) => {
+      person.update(time);
+    });
+    this.magnifier.update(time);
   };
 
   end = () => {
