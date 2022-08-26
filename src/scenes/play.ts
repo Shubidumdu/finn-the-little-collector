@@ -3,7 +3,6 @@ import canvasMap from '../canvas';
 import PlayInfo from '../objects/playInfo';
 import Magnifier from '../objects/magnifier';
 import Person, { EYE_COLORS, SKIN_COLORS } from '../objects/person';
-import gameMusic from '../sounds/musics/game';
 import { getRandomColor, getRandomInt, pickRandomOption } from '../utils';
 
 export default class PlayScene implements Scene {
