@@ -5,7 +5,6 @@
 const canvasMap = new Map<string, HTMLCanvasElement>();
 
 export default canvasMap;
-import { getStringifiedStyle } from './utils';
 
 const setViewPort = () => {
   const viewportMeta = document.querySelector(
@@ -34,8 +33,7 @@ const setViewPort = () => {
 
 const handleResize = () => {
   [...canvasMap.values()].map((canvas) => {
-    const { fixedWidth, fixedHeight } = canvas.dataset;
-    resizeCanvas(canvas, { width: +fixedWidth || undefined, height: +fixedHeight || undefined });
+    resizeCanvas(canvas);
   });
 
   setViewPort();
@@ -43,43 +41,19 @@ const handleResize = () => {
 
 window.addEventListener('resize', handleResize);
 
-
-type CanvasAttributes = {
-  width: number,
-  height: number,
-};
-
-type CreateCanvasOptions = CanvasAttributes & {
-  style: Partial<CSSStyleDeclaration>,
-};
-
-export const createCanvas = (
-  id: string,
-  options: Partial<CreateCanvasOptions> = {},
-) => {
+export const createCanvas = (id: string) => {
   if (canvasMap.has(id)) return canvasMap.get(id);
-
-  const { width, height, style } = options;
-  const stringifiedStyle = getStringifiedStyle(style);
 
   const canvas = Object.assign(
     document.createElement('canvas'),
-    {
-      id,
-      ...options,
-      style: stringifiedStyle,
-    },
+    { id },
   ) as HTMLCanvasElement;
-
-  // 별도 크기 지정이 없을 경우 viewport의 크기를 바인딩 하므로, 크기 지정을 한 경우 data attribute에 저장
-  width && canvas.setAttribute('data-fixed-width', width + '');
-  height && canvas.setAttribute('data-fixed-height', height + '');
 
   canvasMap.set(id, canvas);
 
   document.body.appendChild(canvas);
 
-  resizeCanvas(canvas, { width, height });
+  resizeCanvas(canvas);
 
   canvas.addEventListener('click', (event: PointerEvent) => {
     window.postMessage(
@@ -104,14 +78,9 @@ export const removeCanvas = (id: string) => {
   canvasMap.delete(id);
 };
 
-export const resizeCanvas = (
-  canvas: HTMLCanvasElement,
-  attributes: Partial<CanvasAttributes> = {},
-) => {
-  const { width, height } = attributes;
-
-  canvas.width = width ?? window.innerWidth;
-  canvas.height = height ?? window.innerHeight;
+export const resizeCanvas = (canvas: HTMLCanvasElement) => {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
 };
 
 export const drawLayer = (canvas: HTMLCanvasElement) => {
