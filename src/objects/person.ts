@@ -80,7 +80,7 @@ export default class Person implements GameObject, PersonState {
     const moves = [
       ...Array.from({ length: 0 }, () => this.#moveIdle),
       ...Array.from({ length: 4 }, () => this.#moveRandomX),
-      ...Array.from({ length: 8 }, () => this.#moveGentleSlope),
+      ...Array.from({ length: 24 }, () => this.#moveGentleSlope),
       ...Array.from({ length: 8 }, () => this.#moveSpeedDownGentleSlope),
       ...Array.from({ length: 4 }, () => this.#moveSpeedUpGentleSlope),
       this.#moveSteepSlope,
@@ -93,30 +93,34 @@ export default class Person implements GameObject, PersonState {
       const randomIndex = Math.floor(getRandomInteger(0, moves.length - 1));
       return randomIndex;
     };
-
-    this.moves = [moves[getRandomMoveIndex()], moves[getRandomMoveIndex()]];
-
-    this.intervals = [getRandomInteger(4_000, 7_000)];
-
-    this.randomX = getRandomInteger(SPEED_MIN_MULTIPLE, SPEED_MAX_MULTIPLE);
-    this.randomY = getRandomInteger(SPEED_MIN_MULTIPLE, SPEED_MAX_MULTIPLE);
-
-    const changeRandomValues = () => {
-      this.randomX = getRandomInteger(SPEED_MIN_MULTIPLE, SPEED_MAX_MULTIPLE);
-      this.randomY = getRandomInteger(SPEED_MIN_MULTIPLE, SPEED_MAX_MULTIPLE);
-
-      this.intervals = [getRandomInteger(4_000, 7_000)];
+    const randomizeMoves = () => {
       this.moves = [moves[getRandomMoveIndex()], moves[getRandomMoveIndex()]];
     };
-
-    setInterval(changeRandomValues, 10_000);
-
-    const changeDirection = () => {
+    const randomizeIntervals = () => {
+      this.intervals = [getRandomInteger(4_000, 7_000)];
+    };
+    const randomizeXandY = () => {
+      this.randomX = getRandomInteger(SPEED_MIN_MULTIPLE, SPEED_MAX_MULTIPLE);
+      this.randomY = getRandomInteger(SPEED_MIN_MULTIPLE, SPEED_MAX_MULTIPLE);
+    };
+    const randomizeDirection = () => {
       getRandomInteger(-1, 1) > 0 && this.#changeDirectionX();
       getRandomInteger(-1, 1) > 0 && this.#changeDirectionY();
     };
 
-    setInterval(changeDirection, 8_000);
+    randomizeMoves();
+    randomizeIntervals();
+    randomizeXandY();
+
+    setInterval(() => {
+      randomizeXandY();
+      randomizeIntervals();
+      randomizeMoves();
+    }, getRandomInteger(8_000, 16_000));
+
+    setInterval(() => {
+      randomizeDirection();
+    }, getRandomInteger(8_000, 16_000));
   };
 
   update = (time: DOMHighResTimeStamp) => {
