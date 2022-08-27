@@ -12,6 +12,7 @@ type ColorState = {
 };
 
 type PersonState = {
+  id: number;
   position: {
     x: number;
     y: number;
@@ -42,13 +43,9 @@ const FRAME_RATE_PER_SECOND = 60;
 const DEFAULT_SPEED = DISTANCE_PER_SECOND / FRAME_RATE_PER_SECOND;
 
 export default class Person implements GameObject, PersonState {
+  id: number;
   position: { x: number; y: number; z: number };
   move: {
-    position: {
-      x: number;
-      y: number;
-      z: number;
-    };
     direction: {
       x: -1 | 1;
       y: -1 | 1;
@@ -67,14 +64,10 @@ export default class Person implements GameObject, PersonState {
   }
 
   init = (state: PersonState) => {
-    const { position, colors } = state;
+    const { id, position, colors } = state;
+    this.id = id;
     this.position = position;
     this.move = {
-      position: {
-        x: 200,
-        y: 200,
-        z: 0,
-      },
       direction: {
         x: 1,
         y: 1,
