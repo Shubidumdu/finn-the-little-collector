@@ -4,12 +4,14 @@ import PlayInfo from '../objects/playInfo';
 import Magnifier from '../objects/magnifier';
 import Person, { EYE_COLORS, SKIN_COLORS } from '../objects/person';
 import { getRandomColor, getRandomInt, pickRandomOption } from '../utils';
+import WantedPoster from '../objects/wantedPoster';
 
 export default class PlayScene implements Scene {
   info: PlayInfo;
   magnifier: Magnifier;
   layer1: HTMLCanvasElement;
   persons: Person[];
+  wantedPoster: WantedPoster;
   stage: number = 0;
   timeout: number = 10000;
 
@@ -18,6 +20,7 @@ export default class PlayScene implements Scene {
     this.persons = [];
     this.layer1 = canvasMap.get('layer1');
     this.magnifier = new Magnifier();
+    this.wantedPoster = new WantedPoster();
   }
 
   start = () => {
@@ -48,6 +51,13 @@ export default class PlayScene implements Scene {
       position: { x: 0, y: 0 },
       range: 100,
     });
+    this.wantedPoster.init({
+      persons: [
+        this.persons[0],
+        this.persons[1],
+        this.persons[2],
+      ]
+    })
   };
 
   update = (time: number) => {
@@ -56,6 +66,7 @@ export default class PlayScene implements Scene {
       person.update(time);
     });
     this.magnifier.update(time);
+    this.wantedPoster.update(time);
   };
 
   end = () => {
