@@ -12,6 +12,7 @@ type ColorState = {
 };
 
 type PersonState = {
+  id: number;
   position: {
     x: number;
     y: number;
@@ -30,10 +31,10 @@ export const SKIN_COLORS = [
 ];
 
 const PADDING = 10;
-const SPEED_MAX_MULTIPLE = 0.4;
+const SPEED_MAX_MULTIPLE = 0.3;
 const SPEED_MIN_MULTIPLE = -1;
 
-const DISTANCE_PER_SECOND = 120;
+const DISTANCE_PER_SECOND = 24;
 const FRAME_RATE_PER_SECOND = 60;
 
 /**
@@ -42,13 +43,9 @@ const FRAME_RATE_PER_SECOND = 60;
 const DEFAULT_SPEED = DISTANCE_PER_SECOND / FRAME_RATE_PER_SECOND;
 
 export default class Person implements GameObject, PersonState {
+  id: number;
   position: { x: number; y: number; z: number };
   move: {
-    position: {
-      x: number;
-      y: number;
-      z: number;
-    };
     direction: {
       x: -1 | 1;
       y: -1 | 1;
@@ -61,94 +58,106 @@ export default class Person implements GameObject, PersonState {
   isMoving: boolean;
   defaultSpeed: number;
   colors: ColorState;
+  moves: any[];
 
   constructor(defaultSpeed: number = DEFAULT_SPEED) {
     this.defaultSpeed = defaultSpeed;
   }
 
   init = (state: PersonState) => {
-    const { position, colors } = state;
+    const { id, position, colors } = state;
+    this.id = id;
     this.position = position;
     this.move = {
-      position: {
-        x: 200,
-        y: 200,
-        z: 0,
-      },
       direction: {
-        x: 1,
-        y: 1,
+        x: Math.round(Math.random()) ? 1 : -1,
+        y: Math.round(Math.random()) ? 1 : -1,
         z: 1,
       },
     };
     this.colors = colors;
 
-    this.intervals = [
-      getRandomInteger(1000, 3000),
-      getRandomInteger(3000, 6000),
-      getRandomInteger(6000, 8000),
-      10_000,
+    const moves = [
+      ...Array.from({ length: 12 }, () => this.#moveIdle),
+      ...Array.from({ length: 4 }, () => this.#moveRandomX),
+      ...Array.from({ length: 24 }, () => this.#moveGentleSlope),
+      ...Array.from({ length: 8 }, () => this.#moveSpeedDownGentleSlope),
+      ...Array.from({ length: 2 }, () => this.#moveSpeedUpGentleSlope),
+      this.#moveSteepSlope,
+      this.#moveRandomXY,
+      this.#moveSpeedDownXY,
+      this.#moveSpeedUpXY,
     ];
 
-    this.randomX = getRandomInteger(SPEED_MIN_MULTIPLE, SPEED_MAX_MULTIPLE);
-    this.randomY = getRandomInteger(SPEED_MIN_MULTIPLE, SPEED_MAX_MULTIPLE);
-
-    const changeRandomValues = () => {
+    const getRandomMoveIndex = () => {
+      const randomIndex = Math.floor(getRandomInteger(0, moves.length - 1));
+      return randomIndex;
+    };
+    const randomizeMoves = () => {
+      this.moves = [moves[getRandomMoveIndex()], moves[getRandomMoveIndex()]];
+    };
+    const randomizeIntervals = () => {
+      this.intervals = [getRandomInteger(4_000, 7_000)];
+    };
+    const randomizeXandY = () => {
       this.randomX = getRandomInteger(SPEED_MIN_MULTIPLE, SPEED_MAX_MULTIPLE);
       this.randomY = getRandomInteger(SPEED_MIN_MULTIPLE, SPEED_MAX_MULTIPLE);
-
-      this.intervals = [
-        getRandomInteger(1000, 3000),
-        getRandomInteger(3000, 6000),
-        getRandomInteger(6000, 8000),
-        10_000,
-      ];
     };
-
-    setInterval(changeRandomValues, 10_000);
-
-    const changeDirection = () => {
+    const randomizeDirection = () => {
       getRandomInteger(-1, 1) > 0 && this.#changeDirectionX();
       getRandomInteger(-1, 1) > 0 && this.#changeDirectionY();
     };
 
-    setInterval(changeDirection, 8_000);
+    randomizeMoves();
+    randomizeIntervals();
+    randomizeXandY();
+
+    setInterval(() => {
+      randomizeXandY();
+      randomizeIntervals();
+      randomizeMoves();
+    }, getRandomInteger(8_000, 16_000));
+
+    setInterval(() => {
+      randomizeDirection();
+    }, getRandomInteger(8_000, 16_000));
   };
 
   update = (time: DOMHighResTimeStamp) => {
     this.draw(time);
 
     if (time % 10_000 < this.intervals[0]) {
-      this.#randomMove();
+      const start = 0 + Math.floor(time / 10_000) * 10_000;
+      const duration = this.intervals[0];
+      this.moves[0](getTimings({ time, start, duration }).progress);
       return;
     }
-    if (time % 10_000 < this.intervals[1]) {
-      this.#gentle();
-      return;
-    }
-    if (time % 10_000 < this.intervals[2]) {
-      const start = this.intervals[1] + Math.floor(time / 10_000) * 10_000;
-      const duration = this.intervals[2] - this.intervals[1];
-      this.#speedDown(getTimings({ time, start, duration }).progress);
-      return;
-    }
-    if (time % 10_000 < this.intervals[3]) {
-      const start = this.intervals[2] + Math.floor(time / 10_000) * 10_000;
-      const duration = this.intervals[3] - this.intervals[2];
-      this.#speedUp(getTimings({ time, start, duration }).progress);
-      return;
-    }
+
+    const start = this.intervals[0] + Math.floor(time / 10_000) * 10_000;
+    const duration = 10_000 - this.intervals[0];
+    this.moves[1](getTimings({ time, start, duration }).progress);
   };
 
-  #randomMove = () => {
+  #moveIdle = () => {
+    this.isMoving = false;
+  };
+
+  #moveRandomX = () => {
     this.isMoving = true;
     this.#moveX(this.defaultSpeed * (1 + this.randomX));
-    this.#moveY(this.defaultSpeed * (1 + this.randomY));
 
     this.#stayInViewport();
-  }; 
- 
-  #gentle = () => {
+  };
+
+  #moveRandomXY = () => {
+    this.isMoving = true;
+    this.#moveX(this.defaultSpeed * (1 + this.randomX));
+    this.#moveY(this.defaultSpeed * (1 + this.randomY) * 0.6);
+
+    this.#stayInViewport();
+  };
+
+  #moveGentleSlope = () => {
     this.isMoving = true;
     this.#moveX(this.defaultSpeed);
     this.#moveY(this.defaultSpeed * 0.2);
@@ -156,7 +165,7 @@ export default class Person implements GameObject, PersonState {
     this.#stayInViewport();
   };
 
-  #steep = () => {
+  #moveSteepSlope = () => {
     this.isMoving = true;
     this.#moveX(this.defaultSpeed);
     this.#moveY(this.defaultSpeed * 1.2);
@@ -164,19 +173,39 @@ export default class Person implements GameObject, PersonState {
     this.#stayInViewport();
   };
 
-  #speedDown = (progress?: number) => {
+  #moveSpeedDownGentleSlope = (progress?: number) => {
     this.isMoving = true;
     if (progress === 1) return (this.isMoving = false);
     this.#moveX(this.defaultSpeed * (1 - progress));
-    this.#moveY(this.defaultSpeed * (1 - progress));
+    this.#moveY(this.defaultSpeed * 0.2 * (1 - progress));
 
     this.#stayInViewport();
   };
 
-  #speedUp = (progress?: number) => {
+  #moveSpeedDownXY = (progress?: number) => {
     this.isMoving = true;
-    this.#moveX(this.defaultSpeed * progress);
-    this.#moveY(this.defaultSpeed * progress);
+    if (progress === 1) return (this.isMoving = false);
+
+    const naturalizedProgress = Math.max(0.8, progress);
+    this.#moveX(this.defaultSpeed * (1 - naturalizedProgress));
+    this.#moveY(this.defaultSpeed * (1 - naturalizedProgress));
+
+    this.#stayInViewport();
+  };
+
+  #moveSpeedUpGentleSlope = (progress?: number) => {
+    this.isMoving = true;
+    this.#moveX(this.defaultSpeed * (1 + progress));
+    this.#moveY(this.defaultSpeed * (1 + progress) * 0.2);
+
+    this.#stayInViewport();
+  };
+
+  #moveSpeedUpXY = (progress?: number) => {
+    this.isMoving = true;
+    const naturalizedProgress = Math.max(Math.min(0.2, progress), 1);
+    this.#moveX(this.defaultSpeed * (1 + naturalizedProgress));
+    this.#moveY(this.defaultSpeed * (1 + naturalizedProgress) * 0.6);
 
     this.#stayInViewport();
   };
@@ -248,7 +277,7 @@ export default class Person implements GameObject, PersonState {
     );
     this.#drawArm(context);
     context.setTransform(
-      -sizeRatio * this.move.direction.x, 
+      -sizeRatio * this.move.direction.x,
       0,
       0,
       sizeRatio,
@@ -416,7 +445,6 @@ export default class Person implements GameObject, PersonState {
 
   #moveY(delta: number) {
     this.position.y = this.position.y + delta * this.move.direction.y;
-    this.position.z = this.position.y;
   }
 
   #moveX(delta: number) {
