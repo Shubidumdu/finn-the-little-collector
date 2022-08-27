@@ -69,8 +69,8 @@ export default class Person implements GameObject, PersonState {
     this.position = position;
     this.move = {
       direction: {
-        x: 1,
-        y: 1,
+        x: Math.round(Math.random()) ? 1 : -1,
+        y: Math.round(Math.random()) ? 1 : -1,
         z: 1,
       },
     };
