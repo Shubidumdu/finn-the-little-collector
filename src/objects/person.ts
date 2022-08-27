@@ -78,11 +78,11 @@ export default class Person implements GameObject, PersonState {
     this.colors = colors;
 
     const moves = [
-      ...Array.from({ length: 0 }, () => this.#moveIdle),
+      ...Array.from({ length: 12 }, () => this.#moveIdle),
       ...Array.from({ length: 4 }, () => this.#moveRandomX),
       ...Array.from({ length: 24 }, () => this.#moveGentleSlope),
       ...Array.from({ length: 8 }, () => this.#moveSpeedDownGentleSlope),
-      ...Array.from({ length: 4 }, () => this.#moveSpeedUpGentleSlope),
+      ...Array.from({ length: 2 }, () => this.#moveSpeedUpGentleSlope),
       this.#moveSteepSlope,
       this.#moveRandomXY,
       this.#moveSpeedDownXY,
@@ -203,7 +203,7 @@ export default class Person implements GameObject, PersonState {
 
   #moveSpeedUpXY = (progress?: number) => {
     this.isMoving = true;
-    const naturalizedProgress = Math.min(0.2, progress);
+    const naturalizedProgress = Math.max(Math.min(0.2, progress), 1);
     this.#moveX(this.defaultSpeed * (1 + naturalizedProgress));
     this.#moveY(this.defaultSpeed * (1 + naturalizedProgress) * 0.6);
 
@@ -277,7 +277,7 @@ export default class Person implements GameObject, PersonState {
     );
     this.#drawArm(context);
     context.setTransform(
-      -sizeRatio * this.move.direction.x, 
+      -sizeRatio * this.move.direction.x,
       0,
       0,
       sizeRatio,
