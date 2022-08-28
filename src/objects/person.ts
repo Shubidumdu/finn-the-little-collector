@@ -318,7 +318,7 @@ export default class Person implements GameObject, PersonState {
       0,
       sizeRatio,
       position.x,
-      position.y + Math.sin(time / 128) * 2 * sizeRatio,
+      position.y + Math.sin(time / 128) * sizeRatio,
     );
     this.#drawHead(context);
     context.setTransform(
