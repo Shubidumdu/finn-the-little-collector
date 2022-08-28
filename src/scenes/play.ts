@@ -30,8 +30,9 @@ export default class PlayScene implements Scene {
     });
 
     this.persons = [...new Array(100)].map(() => new Person());
-    this.persons.forEach((person) => {
+    this.persons.forEach((person, index) => {
       person.init({
+        id: index,
         position: {
           x: getRandomInt(this.layer1.width),
           y: getRandomInt(this.layer1.height),
