@@ -17,13 +17,16 @@ export default class WantedPoster implements GameObject, WantedPosterState {
     const { persons } = state;
     this.persons = persons;
     this.selectedIndex = 0;
+    window.addEventListener('keydown', this.#keyHandler);
   };
 
   update = (time: number) => {
     this.draw(time);
   };
 
-  remove = () => {};
+  remove = () => {
+    window.removeEventListener('keydown', this.#keyHandler);
+  };
 
   draw = (time: number) => {
     const paperLayer = canvasMap.get('layer3');
@@ -53,6 +56,8 @@ export default class WantedPoster implements GameObject, WantedPosterState {
       this.#drawRightArrow(context);
       context.setTransform(1, 0, 0, 1, canvas.width - 113, canvas.height - 110);
       this.#drawLeftArrow(context);
+      context.setTransform(1, 0, 0, 1, canvas.width - 74,  canvas.height - 180);
+      this.#drawIndex(context);
     });
   };
 
@@ -65,7 +70,7 @@ export default class WantedPoster implements GameObject, WantedPosterState {
   };
 
   #drawRightArrow = (context: CanvasRenderingContext2D) => {
-    context.fillStyle = 'rgb(0, 0, 0)';
+    context.fillStyle = '#000';
     context.beginPath();
     context.moveTo(0, 0);
     context.lineTo(15, 15);
@@ -88,5 +93,25 @@ export default class WantedPoster implements GameObject, WantedPosterState {
     context.font = getFont(8);
     context.fillStyle = '#fff';
     context.fillText('A', -10, 18);
+  };
+
+  #drawIndex = (context: CanvasRenderingContext2D) => {
+    context.font = getFont(16);
+    context.textAlign = 'center'; 
+    context.fillStyle = '#000';
+    context.fillText(`${this.selectedIndex + 1} / ${this.persons.length}`, 0, 0, 100);
+  }
+ 
+  #keyHandler = (e: KeyboardEvent) => {
+    if (e.code === 'KeyA') {
+      if (this.selectedIndex === 0)
+        this.selectedIndex = this.persons.length - 1;
+      else this.selectedIndex -= 1;
+    }
+    if (e.code === 'KeyS') {
+      if (this.selectedIndex === this.persons.length - 1)
+        this.selectedIndex = 0;
+      else this.selectedIndex += 1;
+    }
   };
 }
