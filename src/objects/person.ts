@@ -222,7 +222,7 @@ export default class Person implements GameObject, PersonState {
 
     drawLayer1((context, canvas) => {
       if (this.isMoving) {
-        this.#drawMovement(
+        this.drawMovement(
           context,
           canvas,
           time,
@@ -230,7 +230,7 @@ export default class Person implements GameObject, PersonState {
           0.6 + 0.4 * (this.position.z / canvas.height),
         );
       } else {
-        this.#drawIdle(
+        this.drawIdle(
           context,
           canvas,
           time,
@@ -241,7 +241,7 @@ export default class Person implements GameObject, PersonState {
     });
     drawLayer2((context, canvas) => {
       if (this.isMoving) {
-        this.#drawMovement(
+        this.drawMovement(
           context,
           canvas,
           time,
@@ -249,7 +249,7 @@ export default class Person implements GameObject, PersonState {
           0.3 + 0.2 * (this.position.z / canvas.height),
         );
       } else {
-        this.#drawIdle(
+        this.drawIdle(
           context,
           canvas,
           time,
@@ -260,7 +260,7 @@ export default class Person implements GameObject, PersonState {
     });
   };
 
-  #drawIdle(
+  drawIdle(
     context: CanvasRenderingContext2D,
     canvas: HTMLCanvasElement,
     time: number,
@@ -332,7 +332,7 @@ export default class Person implements GameObject, PersonState {
     this.#drawArm(context);
   }
 
-  #drawMovement(
+  drawMovement(
     context: CanvasRenderingContext2D,
     canvas: HTMLCanvasElement,
     time: number,
