@@ -1,11 +1,15 @@
 import { Scene } from '.';
-import canvasMap from '../canvas';
+import canvas from '../canvas';
+import { GameObject } from '../objects';
+import { BackgroundType, Pool } from '../objects/backgrounds';
 import PlayInfo from '../objects/playInfo';
 import Magnifier from '../objects/magnifier';
 import Person, { EYE_COLORS, SKIN_COLORS } from '../objects/person';
 import { getRandomColor, getRandomInt, pickRandomOption } from '../utils';
 
 export default class PlayScene implements Scene {
+  activeBackground: BackgroundType;
+  backgrounds: { [background in BackgroundType]: GameObject };
   info: PlayInfo;
   magnifier: Magnifier;
   layer1: HTMLCanvasElement;
@@ -14,13 +18,18 @@ export default class PlayScene implements Scene {
   timeout: number = 10000;
 
   constructor() {
+    this.activeBackground = 'pool';
+    this.backgrounds = {
+      pool: new Pool(),
+    };
     this.info = new PlayInfo();
-    this.persons = [];
-    this.layer1 = canvasMap.get('layer1');
     this.magnifier = new Magnifier();
+    this.persons = [];
+    this.layer1 = canvas.get('layer1');
   }
 
   start = () => {
+    this.backgrounds[this.activeBackground].init();
     this.info.init({
       stage: this.stage,
       timeout: this.timeout,
@@ -52,6 +61,7 @@ export default class PlayScene implements Scene {
   };
 
   update = (time: number) => {
+    this.backgrounds[this.activeBackground].update(time);
     this.info.update(time);
     this.persons.forEach((person) => {
       person.update(time);
@@ -60,6 +70,7 @@ export default class PlayScene implements Scene {
   };
 
   end = () => {
+    this.backgrounds[this.activeBackground].remove();
     this.info.remove();
     this.persons.forEach((person) => person.remove());
   };
