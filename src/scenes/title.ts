@@ -36,10 +36,8 @@ export default class TitleScene implements Scene {
   };
 
   #addEvents = () => {
-    window.addEventListener('keydown', (event) => {
-      this.#changeMenuIndexEvent(event);
-      this.#actionEvent(event);
-    });
+    window.addEventListener('keydown', this.#changeMenuIndexEvent);
+    window.addEventListener('keydown', this.#actionEvent);
   };
 
   #removeEvents = () => {
