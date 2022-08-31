@@ -1,8 +1,11 @@
 import { GameObject } from '..';
 import canvas, { drawLayer } from '../../canvas';
+import { getLinearPosition } from '../../utils';
 
 export default class Pool implements GameObject {
   constructor() {}
+
+  #draw = drawLayer(canvas.get('bg'));
 
   init = () => {};
 
@@ -11,157 +14,147 @@ export default class Pool implements GameObject {
       context,
       canvas,
     ) => {
+      // 바닥
       context.beginPath();
       context.setTransform(1, 0, 0, 1, 0, 0);
-      context.fillStyle = '#f5e6dc'
+      context.fillStyle = '#f7f8f8'
       context.fillRect(0, 0, canvas.width, canvas.height);
 
+      // 하늘
       context.beginPath();
       context.setTransform(1, 0, 0, 1, 0, 0);
-      context.fillStyle = '#c4f0f7';
-      context.fillRect(0, 0, canvas.width, 240);
+      const grad1 = context.createLinearGradient(0, 0, 0, innerHeight / 3);
+      grad1.addColorStop(0, '#c4f0f7');
+      grad1.addColorStop(0.4, '#fff');
+      grad1.addColorStop(0.5, '#fff');
+      grad1.addColorStop(1, '#cff7fd');
+      context.fillStyle = grad1;
+      context.fillRect(0, 0, canvas.width, 200);
       context.closePath();
-      
+
+      const delta1 = Math.sin(time / 200) / 50;
+      const per1 = canvas.width / 1500;
+      context.setTransform(1 * per1, 0, 0, Math.min(0.6 * per1, 1.2) + delta1, 0, 120);
+      const pool = new Path2D();
+      pool.moveTo(1513, 0);
+      pool.lineTo(1513, 185.5);
+      pool.bezierCurveTo(1396, 271, 1125.5, 294.564, 1016, 265.5);
+      pool.bezierCurveTo(906.5, 236.436, 731.5, 294, 677, 321);
+      pool.bezierCurveTo(622.5, 348, 279, 381.54, 270.5, 323.02);
+      pool.bezierCurveTo(262, 264.5, 53.3475, 255.524, 0, 242.086);
+      pool.lineTo(0, 0);
+      pool.lineTo(1513, 0);
+      const grad5 = context.createLinearGradient(0, 0, 0, innerHeight / 3);
+      grad5.addColorStop(0, '#cff7fd');
+      grad5.addColorStop(.15, '#50effa');
+      grad5.addColorStop(.3, '#50effa');
+      grad5.addColorStop(.4, '#8ceffa');
+      grad5.addColorStop(.5, '#8ceffa');
+      grad5.addColorStop(.7, '#dbfdfb');
+      grad5.addColorStop(1, '#dbfdfb');
+      context.fillStyle = grad5;
+      context.fill(pool);
+
+      // person 이동 영역
       context.beginPath();
-      context.setTransform(1, 0, 0, 1, 0, 140);
-      context.fillStyle = '#031005';
-      context.fillRect(0, 0, canvas.width, 100);
-      context.beginPath();
-      context.transform(1, 0, 0, 1, 0, -10);
-      context.fillStyle = '#009e15';
-      context.fillRect(0, 0, canvas.width, 100);
-      context.transform(1, 0, 0, 1, 0, -10);
-      context.fillStyle = '#4dd000';
-      context.fillRect(0, 0, canvas.width, 100);
-      context.closePath();
-      
-      context.beginPath();
-      context.setTransform(1, 0, 0.5, 1, canvas.width / 2 - 500, 240);
+      context.setTransform(1, 0, -0.5, 1, canvas.width / 2 - 280, 240);
       context.strokeRect(0, 0, 800, 600);
       context.closePath();
 
-      const pool = new Path2D();
-      pool.moveTo(598.5, 234.5);
-      pool.bezierCurveTo(639.7, 114.1, 504.333, 4.16666, 436, 0.499992);
-      pool.lineTo(1492.5, 0);
-      pool.bezierCurveTo(1872, 11.5, 2548.5, 54.5, 2540.5, 234.5);
-      pool.bezierCurveTo(2532.5, 414.5, 2101, 591.582, 1936, 627.5);
-      pool.bezierCurveTo(1862.5, 643.5, 654.833, 716.167, 0.5, 729.5);
-      pool.bezierCurveTo(292, 572.5, 557.3, 354.9, 598.5, 234.5);
-      pool.closePath();
+      const cloud = new Path2D();
+      cloud.moveTo(25.6165, 8.85822);
+      cloud.bezierCurveTo(22.2172, 8.85822, 18.8012, 8.7563, 15.4037, 8.85822);
+      cloud.bezierCurveTo(7.85636, 9.08464, 1.42826, 17.1362, 0.592265, 24.1493);
+      cloud.bezierCurveTo(0.0884702, 28.3755, 2.37828, 31.5619, 6.54505, 32.6129);
+      cloud.bezierCurveTo(10.6042, 33.6369, 15.08, 33.415, 19.1982, 33.022);
+      cloud.bezierCurveTo(24.847, 32.4829, 30.2347, 31.336, 35.2933, 28.6914);
+      cloud.bezierCurveTo(37.8802, 27.3391, 42.308, 25.4637, 43.9968, 22.8656);
+      cloud.bezierCurveTo(44.1577, 22.618, 44.3867, 22.3687, 44.4059, 22.0616);
+      cloud.bezierCurveTo(44.4091, 22.0105, 44.4059, 23.6631, 44.4059, 24.0928);
+      cloud.bezierCurveTo(44.4059, 26.6478, 47.2274, 27.6237, 49.3995, 28.0002);
+      cloud.bezierCurveTo(52.5919, 28.5536, 55.8151, 28.4394, 57.6656, 25.3765);
+      cloud.bezierCurveTo(58.0463, 24.7465, 58.2919, 21.9245, 58.3851, 23.2747);
+      cloud.bezierCurveTo(58.6052, 26.4673, 61.8799, 28.4521, 64.7328, 29.1005);
+      cloud.bezierCurveTo(68.0009, 29.8433, 71.582, 28.6258, 73.1824, 25.5317);
+      cloud.bezierCurveTo(73.981, 23.9877, 73.4957, 24.9723, 74.2968, 26.3075);
+      cloud.bezierCurveTo(76.8638, 30.5858, 82.1012, 31.8906, 86.5127, 29.5378);
+      cloud.bezierCurveTo(88.9019, 28.2636, 91.0424, 26.1879, 92.4796, 23.8954);
+      cloud.bezierCurveTo(92.8955, 23.2319, 93.2335, 22.5029, 93.4952, 21.7653);
+      cloud.bezierCurveTo(93.5654, 21.5675, 93.4546, 21.1588, 93.6645, 21.1588);
+      cloud.bezierCurveTo(93.7512, 21.1588, 93.6868, 21.333, 93.7209, 21.4127);
+      cloud.bezierCurveTo(93.9554, 21.9599, 94.4488, 22.2957, 94.9481, 22.5835);
+      cloud.bezierCurveTo(97.0986, 23.8227, 99.6538, 24.2133, 102.1, 24.2903);
+      cloud.bezierCurveTo(106.061, 24.4151, 112.407, 22.6558, 111.579, 17.3501);
+      cloud.bezierCurveTo(111.149, 14.5889, 107.37, 14.1881, 105.147, 14.5007);
+      cloud.bezierCurveTo(104.613, 14.5758, 103.42, 15.4907, 104.442, 15.9113);
+      cloud.bezierCurveTo(105.503, 16.3484, 104.795, 10.3448, 104.611, 9.93029);
+      cloud.bezierCurveTo(101.889, 3.7879, 92.8501, 3.67228, 87.2321, 3.83644);
+      cloud.bezierCurveTo(84.7659, 3.90851, 78.9878, 4.03853, 77.7246, 7.02443);
+      cloud.bezierCurveTo(77.5917, 7.33837, 77.8468, 6.91091, 77.7387, 6.5025);
+      cloud.bezierCurveTo(77.1136, 4.1413, 74.4763, 2.98863, 72.3783, 2.29887);
+      cloud.bezierCurveTo(65.2923, -0.030799, 54.4134, -0.610086, 48.3415, 4.52764);
+      cloud.bezierCurveTo(46.8686, 5.77393, 45.9501, 7.2314, 45.5344, 9.11213);
+      cloud.bezierCurveTo(45.4643, 9.42896, 45.2472, 10.206, 45.5485, 10.0855);
+      cloud.bezierCurveTo(45.8393, 9.96915, 45.6575, 8.85972, 45.619, 8.66074);
+      cloud.bezierCurveTo(45.375, 7.40018, 44.089, 6.75431, 42.9953, 6.34733);
+      cloud.bezierCurveTo(40.1956, 5.30561, 37.1088, 5.32529, 34.1648, 5.30348);
+      cloud.bezierCurveTo(32.0996, 5.28818, 29.9111, 5.12539, 27.8594, 5.44454);
+      cloud.bezierCurveTo(26.3433, 5.68038, 25.6924, 7.31093, 25.3767, 8.73127);
+      cloud.bezierCurveTo(25.189, 9.57584, 26.1271, 10.3817, 26.8861, 10.3817);
+      cloud.closePath();
 
       context.beginPath();
-      context.setTransform(1, 0, 0, 1, canvas.width / 2 - 1300, 292);
-      context.fillStyle = '#49e5fb';
-      context.fill(pool);
-      context.transform(1, 0, 0, 1, 0, 20);
-      context.fillStyle = '#54fff2';
-      context.fill(pool);
-      context.transform(1, 0, 0, 1, 0, -20);
-      context.stroke(pool);
-      context.closePath();
-
-      const bush = new Path2D();
-      bush.moveTo(0, 0);
-      bush.bezierCurveTo(13.4458, 1.77682, 24.9779, 0.748982, 35.7585, 4.18529);
-      bush.bezierCurveTo(54.3657, 10.1163, 74.9283, 25.5113, 77.6991, 46.292);
-      bush.bezierCurveTo(77.9911, 48.4818, 78.2028, 47.6065, 79.8584, 46.0428);
-      bush.bezierCurveTo(83.8117, 42.3092, 88.6962, 37.3164, 94.2262, 36.1183);
-      bush.bezierCurveTo(101.669, 34.5058, 110.433, 42.5884, 115.238, 47.1225);
-      bush.bezierCurveTo(119.334, 50.9875, 122.201, 55.4417, 124.374, 60.5767);
-      bush.bezierCurveTo(125.758, 63.8493, 127.499, 59.8285, 130.104, 58.7496);
-      bush.bezierCurveTo(143.309, 53.2811, 154.842, 61.4253, 161.497, 72.1207);
-      bush.bezierCurveTo(162.195, 73.2422, 163.503, 72.6367, 164.57, 72.3699);
-      bush.bezierCurveTo(168.726, 71.331, 173.291, 70.4954, 177.526, 71.7055);
-      bush.bezierCurveTo(184.129, 73.5919, 186.157, 80.7633, 187.492, 86.6961);
-      bush.bezierCurveTo(187.556, 86.9795, 188.289, 93.2017, 188.738, 93.1326);
-      bush.bezierCurveTo(197.899, 91.7231, 205.64, 96.2797, 209.874, 104.22);
-      bush.bezierCurveTo(210.421, 105.246, 210.83, 107.428, 211.909, 106.255);
-      bush.bezierCurveTo(214.001, 103.98, 218.23, 103.27, 221.086, 104.012);
-      bush.bezierCurveTo(229.614, 106.227, 232.625, 116.801, 233.336, 124.443);
-      bush.bezierCurveTo(233.606, 127.346, 233.419, 130.745, 233.087, 133.661);
-      bush.bezierCurveTo(232.924, 135.092, 231.758, 138.624, 233.045, 137.98);
-      bush.bezierCurveTo(239.424, 134.791, 253.605, 120.405, 259.622, 131.377);
-      bush.bezierCurveTo(259.689, 131.501, 260.712, 134.362, 260.95, 134.243);
-      bush.bezierCurveTo(265.113, 132.161, 268.718, 128.864, 273.283, 127.183);
-      bush.bezierCurveTo(280.837, 124.402, 287.878, 129.056, 291.762, 135.53);
-      bush.bezierCurveTo(292.711, 137.111, 294.044, 145.587, 295.458, 146.451);
-      bush.bezierCurveTo(295.73, 146.617, 309.964, 130.456, 310.366, 130.09);
-      bush.bezierCurveTo(321.899, 119.559, 335.852, 114.047, 347.116, 128.512);
-      bush.bezierCurveTo(354.078, 137.454, 356.451, 149.122, 358.369, 159.988);
-      bush.bezierCurveTo(358.532, 160.912, 358.826, 162.722, 358.826, 160.985);
-      bush.lineTo(0, 162.722);
-      bush.closePath();
-
-      context.beginPath();
-      context.setTransform(1.5, 0, 0, 1, 0, -40);
-      context.fillStyle = '#004f31';
-      context.fill(bush);
-      context.transform(1.02, 0, 0, 1, 0, 0);
-      context.fillStyle = '#043c26';
-      context.stroke(bush);
-      context.closePath();
-
-      const hill = new Path2D();
-      hill.moveTo(595.884, 8.43995);
-      hill.bezierCurveTo(691.649, -10.9801, 797.643, 29.3659, 875.13, 85.8244);
-      hill.bezierCurveTo(874.099, 86.2714, 873.07, 86.7185, 872.04, 87.1655);
-      hill.lineTo(871.984, 87.1898);
-      hill.bezierCurveTo(870.786, 87.7104, 869.587, 88.2307, 868.389, 88.7503);
-      hill.bezierCurveTo(852.718, 95.5478, 837.081, 102.228, 821.072, 107.663);
-      hill.bezierCurveTo(802.688, 113.904, 784.125, 114.474, 764.703, 114.474);
-      hill.bezierCurveTo(763.875, 114.474, 763.203, 115.146, 763.203, 115.974);
-      hill.bezierCurveTo(763.203, 116.803, 763.875, 117.474, 764.703, 117.474);
-      hill.bezierCurveTo(784.135, 117.474, 803.141, 116.919, 822.036, 110.504);
-      hill.bezierCurveTo(838.176, 105.024, 853.916, 98.298, 869.583, 91.5026);
-      hill.bezierCurveTo(870.705, 91.016, 871.827, 90.529, 872.948, 90.0421);
-      hill.lineTo(873.222, 89.9231);
-      hill.bezierCurveTo(887.684, 83.6432, 902.105, 77.3808, 916.819, 72.0177);
-      hill.bezierCurveTo(992.129, 44.5684, 1076.05, 76.7717, 1144.77, 110.43);
-      hill.bezierCurveTo(1144.92, 110.501, 1145.07, 110.547, 1145.22, 110.568);
-      hill.bezierCurveTo(1169.67, 124.577, 1207.53, 145.436, 1242.29, 162.842);
-      hill.bezierCurveTo(1259.78, 171.599, 1276.5, 179.492, 1290.34, 185.2);
-      hill.bezierCurveTo(1296.55, 187.759, 1302.19, 189.886, 1307.07, 191.455);
-      hill.bezierCurveTo(1302.41, 191.443, 1296.69, 191.429, 1290, 191.413);
-      hill.bezierCurveTo(1266.93, 191.356, 1232.18, 191.274, 1188.41, 191.172);
-      hill.bezierCurveTo(1100.88, 190.969, 977.266, 190.688, 838.853, 190.375);
-      hill.bezierCurveTo(582.861, 189.798, 276.244, 189.113, 53.6148, 188.617);
-      hill.bezierCurveTo(122.376, 180.475, 188.734, 158.994, 254.027, 135.675);
-      hill.bezierCurveTo(304.881, 117.513, 355.094, 97.4395, 405.239, 77.3935);
-      hill.bezierCurveTo(420.795, 71.1748, 436.344, 64.9587, 451.904, 58.8032);
-      hill.bezierCurveTo(460.77, 55.2958, 469.672, 51.669, 478.614, 48.0258);
-      hill.lineTo(478.614, 48.0258);
-      hill.bezierCurveTo(516.87, 32.44, 555.853, 16.5577, 595.884, 8.43995);
-      hill.closePath();
-
-      context.beginPath();
-      context.setTransform(1, 0, 0, 1, canvas.width / 2, -68);
-      context.globalAlpha = .7;
-      context.fillStyle = '#002116';
-      context.fill(hill);
-      context.transform(1.05, 0, 0, 1, -20, 0);
-      context.fillStyle = '#002016';
-      context.stroke(hill);
-      context.closePath();
-
-      const parasol = new Path2D();
-      parasol.moveTo(1, 32.5019);
-      parasol.lineTo(37.5, 50.0019);
-      parasol.bezierCurveTo(53.1667, 38.8352, 103.5, 22.2019, 179.5, 45.0019);
-      parasol.lineTo(195, 32.5019);
-      parasol.bezierCurveTo(167.199, 9.23635, 89.9362, -23.115, 3.29788, 33.6036);
-      parasol.rect(3, 33.5019, 2, 32);
-      parasol.rect(37.5, 49.0019, 2, 32);
-      parasol.rect(177.5, 44.0019, 2, 32);
-      parasol.rect(193, 32.5019, 2, 32);
-      parasol.closePath();
-
-      context.beginPath();
-      context.setTransform(2, 0, 0, 2, canvas.width - 60, 100);
-      context.scale(-1, 1);
-      context.globalAlpha = 1;
+      context.setTransform(
+        .7,
+        0,
+        0,
+        .8,
+        getLinearPosition({
+          x: canvas.width / 2,
+          maxWidth: canvas.width,
+          time: time / 120,
+          offset: 200,
+        }),
+        60,
+      );
       context.fillStyle = '#fff';
-      context.fill(parasol);
+      context.fill(cloud);
+      context.setTransform(
+        1,
+        0,
+        0,
+        1,
+        getLinearPosition({
+          x: canvas.width / 2 + 300,
+          maxWidth: canvas.width,
+          time: time / 60,
+          offset: 100,
+        }),
+        20,
+      );
+      context.scale(1.1, 1);
+      context.fillStyle = '#fff';
+      context.fill(cloud);
+      context.setTransform(
+        1,
+        0,
+        0,
+        1,
+        getLinearPosition({
+          x: canvas.width / 2 + 1300,
+          maxWidth: canvas.width,
+          time: time / 55,
+          offset: 120,
+        }),
+        10,
+      );
+      context.scale(1.2, 1.1);
+      context.fillStyle = '#fff';
+      context.fill(cloud);
+      context.transform(1, 0, 0, 1, -20, 0);
+      context.scale(0.4, 0.6);
+      context.fillStyle = '#fff';
+      context.fill(cloud);
     });
   };
 
@@ -170,6 +163,4 @@ export default class Pool implements GameObject {
       context.clearRect(0, 0, canvas.width, canvas.height);
     });
   };
-
-  #draw = drawLayer(canvas.get('bg'));
 }

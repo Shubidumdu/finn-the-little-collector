@@ -1,7 +1,7 @@
 import { Scene } from '.';
 import canvas from '../canvas';
 import { GameObject } from '../objects';
-import { BackgroundType, Pool } from '../objects/backgrounds';
+import { BackgroundType, Ground, Pool, Road } from '../objects/backgrounds';
 import PlayInfo from '../objects/playInfo';
 import Magnifier from '../objects/magnifier';
 import Person, { EYE_COLORS, SKIN_COLORS } from '../objects/person';
@@ -18,9 +18,11 @@ export default class PlayScene implements Scene {
   timeout: number = 10000;
 
   constructor() {
-    this.activeBackground = 'pool';
+    this.activeBackground = 'road';
     this.backgrounds = {
+      ground: new Ground(),
       pool: new Pool(),
+      road: new Road(),
     };
     this.info = new PlayInfo();
     this.magnifier = new Magnifier();
