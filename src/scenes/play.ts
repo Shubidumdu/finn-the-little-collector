@@ -64,6 +64,8 @@ export default class PlayScene implements Scene {
 
     window.addEventListener('click', (e: PointerEvent) => {
       wantedPersons.forEach((person) => {
+        if (person.isHit) return;
+
         person.setIsHit({
           x: e.clientX,
           y: e.clientY,
@@ -71,6 +73,7 @@ export default class PlayScene implements Scene {
 
         if (person.isHit) {
           alert(`You hit PersonId:${person.id}!`);
+          this.wantedPoster.removePerson(person.id);
         }
       });
     });
