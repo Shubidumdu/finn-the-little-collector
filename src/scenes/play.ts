@@ -52,13 +52,28 @@ export default class PlayScene implements Scene {
       position: { x: 0, y: 0 },
       range: 100,
     });
+
+    const wantedPersonCount = 3;
+    const wantedPersons = this.persons.filter(
+      (person) => person.id < wantedPersonCount,
+    );
+
     this.wantedPoster.init({
-      persons: [
-        this.persons[0],
-        this.persons[1],
-        this.persons[2],
-      ]
-    })
+      persons: [...wantedPersons],
+    });
+
+    window.addEventListener('click', (e: PointerEvent) => {
+      wantedPersons.forEach((person) => {
+        person.setIsHit({
+          x: e.clientX,
+          y: e.clientY,
+        });
+
+        if (person.isHit) {
+          alert(`You hit PersonId:${person.id}!`);
+        }
+      });
+    });
   };
 
   update = (time: number) => {
