@@ -1,5 +1,7 @@
 import { Scene, SceneType } from '.';
 import canvas, { drawLayer } from '../canvas';
+import Music from '../sounds/music';
+import titleMusic from '../sounds/musics/title';
 import store from '../store';
 import { setIsSoundOn } from '../store/mutation';
 import { getFont } from '../utils';
@@ -16,13 +18,20 @@ export default class TitleScene implements Scene {
       action: () => {
         const { isSoundOn } = store;
         setIsSoundOn(!isSoundOn);
+        if (store.isSoundOn) {
+          this.music.play(true);
+        } else {
+          this.music.stop();
+        }
       },
     },
   ];
+  music = new Music(titleMusic);
 
   start = () => {
     this.activeMenuIndex = 0;
     this.#addEvents();
+    store.isSoundOn && this.music.play(true);
   };
 
   update = (time: number) => {
@@ -33,6 +42,7 @@ export default class TitleScene implements Scene {
 
   end = () => {
     this.#removeEvents();
+    store.isSoundOn && this.music.stop();
   };
 
   #addEvents = () => {
