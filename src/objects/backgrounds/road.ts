@@ -136,8 +136,8 @@ export default class Road implements GameObject {
       context.fill(carWheelRight);
 
       // person 이동 영역
-      context.beginPath();
       context.setTransform(1, 0, -0.5, 1, canvas.width / 2 - 280, 240);
+      context.beginPath();
       context.strokeRect(0, 0, 800, 600);
       context.closePath();
     });

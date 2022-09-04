@@ -6,6 +6,8 @@ const canvasMap = new Map<string, HTMLCanvasElement>();
 
 export default canvasMap;
 
+export type DrawFunc = (context: CanvasRenderingContext2D, canvas?: HTMLCanvasElement) => void;
+
 const setViewPort = () => {
   const viewportMeta = document.querySelector(
     'meta[name="viewport"]',
