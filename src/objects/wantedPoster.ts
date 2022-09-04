@@ -1,5 +1,6 @@
 import { GameObject } from '.';
 import canvasMap, { drawLayer } from '../canvas';
+import playEffectSound from '../sounds/effects';
 import { getFont } from '../utils';
 import Person from './person';
 
@@ -104,11 +105,13 @@ export default class WantedPoster implements GameObject, WantedPosterState {
  
   #keyHandler = (e: KeyboardEvent) => {
     if (e.code === 'KeyA') {
+      playEffectSound('pick');
       if (this.selectedIndex === 0)
         this.selectedIndex = this.persons.length - 1;
       else this.selectedIndex -= 1;
     }
     if (e.code === 'KeyS') {
+      playEffectSound('pick');
       if (this.selectedIndex === this.persons.length - 1)
         this.selectedIndex = 0;
       else this.selectedIndex += 1;

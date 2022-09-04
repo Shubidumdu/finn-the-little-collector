@@ -1,5 +1,6 @@
 import { Scene, SceneType } from '.';
 import canvas, { drawLayer } from '../canvas';
+import playEffectSound from '../sounds/effects';
 import Music from '../sounds/music';
 import titleMusic from '../sounds/musics/title';
 import store from '../store';
@@ -31,7 +32,7 @@ export default class TitleScene implements Scene {
   start = () => {
     this.activeMenuIndex = 0;
     this.#addEvents();
-    store.isSoundOn && this.music.play(true);
+    this.music.play(true);
   };
 
   update = (time: number) => {
@@ -42,7 +43,7 @@ export default class TitleScene implements Scene {
 
   end = () => {
     this.#removeEvents();
-    store.isSoundOn && this.music.stop();
+    this.music.stop();
   };
 
   #addEvents = () => {
@@ -56,6 +57,8 @@ export default class TitleScene implements Scene {
   };
 
   #changeMenuIndexEvent = (e: KeyboardEvent) => {
+    playEffectSound('pick');
+
     if (e.code === 'ArrowDown') {
       this.activeMenuIndex = Math.min(this.activeMenuIndex + 1, this.menus.length - 1);
     }

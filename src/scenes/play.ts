@@ -28,7 +28,7 @@ export default class PlayScene implements Scene {
   }
 
   start = () => {
-    store.isSoundOn && this.music.play(true);
+    this.music.play(true);
     this.info.init({
       stage: this.stage,
       timeout: this.timeout,
@@ -76,7 +76,7 @@ export default class PlayScene implements Scene {
   };
 
   end = () => {
-    store.isSoundOn && this.music.stop();
+    this.music.stop();
     this.info.remove();
     this.persons.forEach((person) => person.remove());
   };
