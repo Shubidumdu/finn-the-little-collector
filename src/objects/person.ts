@@ -21,6 +21,15 @@ type PersonState = {
   colors: ColorState;
 };
 
+type Rect = {
+  left: number;
+  width: number;
+  right: number;
+  top: number;
+  height: number;
+  bottom: number;
+};
+
 export const EYE_COLORS = ['#634e34', '#2e536f', '#1c7847'];
 export const SKIN_COLORS = [
   '#8d5524',
@@ -59,6 +68,9 @@ export default class Person implements GameObject, PersonState {
   defaultSpeed: number;
   colors: ColorState;
   moves: any[];
+
+  hitBoxPosition: Rect;
+  isHit: boolean = false;
 
   constructor(defaultSpeed: number = DEFAULT_SPEED) {
     this.defaultSpeed = defaultSpeed;
@@ -214,6 +226,15 @@ export default class Person implements GameObject, PersonState {
     return;
   };
 
+  setIsHit = (shotPosition: { x: number; y: number }) => {
+    const { left, right, top, bottom } = this.hitBoxPosition;
+    const { x: shotX, y: shotY } = shotPosition;
+
+    left <= shotX && shotX <= right && top <= shotY && shotY <= bottom
+      ? (this.isHit = true)
+      : (this.isHit = false);
+  };
+
   draw = (time: number) => {
     const layer1 = canvas.get('layer1'); // 확대
     const drawLayer1 = drawLayer(layer1);
@@ -221,6 +242,12 @@ export default class Person implements GameObject, PersonState {
     const drawLayer2 = drawLayer(layer2);
 
     drawLayer1((context, canvas) => {
+      this.#setHitBoxPosition();
+
+      if (this.isHit) {
+        this.#drawDeadMark(context);
+      }
+
       if (this.isMoving) {
         this.drawMovement(
           context,
@@ -441,6 +468,79 @@ export default class Person implements GameObject, PersonState {
     context.fillRect(-12, 0, 10, 24);
     context.fillStyle = this.colors.shoe;
     context.fillRect(-14, 23, 12, 8);
+  };
+
+  #setHitBoxPosition = () => {
+    const width = 27;
+    const height = 70;
+
+    this.hitBoxPosition = {
+      left: this.position.x - width / 2,
+      width,
+      right: this.position.x + width / 2,
+      top: this.position.y - height / 2 - 3,
+      height,
+      bottom: this.position.y + height / 2,
+    };
+  };
+
+  #drawDeadMark = (context: CanvasRenderingContext2D) => {
+    context.strokeStyle = '#b6d9e9';
+    context.beginPath();
+    context.ellipse(
+      this.position.x,
+      this.position.y - 50 + 1,
+      12,
+      5,
+      Math.PI,
+      0,
+      Math.PI * 2,
+    );
+    context.lineWidth = 3;
+    context.stroke();
+
+    context.strokeStyle = '#fff';
+    context.beginPath();
+    context.ellipse(
+      this.position.x,
+      this.position.y - 50,
+      10,
+      5,
+      Math.PI,
+      0,
+      Math.PI * 2,
+    );
+    context.lineWidth = 3;
+    context.stroke();
+  };
+
+  #drawHitBox = (
+    context: CanvasRenderingContext2D,
+    { isRect }: { isRect: boolean },
+  ) => {
+    context.fillStyle = '#fff';
+
+    if (isRect) {
+      context.fillRect(
+        this.hitBoxPosition.left,
+        this.hitBoxPosition.top,
+        this.hitBoxPosition.width,
+        this.hitBoxPosition.height,
+      );
+      context.fill();
+      return;
+    }
+
+    context.ellipse(
+      this.position.x,
+      this.position.y - 5,
+      35,
+      55,
+      Math.PI,
+      0,
+      Math.PI * 2,
+    );
+    context.fill();
   };
 
   #moveY(delta: number) {

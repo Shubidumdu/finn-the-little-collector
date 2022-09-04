@@ -1,3 +1,4 @@
+import store from '../store';
 import { zzfxP } from './libs/zzfx';
 import zzfxM from './libs/zzfxM';
 
@@ -10,6 +11,7 @@ class Music {
   }
 
   play = (loop = false) => {
+    if (!store.isSoundOn) return;
     this.player = zzfxP(...this.buffer);
     this.player.loop = loop;
   };

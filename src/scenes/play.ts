@@ -7,6 +7,9 @@ import Magnifier from '../objects/magnifier';
 import Person, { EYE_COLORS, SKIN_COLORS } from '../objects/person';
 import { getRandomColor, getRandomInt, pickRandomOption } from '../utils';
 import WantedPoster from '../objects/wantedPoster';
+import Music from '../sounds/music';
+import playMusic from '../sounds/musics/play';
+import store from '../store';
 
 export default class PlayScene implements Scene {
   activeBackground: BackgroundType;
@@ -18,6 +21,7 @@ export default class PlayScene implements Scene {
   wantedPoster: WantedPoster;
   stage: number = 0;
   timeout: number = 10000;
+  music = new Music(playMusic);
 
   constructor() {
     this.activeBackground = 'road';
@@ -35,6 +39,7 @@ export default class PlayScene implements Scene {
 
   start = () => {
     this.backgrounds[this.activeBackground].init();
+    this.music.play(true);
     this.info.init({
       stage: this.stage,
       timeout: this.timeout,
@@ -63,13 +68,31 @@ export default class PlayScene implements Scene {
       position: { x: 0, y: 0 },
       range: 100,
     });
+
+    const wantedPersonCount = 3;
+    const wantedPersons = this.persons.filter(
+      (person) => person.id < wantedPersonCount,
+    );
+
     this.wantedPoster.init({
-      persons: [
-        this.persons[0],
-        this.persons[1],
-        this.persons[2],
-      ]
-    })
+      persons: [...wantedPersons],
+    });
+
+    window.addEventListener('click', (e: PointerEvent) => {
+      wantedPersons.forEach((person) => {
+        if (person.isHit) return;
+
+        person.setIsHit({
+          x: e.clientX,
+          y: e.clientY,
+        });
+
+        if (person.isHit) {
+          alert(`You hit PersonId:${person.id}!`);
+          this.wantedPoster.removePerson(person.id);
+        }
+      });
+    });
   };
 
   update = (time: number) => {
@@ -84,6 +107,7 @@ export default class PlayScene implements Scene {
 
   end = () => {
     this.backgrounds[this.activeBackground].remove();
+    this.music.stop();
     this.info.remove();
     this.persons.forEach((person) => person.remove());
   };
