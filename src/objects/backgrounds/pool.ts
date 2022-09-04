@@ -17,7 +17,7 @@ export default class Pool implements GameObject {
       // 바닥
       context.beginPath();
       context.setTransform(1, 0, 0, 1, 0, 0);
-      context.fillStyle = '#f7f8f8'
+      context.fillStyle = '#f6f4e5'
       context.fillRect(0, 0, canvas.width, canvas.height);
 
       // 하늘
