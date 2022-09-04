@@ -35,9 +35,12 @@ export default class WantedPoster implements GameObject, WantedPosterState {
     drawPaperLayer((context, canvas) => {
       context.setTransform(1, 0, 0, 1, canvas.width - 120, canvas.height - 170);
       this.#drawPoster(context);
-      const person = this.persons[this.selectedIndex];
-      if (person.isMoving) {
-        this.persons[this.selectedIndex].drawMovement(
+
+      if (!this.persons.length) return;
+
+      const selectedPerson = this.persons[this.selectedIndex];
+      if (selectedPerson.isMoving) {
+        selectedPerson.drawMovement(
           context,
           canvas,
           time,
@@ -45,7 +48,7 @@ export default class WantedPoster implements GameObject, WantedPosterState {
           1,
         );
       } else {
-        this.persons[this.selectedIndex].drawIdle(
+        selectedPerson.drawIdle(
           context,
           canvas,
           time,
@@ -57,7 +60,7 @@ export default class WantedPoster implements GameObject, WantedPosterState {
       this.#drawRightArrow(context);
       context.setTransform(1, 0, 0, 1, canvas.width - 113, canvas.height - 110);
       this.#drawLeftArrow(context);
-      context.setTransform(1, 0, 0, 1, canvas.width - 74,  canvas.height - 180);
+      context.setTransform(1, 0, 0, 1, canvas.width - 74, canvas.height - 180);
       this.#drawIndex(context);
     });
   };
@@ -98,23 +101,39 @@ export default class WantedPoster implements GameObject, WantedPosterState {
 
   #drawIndex = (context: CanvasRenderingContext2D) => {
     context.font = getFont(16);
-    context.textAlign = 'center'; 
+    context.textAlign = 'center';
     context.fillStyle = '#000';
-    context.fillText(`${this.selectedIndex + 1} / ${this.persons.length}`, 0, 0, 100);
-  }
- 
+    context.fillText(
+      `${this.selectedIndex + 1} / ${this.persons.length}`,
+      0,
+      0,
+      100,
+    );
+  };
+
   #keyHandler = (e: KeyboardEvent) => {
     if (e.code === 'KeyA') {
       playEffectSound('pick');
-      if (this.selectedIndex === 0)
-        this.selectedIndex = this.persons.length - 1;
-      else this.selectedIndex -= 1;
+      this.#movePrevious();
     }
     if (e.code === 'KeyS') {
       playEffectSound('pick');
-      if (this.selectedIndex === this.persons.length - 1)
-        this.selectedIndex = 0;
-      else this.selectedIndex += 1;
+      this.#moveNext();
     }
+  };
+
+  #movePrevious = () => {
+    if (this.selectedIndex === 0) this.selectedIndex = this.persons.length - 1;
+    else this.selectedIndex -= 1;
+  };
+
+  #moveNext = () => {
+    if (this.selectedIndex === this.persons.length - 1) this.selectedIndex = 0;
+    else this.selectedIndex += 1;
+  };
+
+  removePerson = (id: number) => {
+    this.persons = this.persons.filter((person) => person.id !== id);
+    this.selectedIndex = 0;
   };
 }
