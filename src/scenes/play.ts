@@ -1,7 +1,7 @@
 import { Scene } from '.';
 import canvas from '../canvas';
 import { GameObject } from '../objects';
-import { BackgroundType, Mart, Playground, Pool, Road, Park } from '../objects/backgrounds';
+import { BackgroundType, Playground, Pool, Road } from '../objects/backgrounds';
 import PlayInfo from '../objects/playInfo';
 import Magnifier from '../objects/magnifier';
 import Person, { EYE_COLORS, SKIN_COLORS } from '../objects/person';
@@ -20,10 +20,8 @@ export default class PlayScene implements Scene {
   timeout: number = 10000;
 
   constructor() {
-    this.activeBackground = 'playground';
+    this.activeBackground = 'road';
     this.backgrounds = {
-      mart: new Mart(),
-      park: new Park(),
       playground: new Playground(),
       pool: new Pool(),
       road: new Road(),
