@@ -5,6 +5,9 @@ import Magnifier from '../objects/magnifier';
 import Person, { EYE_COLORS, SKIN_COLORS } from '../objects/person';
 import { getRandomColor, getRandomInt, pickRandomOption } from '../utils';
 import WantedPoster from '../objects/wantedPoster';
+import Music from '../sounds/music';
+import playMusic from '../sounds/musics/play';
+import store from '../store';
 
 export default class PlayScene implements Scene {
   info: PlayInfo;
@@ -14,6 +17,7 @@ export default class PlayScene implements Scene {
   wantedPoster: WantedPoster;
   stage: number = 0;
   timeout: number = 10000;
+  music = new Music(playMusic);
 
   constructor() {
     this.info = new PlayInfo();
@@ -24,6 +28,7 @@ export default class PlayScene implements Scene {
   }
 
   start = () => {
+    this.music.play(true);
     this.info.init({
       stage: this.stage,
       timeout: this.timeout,
@@ -89,6 +94,7 @@ export default class PlayScene implements Scene {
   };
 
   end = () => {
+    this.music.stop();
     this.info.remove();
     this.persons.forEach((person) => person.remove());
   };

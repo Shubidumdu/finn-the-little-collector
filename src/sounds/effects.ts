@@ -1,38 +1,18 @@
+import store from '../store';
 import { zzfx } from './libs/zzfx';
 
-type SoundType = 'move';
+type SoundType = 'pick';
 
 const playEffectSound = (type: SoundType) => {
+  if (!store.isSoundOn) return;
   switch (type) {
-    case 'move':
-      soundMove();
+    case 'pick':
+      soundPick();
   }
 };
 
-const soundMove = () => {
-  zzfx(
-    ...[
-      2.35,
-      ,
-      377,
-      ,
-      ,
-      0.11,
-      1,
-      2.31,
-      ,
-      -4.9,
-      ,
-      ,
-      ,
-      0.5,
-      ,
-      0.4,
-      0.1,
-      0.68,
-      0.08,
-    ],
-  );
+const soundPick = () => {
+  zzfx(...[.3,,1384,.02,.01,0,,1.36,8.5,,,,,,15,,,,.01]);
 };
 
 export default playEffectSound;
