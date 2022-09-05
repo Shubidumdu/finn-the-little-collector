@@ -17,7 +17,7 @@ class Music {
   };
 
   stop = () => {
-    this.player.stop();
+    this.player?.stop();
   };
 }
 
