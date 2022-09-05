@@ -1,1 +1,1 @@
-body,html{margin:0;overflow:hidden;padding:0;position:relative}body,canvas,html{height:100%;width:100%}canvas{left:50%;position:absolute;transform:translateX(-50%)}#layer1{z-index:0}
+body,html{margin:0;overflow:hidden;padding:0;position:relative}body,canvas,html{height:100%;width:100%}canvas{left:50%;position:absolute;transform:translateX(-50%)}#layer1{z-index:0}#bg{z-index:-1}
