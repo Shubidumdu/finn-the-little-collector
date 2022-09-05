@@ -77,7 +77,10 @@ export default class PlayScene implements Scene {
     });
 
     window.addEventListener('click', (e: PointerEvent) => {
-      wantedPersons.forEach((person) => {
+      let isPersonClicked = false;
+      let isCorrect = false;
+
+      this.persons.forEach((person) => {
         if (person.isHit) return;
 
         person.setIsHit({
@@ -86,10 +89,18 @@ export default class PlayScene implements Scene {
         });
 
         if (person.isHit) {
-          alert(`You hit PersonId:${person.id}!`);
-          this.wantedPoster.removePerson(person.id);
+          isPersonClicked = true;
+          if (person.id < this.wantedPoster.persons.length) {
+            isCorrect = true;
+            alert(`You hit PersonId:${person.id}!`);
+            this.wantedPoster.removePerson(person.id);
+          }
         }
       });
+
+      if (isPersonClicked && !isCorrect) {
+        this.info.lifeCount = Math.max(0, this.info.lifeCount - 1);
+      }
     });
   };
 
