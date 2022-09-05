@@ -29,6 +29,8 @@ export default class TitleScene implements Scene {
   ];
   music = new Music(titleMusic);
 
+  
+
   start = () => {
     this.activeMenuIndex = 0;
     this.#addEvents();
@@ -49,6 +51,25 @@ export default class TitleScene implements Scene {
   #addEvents = () => {
     window.addEventListener('keydown', this.#changeMenuIndexEvent);
     window.addEventListener('keydown', this.#actionEvent);
+
+    window.addEventListener('click', (e: PointerEvent) => {
+      const { clientX, clientY } = e;
+
+
+      // const { width, height } = canvas;
+      // const { x, y } = this.menus[this.activeMenuIndex];
+      // const { width: menuWidth, height: menuHeight } = this.menus[
+      //   this.activeMenuIndex
+      // ];
+      // if (
+      //   clientX >= x &&
+      //   clientX <= x + menuWidth &&
+      //   clientY >= y &&
+      //   clientY <= y + menuHeight
+      // ) {
+      //   this.menus[this.activeMenuIndex].action();
+      // }
+    });
   };
 
   #removeEvents = () => {
@@ -60,7 +81,10 @@ export default class TitleScene implements Scene {
     playEffectSound('pick');
 
     if (e.code === 'ArrowDown') {
-      this.activeMenuIndex = Math.min(this.activeMenuIndex + 1, this.menus.length - 1);
+      this.activeMenuIndex = Math.min(
+        this.activeMenuIndex + 1,
+        this.menus.length - 1,
+      );
     }
 
     if (e.code === 'ArrowUp') {
@@ -74,7 +98,7 @@ export default class TitleScene implements Scene {
     const currentMenu = this.menus[this.activeMenuIndex];
     currentMenu.action();
   };
-  
+
   #changeScene = (sceneType: SceneType) => {
     window.postMessage(
       {
@@ -120,14 +144,7 @@ export default class TitleScene implements Scene {
       context.font = getFont(12);
       context.fillText('Start', 0, 0);
 
-      context.transform(
-        1,
-        0,
-        0,
-        1,
-        -20,
-        40,
-      );
+      context.transform(1, 0, 0, 1, -20, 40);
       context.font = getFont(12);
 
       const isSoundOn = store.isSoundOn ? 'on' : 'off';
