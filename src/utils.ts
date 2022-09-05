@@ -27,7 +27,7 @@ export const getFont = (
   type: string = 'Arial Black, Arial, sans-serif',
 ) => `bold ${size}pt ${type}`;
 
-export const getRandomInteger = (min: number, max:number) => Math.random() * (max - min) + min;
+export const getRandomInteger = (min: number, max: number) => Math.round(Math.random() * (max - min) + min);
 
 export const getRandomColor = () =>
   `#${Math.floor(Math.random() * 16777215).toString(16).padEnd(6, '0')}`;
@@ -39,3 +39,17 @@ export const pickRandomOption = <T>(options: T[]) => {
 
 export const camelToKebab = (str: string): string =>
   !str ? '' : str.replace(/(^[a-z]*)([A-Z]{1})(\w*)/, (_, $1, $2, $3) => `${$1}-${$2.toLowerCase()}${camelToKebab($3)}`);
+
+type LinearPosition = {
+  x: number,
+  maxWidth: number,
+  time: DOMHighResTimeStamp,
+  offset: number,
+};
+export const getLinearPosition = ({
+  x,
+  maxWidth,
+  time,
+  offset,
+}: LinearPosition) =>
+  (x + time) % (maxWidth + offset) - offset;

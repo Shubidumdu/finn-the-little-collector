@@ -1,5 +1,7 @@
 import { Scene } from '.';
-import canvasMap from '../canvas';
+import canvas from '../canvas';
+import { GameObject } from '../objects';
+import { BackgroundType, Playground, Pool, Road } from '../objects/backgrounds';
 import PlayInfo from '../objects/playInfo';
 import Magnifier from '../objects/magnifier';
 import Person, { EYE_COLORS, SKIN_COLORS } from '../objects/person';
@@ -10,6 +12,8 @@ import playMusic from '../sounds/musics/play';
 import store from '../store';
 
 export default class PlayScene implements Scene {
+  activeBackground: BackgroundType;
+  backgrounds: { [background in BackgroundType]: GameObject };
   info: PlayInfo;
   magnifier: Magnifier;
   layer1: HTMLCanvasElement;
@@ -20,14 +24,21 @@ export default class PlayScene implements Scene {
   music = new Music(playMusic);
 
   constructor() {
+    this.activeBackground = 'road';
+    this.backgrounds = {
+      playground: new Playground(),
+      pool: new Pool(),
+      road: new Road(),
+    };
     this.info = new PlayInfo();
-    this.persons = [];
-    this.layer1 = canvasMap.get('layer1');
     this.magnifier = new Magnifier();
+    this.persons = [];
+    this.layer1 = canvas.get('layer1');
     this.wantedPoster = new WantedPoster();
   }
 
   start = () => {
+    this.backgrounds[this.activeBackground].init();
     this.music.play(true);
     this.info.init({
       stage: this.stage,
@@ -85,6 +96,7 @@ export default class PlayScene implements Scene {
   };
 
   update = (time: number) => {
+    this.backgrounds[this.activeBackground].update(time);
     this.info.update(time);
     this.persons.forEach((person) => {
       person.update(time);
@@ -94,6 +106,7 @@ export default class PlayScene implements Scene {
   };
 
   end = () => {
+    this.backgrounds[this.activeBackground].remove();
     this.music.stop();
     this.info.remove();
     this.persons.forEach((person) => person.remove());
