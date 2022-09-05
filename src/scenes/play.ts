@@ -9,7 +9,6 @@ import { getRandomColor, getRandomInt, pickRandomOption } from '../utils';
 import WantedPoster from '../objects/wantedPoster';
 import Music from '../sounds/music';
 import playMusic from '../sounds/musics/play';
-import store from '../store';
 
 export default class PlayScene implements Scene {
   activeBackground: BackgroundType;
@@ -19,8 +18,6 @@ export default class PlayScene implements Scene {
   layer1: HTMLCanvasElement;
   persons: Person[];
   wantedPoster: WantedPoster;
-  stage: number = 0;
-  timeout: number = 10000;
   music = new Music(playMusic);
 
   constructor() {
@@ -41,8 +38,9 @@ export default class PlayScene implements Scene {
     this.backgrounds[this.activeBackground].init();
     this.music.play(true);
     this.info.init({
-      stage: this.stage,
-      timeout: this.timeout,
+      stage: 1,
+      timeout: 10000,
+      lifeCount: 5,
     });
 
     this.persons = [...new Array(100)].map(() => new Person());
