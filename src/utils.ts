@@ -1,3 +1,5 @@
+import { Rect } from './types/rect';
+
 export const degreeToRadian = (degree: number) => (Math.PI / 180) * degree;
 
 interface GetTimingProps {
@@ -51,5 +53,14 @@ export const getLinearPosition = ({
   maxWidth,
   time,
   offset,
-}: LinearPosition) =>
-  (x + time) % (maxWidth + offset) - offset;
+}: LinearPosition) => ((x + time) % (maxWidth + offset)) - offset;
+
+export const isInsideRect = (
+  position: { x: number; y: number },
+  rect: Rect,
+) => {
+  const { left, right, top, bottom } = rect;
+  const { x, y } = position;
+
+  return left <= x && x <= right && top <= y && y <= bottom;
+};

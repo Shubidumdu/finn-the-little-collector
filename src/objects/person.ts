@@ -1,5 +1,6 @@
 import { GameObject } from '.';
 import canvas, { drawLayer } from '../canvas';
+import { Rect } from '../types/rect';
 import { degreeToRadian, getRandomInteger, getTimings } from '../utils';
 
 type ColorState = {
@@ -19,15 +20,6 @@ type PersonState = {
     z: number;
   };
   colors: ColorState;
-};
-
-type Rect = {
-  left: number;
-  width: number;
-  right: number;
-  top: number;
-  height: number;
-  bottom: number;
 };
 
 export const EYE_COLORS = ['#634e34', '#2e536f', '#1c7847'];
