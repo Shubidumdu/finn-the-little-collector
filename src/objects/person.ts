@@ -683,5 +683,85 @@ export default class Person implements GameObject, PersonState {
     time: number,
     position: { x: number; y: number },
     sizeRatio: number,
-  ) => {};
+  ) => {
+    const { isProgressing, progress } = getTimings({
+      time,
+      start: this.deadAt,
+      duration: 300,
+    });
+    if (!isProgressing || progress < 0) return;
+    const curvedProgress = Math.cos((1 - progress) * Math.PI);
+    context.setTransform(
+      sizeRatio,
+      0,
+      0,
+      sizeRatio,
+      position.x,
+      position.y + -74 * sizeRatio,
+    );
+    context.filter = `grayscale(${100 * (curvedProgress)}%) opacity(${100 * (1 - curvedProgress)}%)`;
+    context.setTransform(
+      -sizeRatio * this.move.direction.x,
+      0,
+      0,
+      sizeRatio,
+      position.x + (-2 + 4 * Number(this.move.direction.x === 1)) * sizeRatio,
+      position.y + (-28 + Math.sin(time / 128)) * sizeRatio,
+    );
+    this.#drawArm(context);
+    context.setTransform(
+      -sizeRatio * this.move.direction.x,
+      0,
+      0,
+      sizeRatio,
+      position.x,
+      position.y + (24 + Math.sin(time / 128)) * sizeRatio,
+    );
+    this.#drawUpperBody(context);
+    context.setTransform(
+      -sizeRatio * this.move.direction.x,
+      0,
+      0,
+      sizeRatio,
+      position.x,
+      position.y + (63 + Math.sin(time / 128)) * sizeRatio,
+    );
+    this.#drawLowerBody(context);
+    context.setTransform(
+      -sizeRatio * this.move.direction.x,
+      0,
+      0,
+      sizeRatio,
+      position.x,
+      position.y + 16 * sizeRatio,
+    );
+    this.#drawLeg(context);
+    context.setTransform(
+      -sizeRatio * this.move.direction.x,
+      0,
+      0,
+      sizeRatio,
+      position.x + (14 + -28 * Number(this.move.direction.x === 1)) * sizeRatio,
+      position.y + 16 * sizeRatio,
+    );
+    this.#drawLeg(context);
+    context.setTransform(
+      -sizeRatio * this.move.direction.x,
+      0,
+      0,
+      sizeRatio,
+      position.x,
+      position.y + Math.sin(time / 128) * sizeRatio,
+    );
+    this.#drawHead(context);
+    context.setTransform(
+      -sizeRatio * this.move.direction.x,
+      0,
+      0,
+      sizeRatio,
+      position.x + (18 + -36 * Number(this.move.direction.x === 1)) * sizeRatio,
+      position.y + (-28 + Math.sin(time / 128)) * sizeRatio,
+    );
+    this.#drawArm(context);
+  };
 }
