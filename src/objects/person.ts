@@ -247,6 +247,7 @@ export default class Person implements GameObject, PersonState {
     drawLayer1((context, canvas) => {
       const sizeRatio = 0.6 + 0.4 * (this.position.z / canvas.height);
       this.#setHitBoxPosition();
+      this.#drawShadow(context, canvas, time, this.position, sizeRatio);
 
       if (this.correctAt) {
         this.#drawCorrect(context, canvas, time, this.position, sizeRatio);
@@ -271,6 +272,8 @@ export default class Person implements GameObject, PersonState {
     drawLayer2((context, canvas) => {
       const sizeRatio = 0.3 + 0.2 * (this.position.z / canvas.height);
 
+      this.#drawShadow(context, canvas, time, this.position, sizeRatio);
+
       if (this.correctAt) {
         this.#drawCorrect(context, canvas, time, this.position, sizeRatio);
         return;
@@ -280,6 +283,8 @@ export default class Person implements GameObject, PersonState {
         this.#drawCorrect(context, canvas, time, this.position, sizeRatio);
         return;
       }
+
+      this.#drawShadow(context, canvas, time, this.position, sizeRatio);
 
       if (this.isHit) {
         this.#drawDeadMark(context, canvas, time, this.position, sizeRatio);
@@ -608,6 +613,7 @@ export default class Person implements GameObject, PersonState {
       0,
       degreeToRadian(360),
     );
+    context.fillStyle = '#000';
     context.fill();
     context.filter = `opacity(${100 * (1 - curvedProgress)}%) hue-rotate(${
       180 * curvedProgress
@@ -687,10 +693,9 @@ export default class Person implements GameObject, PersonState {
     const { isProgressing, progress } = getTimings({
       time,
       start: this.deadAt,
-      duration: 300,
+      duration: 200,
     });
     if (!isProgressing || progress < 0) return;
-    const curvedProgress = Math.cos((1 - progress) * Math.PI);
     context.setTransform(
       sizeRatio,
       0,
@@ -699,7 +704,9 @@ export default class Person implements GameObject, PersonState {
       position.x,
       position.y + -74 * sizeRatio,
     );
-    context.filter = `grayscale(${100 * (curvedProgress)}%) opacity(${100 * (1 - curvedProgress)}%)`;
+    context.filter = `grayscale(${100 * progress}%) opacity(${
+      100 * (1 - progress)
+    }%)`;
     context.setTransform(
       -sizeRatio * this.move.direction.x,
       0,
@@ -763,5 +770,36 @@ export default class Person implements GameObject, PersonState {
       position.y + (-28 + Math.sin(time / 128)) * sizeRatio,
     );
     this.#drawArm(context);
+  };
+
+  #drawShadow = (
+    context: CanvasRenderingContext2D,
+    canvas: HTMLCanvasElement,
+    time: number,
+    position: { x: number; y: number },
+    sizeRatio: number,
+  ) => {
+    const deadTiming = getTimings({
+      time,
+      start: this.deadAt,
+      duration: 200,
+    });
+    if (deadTiming.isEnded && this.deadAt) return;
+    if (this.correctAt) return;
+
+    context.setTransform(
+      -sizeRatio * this.move.direction.x,
+      0,
+      0,
+      sizeRatio,
+      position.x + (-2 + 4 * Number(this.move.direction.x === 1)) * sizeRatio,
+      position.y + 44 * sizeRatio,
+    );
+    context.scale(2, 1);
+    context.arc(0, 0, 18, 0, degreeToRadian(360));
+    context.fillStyle = deadTiming.isProgressing
+      ? `rgba(0, 0, 0, ${0.1 * (1 - deadTiming.progress)})`
+      : 'rgba(0, 0, 0, 0.1)';
+    context.fill();
   };
 }
