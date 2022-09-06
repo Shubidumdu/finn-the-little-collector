@@ -1,6 +1,7 @@
 import { GameObject } from '..';
 import canvas, { drawLayer } from '../../canvas';
 import { calculateHex } from '../../utils';
+import { drawSky } from './unit';
 
 export default class Road implements GameObject {
   constructor() {}
@@ -13,15 +14,7 @@ export default class Road implements GameObject {
     this.#draw((context, canvas) => {
       // 하늘
       context.setTransform(1, 0, 0, 1, 0, 0);
-      context.beginPath();
-      const grad1 = context.createLinearGradient(0, 0, 0, 300);
-      grad1.addColorStop(0, '#afe8f8');
-      grad1.addColorStop(.4, '#fff');
-      grad1.addColorStop(.5, '#fff');
-      grad1.addColorStop(1, '#cff7fd');
-      context.fillStyle = grad1;
-      context.fillRect(0, 0, canvas.width, 160);
-      context.closePath();
+      drawSky(context, canvas);
 
       context.transform(1, 0, 0, 1, 0, 160);
       const base = Math.floor((canvas.height - 160) / 40 / 2) + 2;

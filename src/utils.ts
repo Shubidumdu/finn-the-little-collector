@@ -53,3 +53,12 @@ export const getLinearPosition = ({
   offset,
 }: LinearPosition) =>
   (x + time) % (maxWidth + offset) - offset;
+
+/**
+ * 
+ * @param start color like #aaaaaa 
+ * @param delta distance from start
+ * @returns 
+ */
+export const calculateHex = (start: string, delta: number) =>
+  `#${(parseInt(start.replace('#', '0x')) + delta).toString(16)}`;

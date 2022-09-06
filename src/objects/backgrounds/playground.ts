@@ -1,5 +1,6 @@
 import { GameObject } from '..';
 import canvas, { DrawFunc, drawLayer } from '../../canvas';
+import { drawSky } from './unit';
 
 export default class Playground implements GameObject {
   constructor() {};
@@ -12,15 +13,7 @@ export default class Playground implements GameObject {
     this.#draw((context, canvas) => {
       // 하늘
       context.setTransform(1, 0, 0, 1, 0, 0);
-      context.beginPath();
-      const grad1 = context.createLinearGradient(0, 0, 0, 300);
-      grad1.addColorStop(0, '#afe8f8');
-      grad1.addColorStop(.4, '#fff');
-      grad1.addColorStop(.5, '#fff');
-      grad1.addColorStop(1, '#cff7fd');
-      context.fillStyle = grad1;
-      context.fillRect(0, 0, canvas.width, 160);
-      context.closePath();
+      drawSky(context, canvas);
 
       // 풀
       context.transform(1, 0, 0, 1, 0, 160);

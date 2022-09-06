@@ -1,5 +1,6 @@
 import { GameObject } from '..';
 import canvas, { DrawFunc, drawLayer } from '../../canvas';
+import { drawSky } from './unit';
 
 export default class Pool implements GameObject {
   constructor() {}
@@ -15,15 +16,7 @@ export default class Pool implements GameObject {
     ) => {
       // 하늘
       context.setTransform(1, 0, 0, 1, 0, 0);
-      context.beginPath();
-      const grad2 = context.createLinearGradient(0, 0, 0, 240);
-      grad2.addColorStop(0, '#c4f0f7');
-      grad2.addColorStop(.4, '#fff');
-      grad2.addColorStop(.5, '#fff');
-      grad2.addColorStop(1, '#cff7fd');
-      context.fillStyle = grad2;
-      context.fillRect(0, 0, canvas.width, 160);
-      context.closePath();
+      drawSky(context, canvas);
 
       // 파도
       context.transform(1, 0, 0, 1, 0, 160);
@@ -107,7 +100,11 @@ export default class Pool implements GameObject {
     context.fillStyle = '#eaede8';
     context.fillRect(0, 0, canvas.width, 10);
     context.transform(1, 0, 0, 1, 0, 10);
-    context.fillStyle = '#fcfff9';
+
+    const grad = context.createLinearGradient(0, 0, 0, height);
+    grad.addColorStop(0, '#fcfff9');
+    grad.addColorStop(1, '#ece8de');
+    context.fillStyle = grad;
     context.fillRect(0, 0, canvas.width, height);
   };
 }
