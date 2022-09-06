@@ -94,6 +94,9 @@ export default class PlayScene implements Scene {
           if (person.id < wantedPersonCount) {
             isCorrect = true;
             this.wantedPoster.removePerson(person.id);
+            person.correctAt = performance.now();
+          } else {
+            person.deadAt = performance.now();
           }
         }
       });

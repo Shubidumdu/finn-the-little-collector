@@ -72,6 +72,9 @@ export default class Person implements GameObject, PersonState {
   hitBoxPosition: Rect;
   isHit: boolean = false;
 
+  correctAt: number = 0;
+  deadAt: number = 0;
+
   constructor(defaultSpeed: number = DEFAULT_SPEED) {
     this.defaultSpeed = defaultSpeed;
   }
@@ -242,63 +245,50 @@ export default class Person implements GameObject, PersonState {
     const drawLayer2 = drawLayer(layer2);
 
     drawLayer1((context, canvas) => {
+      const sizeRatio = 0.6 + 0.4 * (this.position.z / canvas.height);
       this.#setHitBoxPosition();
 
+      if (this.correctAt) {
+        this.#drawCorrect(context, canvas, time, this.position, sizeRatio);
+        return;
+      }
+
+      if (this.deadAt) {
+        this.#drawDead(context, canvas, time, this.position, sizeRatio);
+        return;
+      }
+
       if (this.isHit) {
-        this.#drawDeadMark(
-          context,
-          canvas,
-          time,
-          this.position,
-          0.6 + 0.4 * (this.position.z / canvas.height),
-        );
+        this.#drawDeadMark(context, canvas, time, this.position, sizeRatio);
       }
 
       if (this.isMoving) {
-        this.drawMovement(
-          context,
-          canvas,
-          time,
-          this.position,
-          0.6 + 0.4 * (this.position.z / canvas.height),
-        );
+        this.drawMovement(context, canvas, time, this.position, sizeRatio);
       } else {
-        this.drawIdle(
-          context,
-          canvas,
-          time,
-          this.position,
-          0.6 + 0.4 * (this.position.z / canvas.height),
-        );
+        this.drawIdle(context, canvas, time, this.position, sizeRatio);
       }
     });
     drawLayer2((context, canvas) => {
+      const sizeRatio = 0.3 + 0.2 * (this.position.z / canvas.height);
+
+      if (this.correctAt) {
+        this.#drawCorrect(context, canvas, time, this.position, sizeRatio);
+        return;
+      }
+
+      if (this.deadAt) {
+        this.#drawCorrect(context, canvas, time, this.position, sizeRatio);
+        return;
+      }
+
       if (this.isHit) {
-        this.#drawDeadMark(
-          context,
-          canvas,
-          time,
-          this.position,
-          0.3 + 0.2 * (this.position.z / canvas.height),
-        );
+        this.#drawDeadMark(context, canvas, time, this.position, sizeRatio);
       }
 
       if (this.isMoving) {
-        this.drawMovement(
-          context,
-          canvas,
-          time,
-          this.position,
-          0.3 + 0.2 * (this.position.z / canvas.height),
-        );
+        this.drawMovement(context, canvas, time, this.position, sizeRatio);
       } else {
-        this.drawIdle(
-          context,
-          canvas,
-          time,
-          this.position,
-          0.3 + 0.2 * (this.position.z / canvas.height),
-        );
+        this.drawIdle(context, canvas, time, this.position, sizeRatio);
       }
     });
   };
@@ -588,5 +578,110 @@ export default class Person implements GameObject, PersonState {
     this.move.direction.x = (-1 * this.move.direction.x) as -1 | 1;
   }
 
-  #drawCorrectMark(context: CanvasRenderingContext2D) {}
+  #drawCorrect = (
+    context: CanvasRenderingContext2D,
+    canvas: HTMLCanvasElement,
+    time: number,
+    position: { x: number; y: number },
+    sizeRatio: number,
+  ) => {
+    const { isProgressing, progress } = getTimings({
+      time,
+      start: this.correctAt,
+      duration: 500,
+    });
+    if (!isProgressing || progress < 0) return;
+    const curvedProgress = Math.cos((1 - progress) * Math.PI * (2 / 3));
+    context.setTransform(
+      sizeRatio,
+      0,
+      0,
+      sizeRatio,
+      position.x,
+      position.y + -74 * sizeRatio,
+    );
+    context.scale(2, 1);
+    context.arc(
+      0,
+      120,
+      24 * Math.sin(progress * Math.PI),
+      0,
+      degreeToRadian(360),
+    );
+    context.fill();
+    context.filter = `opacity(${100 * (1 - curvedProgress)}%) hue-rotate(${
+      180 * curvedProgress
+    }deg)`;
+    context.setTransform(
+      -sizeRatio * this.move.direction.x,
+      0,
+      0,
+      sizeRatio * (1 - curvedProgress),
+      position.x + (-2 + 4 * Number(this.move.direction.x === 1)) * sizeRatio,
+      position.y + (-28 + 80 * curvedProgress) * sizeRatio,
+    );
+    this.#drawArm(context);
+    context.setTransform(
+      -sizeRatio * this.move.direction.x,
+      0,
+      0,
+      sizeRatio * (1 - curvedProgress),
+      position.x,
+      position.y + (24 + 28 * curvedProgress) * sizeRatio,
+    );
+    this.#drawUpperBody(context);
+    context.setTransform(
+      -sizeRatio * this.move.direction.x,
+      0,
+      0,
+      sizeRatio * (1 - curvedProgress),
+      position.x,
+      position.y + (63 + -11 * curvedProgress) * sizeRatio,
+    );
+    this.#drawLowerBody(context);
+    context.setTransform(
+      -sizeRatio * this.move.direction.x,
+      0,
+      0,
+      sizeRatio * (1 - curvedProgress),
+      position.x,
+      position.y + (16 + 36 * curvedProgress) * sizeRatio,
+    );
+    this.#drawLeg(context);
+    context.setTransform(
+      -sizeRatio * this.move.direction.x,
+      0,
+      0,
+      sizeRatio * (1 - curvedProgress),
+      position.x + (14 + -28 * Number(this.move.direction.x === 1)) * sizeRatio,
+      position.y + (16 + 36 * curvedProgress) * sizeRatio,
+    );
+    this.#drawLeg(context);
+    context.setTransform(
+      -sizeRatio * this.move.direction.x,
+      0,
+      0,
+      sizeRatio * (1 - curvedProgress),
+      position.x,
+      position.y + 52 * curvedProgress * sizeRatio,
+    );
+    this.#drawHead(context);
+    context.setTransform(
+      -sizeRatio * this.move.direction.x,
+      0,
+      0,
+      sizeRatio * (1 - curvedProgress),
+      position.x + (18 + -36 * Number(this.move.direction.x === 1)) * sizeRatio,
+      position.y + (-28 + 80 * curvedProgress) * sizeRatio,
+    );
+    this.#drawArm(context);
+  };
+
+  #drawDead = (
+    context: CanvasRenderingContext2D,
+    canvas: HTMLCanvasElement,
+    time: number,
+    position: { x: number; y: number },
+    sizeRatio: number,
+  ) => {};
 }
