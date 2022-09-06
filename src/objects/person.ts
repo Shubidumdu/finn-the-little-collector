@@ -245,7 +245,13 @@ export default class Person implements GameObject, PersonState {
       this.#setHitBoxPosition();
 
       if (this.isHit) {
-        this.#drawDeadMark(context);
+        this.#drawDeadMark(
+          context,
+          canvas,
+          time,
+          this.position,
+          0.6 + 0.4 * (this.position.z / canvas.height),
+        );
       }
 
       if (this.isMoving) {
@@ -267,6 +273,16 @@ export default class Person implements GameObject, PersonState {
       }
     });
     drawLayer2((context, canvas) => {
+      if (this.isHit) {
+        this.#drawDeadMark(
+          context,
+          canvas,
+          time,
+          this.position,
+          0.3 + 0.2 * (this.position.z / canvas.height),
+        );
+      }
+
       if (this.isMoving) {
         this.drawMovement(
           context,
@@ -484,32 +500,30 @@ export default class Person implements GameObject, PersonState {
     };
   };
 
-  #drawDeadMark = (context: CanvasRenderingContext2D) => {
+  #drawDeadMark = (
+    context: CanvasRenderingContext2D,
+    canvas: HTMLCanvasElement,
+    time: number,
+    position: { x: number; y: number },
+    sizeRatio: number,
+  ) => {
+    context.setTransform(
+      sizeRatio,
+      0,
+      0,
+      sizeRatio,
+      position.x,
+      position.y + (-74 + Math.sin(time / 128) * 2) * sizeRatio,
+    );
     context.strokeStyle = '#b6d9e9';
     context.beginPath();
-    context.ellipse(
-      this.position.x,
-      this.position.y - 50 + 1,
-      12,
-      5,
-      Math.PI,
-      0,
-      Math.PI * 2,
-    );
+    context.ellipse(0, 0, 12, 5, Math.PI, 0, Math.PI * 2);
     context.lineWidth = 3;
     context.stroke();
 
     context.strokeStyle = '#fff';
     context.beginPath();
-    context.ellipse(
-      this.position.x,
-      this.position.y - 50,
-      10,
-      5,
-      Math.PI,
-      0,
-      Math.PI * 2,
-    );
+    context.ellipse(0, 0, 10, 5, Math.PI, 0, Math.PI * 2);
     context.lineWidth = 3;
     context.stroke();
   };
@@ -573,4 +587,6 @@ export default class Person implements GameObject, PersonState {
   #changeDirectionX() {
     this.move.direction.x = (-1 * this.move.direction.x) as -1 | 1;
   }
+
+  #drawCorrectMark(context: CanvasRenderingContext2D) {}
 }
