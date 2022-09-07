@@ -53,7 +53,17 @@ export const getLinearPosition = ({
   maxWidth,
   time,
   offset,
-}: LinearPosition) => ((x + time) % (maxWidth + offset)) - offset;
+}: LinearPosition) =>
+  (x + time) % (maxWidth + offset) - offset;
+
+/**
+ * 
+ * @param start color like #aaaaaa 
+ * @param delta distance from start
+ * @returns 
+ */
+export const calculateHex = (start: string, delta: number) =>
+  `#${(parseInt(start.replace('#', '0x')) + delta).toString(16)}`;
 
 export const isInsideRect = (
   position: { x: number; y: number },
