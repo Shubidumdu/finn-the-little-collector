@@ -24,7 +24,7 @@ export default class PlayScene implements Scene {
   barrier: Rect;
 
   constructor() {
-    this.activeBackground = 'pool';
+    this.activeBackground = 'road';
     this.backgrounds = {
       playground: new Playground(),
       pool: new Pool(),
