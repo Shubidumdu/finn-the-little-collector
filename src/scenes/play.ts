@@ -82,7 +82,7 @@ export default class PlayScene implements Scene {
     });
     this.magnifier.init({
       position: { x: 0, y: 0 },
-      range: 240,
+      range: 120,
     });
 
     const wantedPersons = this.persons.filter(

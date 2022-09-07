@@ -1,8 +1,7 @@
 import { resetAllLayers } from './canvas';
-import { EventType } from './event';
+import { ChangeSceneEvent, EventType, listenEvent } from './event';
 import { PlayScene, TitleScene, Scene, SceneType } from './scenes';
 import { PlaySceneState } from './scenes/play';
-
 
 export type ChangeSceneToPlay = (type: 'play', state: PlaySceneState) => void;
 
@@ -23,7 +22,7 @@ export default class Game {
   start = () => {
     this.scenes['title'].start();
     requestAnimationFrame(this.#update);
-    this.#observeEvents();
+    this.#listenEvents();
   };
 
   #changeScene: ChangeScene = (type, state) => {
@@ -38,19 +37,11 @@ export default class Game {
     requestAnimationFrame(this.#update);
   };
 
-  #observeEvents = () => {
-    window.addEventListener(
-      'message',
-      (event: MessageEvent<EventType>) => {
-        if (!event.data) return;
-        const { type, payload } = event.data;
-
-        switch (type) {
-          case 'change-scene':
-            this.#changeScene(payload.type, payload.state);
-            break;
-        }
-      },
-    );
-  };
+  #listenEvents = () => {
+    listenEvent(({ type, payload }) => {
+      if (type === 'change-scene') {
+        this.#changeScene(payload.type, payload.state);
+      }
+    });
+  }
 }

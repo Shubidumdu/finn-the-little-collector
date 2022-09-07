@@ -28,3 +28,10 @@ export const postEvent = ({ type, payload }: EventType) => {
     window.origin,
   );
 };
+
+export const listenEvent = (handleEventData: (data: EventType) => void) => {
+  window.addEventListener('message', (event: MessageEvent<EventType>) => {
+    if (!event.data) return;
+    handleEventData(event.data);
+  });
+};
