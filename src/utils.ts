@@ -29,7 +29,7 @@ export const getFont = (
   type: string = 'Arial Black, Arial, sans-serif',
 ) => `bold ${size}pt ${type}`;
 
-export const getRandomInteger = (min: number, max: number) => Math.round(Math.random() * (max - min) + min);
+export const getRandomIntegerFromRange = (min: number, max: number) => Math.round(Math.random() * (max - min) + min);
 
 export const getRandomColor = () =>
   `#${Math.floor(Math.random() * 16777215).toString(16).padEnd(6, '0')}`;

@@ -5,7 +5,7 @@ import { BackgroundType, Playground, Pool, Road } from '../objects/backgrounds';
 import PlayInfo from '../objects/playInfo';
 import Magnifier from '../objects/magnifier';
 import Person, { EYE_COLORS, LOWER_BODY_SIZE, SKIN_COLORS } from '../objects/person';
-import { getRandomColor, getRandomInteger, pickRandomOption } from '../utils';
+import { getRandomColor, getRandomIntegerFromRange, pickRandomOption } from '../utils';
 import WantedPoster from '../objects/wantedPoster';
 import Music from '../sounds/music';
 import playMusic from '../sounds/musics/play';
@@ -57,8 +57,8 @@ export default class PlayScene implements Scene {
       person.init({
         id: index,
         position: {
-          x: getRandomInteger(this.barrier.left, this.barrier.right),
-          y: getRandomInteger(this.barrier.top, this.barrier.bottom - LOWER_BODY_SIZE),
+          x: getRandomIntegerFromRange(this.barrier.left, this.barrier.right),
+          y: getRandomIntegerFromRange(this.barrier.top, this.barrier.bottom - LOWER_BODY_SIZE),
           z: 0,
         },
         colors: {

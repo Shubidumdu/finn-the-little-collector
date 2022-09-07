@@ -1,7 +1,7 @@
 import { GameObject } from '.';
 import canvas, { drawLayer } from '../canvas';
 import { RectType, Rect } from '../types/rect';
-import { degreeToRadian, getRandomInteger, getTimings } from '../utils';
+import { degreeToRadian, getRandomIntegerFromRange, getTimings } from '../utils';
 
 type ColorState = {
   hair: string;
@@ -101,22 +101,22 @@ export default class Person implements GameObject, PersonState {
     ];
 
     const getRandomMoveIndex = () => {
-      const randomIndex = Math.floor(getRandomInteger(0, moves.length - 1));
+      const randomIndex = Math.floor(getRandomIntegerFromRange(0, moves.length - 1));
       return randomIndex;
     };
     const randomizeMoves = () => {
       this.moves = [moves[getRandomMoveIndex()], moves[getRandomMoveIndex()]];
     };
     const randomizeIntervals = () => {
-      this.intervals = [getRandomInteger(4_000, 7_000)];
+      this.intervals = [getRandomIntegerFromRange(4_000, 7_000)];
     };
     const randomizeXandY = () => {
-      this.randomX = getRandomInteger(SPEED_MIN_MULTIPLE, SPEED_MAX_MULTIPLE);
-      this.randomY = getRandomInteger(SPEED_MIN_MULTIPLE, SPEED_MAX_MULTIPLE);
+      this.randomX = getRandomIntegerFromRange(SPEED_MIN_MULTIPLE, SPEED_MAX_MULTIPLE);
+      this.randomY = getRandomIntegerFromRange(SPEED_MIN_MULTIPLE, SPEED_MAX_MULTIPLE);
     };
     const randomizeDirection = () => {
-      getRandomInteger(-1, 1) > 0 && this.#changeDirectionX();
-      getRandomInteger(-1, 1) > 0 && this.#changeDirectionY();
+      getRandomIntegerFromRange(-1, 1) > 0 && this.#changeDirectionX();
+      getRandomIntegerFromRange(-1, 1) > 0 && this.#changeDirectionY();
     };
 
     randomizeMoves();
@@ -127,11 +127,11 @@ export default class Person implements GameObject, PersonState {
       randomizeXandY();
       randomizeIntervals();
       randomizeMoves();
-    }, getRandomInteger(8_000, 16_000));
+    }, getRandomIntegerFromRange(8_000, 16_000));
 
     setInterval(() => {
       randomizeDirection();
-    }, getRandomInteger(8_000, 16_000));
+    }, getRandomIntegerFromRange(8_000, 16_000));
   };
 
   update = (time: DOMHighResTimeStamp) => {
