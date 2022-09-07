@@ -15,22 +15,22 @@ const setViewPort = () => {
   const width = Math.round(visualViewport.scale * visualViewport.width);
   const height = Math.round(visualViewport.scale * visualViewport.height);
 
-  if (width <= 460 || height <= 460) {
-    viewportMeta.setAttribute(
-      'content',
-      'width=device-width, initial-scale=0.5, user-scalable=0',
-    );
-  } else if (width <= 768 || height <= 768) {
-    viewportMeta.setAttribute(
-      'content',
-      'width=device-width, initial-scale=0.725, user-scalable=0',
-    );
-  } else {
-    viewportMeta.setAttribute(
-      'content',
-      'width=device-width, initial-scale=1.0, user-scalable=0',
-    );
-  }
+  // if (width <= 460 || height <= 460) {
+  //   viewportMeta.setAttribute(
+  //     'content',
+  //     'width=device-width, initial-scale=0.5, user-scalable=0',
+  //   );
+  // } else if (width <= 768 || height <= 768) {
+  //   viewportMeta.setAttribute(
+  //     'content',
+  //     'width=device-width, initial-scale=0.725, user-scalable=0',
+  //   );
+  // } else {
+  //   viewportMeta.setAttribute(
+  //     'content',
+  //     'width=device-width, initial-scale=1.0, user-scalable=0',
+  //   );
+  // }
 };
 
 const handleResize = () => {

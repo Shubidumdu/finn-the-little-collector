@@ -11,6 +11,15 @@ import Music from '../sounds/music';
 import playMusic from '../sounds/musics/play';
 import playEffectSound from '../sounds/effects';
 
+export type PlaySceneState = {
+  activeBackground: BackgroundType;
+  stage: number;
+  timeout: number;
+  lifeCount: number;
+  personCount: number;
+  wantedPersonCount: number;
+};
+
 export default class PlayScene implements Scene {
   activeBackground: BackgroundType;
   backgrounds: { [background in BackgroundType]: GameObject };
@@ -35,16 +44,24 @@ export default class PlayScene implements Scene {
     this.wantedPoster = new WantedPoster();
   }
 
-  start = () => {
+  start = ({
+    activeBackground,
+    stage,
+    timeout,
+    lifeCount,
+    personCount,
+    wantedPersonCount
+  }: PlaySceneState) => {
+    this.activeBackground = activeBackground;
     this.backgrounds[this.activeBackground].init();
     this.music.play(true);
     this.info.init({
-      stage: 1,
-      timeout: 10000,
-      lifeCount: 5,
+      stage,
+      timeout,
+      lifeCount,
     });
 
-    this.persons = [...new Array(100)].map(() => new Person());
+    this.persons = [...new Array(personCount)].map(() => new Person());
     this.persons.forEach((person, index) => {
       person.init({
         id: index,
@@ -65,10 +82,9 @@ export default class PlayScene implements Scene {
     });
     this.magnifier.init({
       position: { x: 0, y: 0 },
-      range: 100,
+      range: 240,
     });
 
-    const wantedPersonCount = 3;
     const wantedPersons = this.persons.filter(
       (person) => person.id < wantedPersonCount,
     );

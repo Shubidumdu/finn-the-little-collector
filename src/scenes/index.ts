@@ -4,7 +4,7 @@ import TitleScene from './title';
 export type SceneType = 'play' | 'title';
 
 export interface Scene {
-  start: () => void;
+  start: (...args: any) => void;
   update: (time: number) => void;
   end: () => void;
 }

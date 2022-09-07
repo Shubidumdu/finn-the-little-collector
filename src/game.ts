@@ -1,21 +1,12 @@
 import { resetAllLayers } from './canvas';
+import { EventType } from './event';
 import { PlayScene, TitleScene, Scene, SceneType } from './scenes';
+import { PlaySceneState } from './scenes/play';
 
-type ChangeScene = {
-  type: 'change-scene',
-  payload: SceneType,
-};
 
-type ClickEvent = {
-  type: 'click-canvas',
-  payload: {
-    id: string,
-    x: number,
-    y: number,
-  },
-};
+export type ChangeSceneToPlay = (type: 'play', state: PlaySceneState) => void;
 
-export type ObservableEventType = ChangeScene | ClickEvent;
+export type ChangeScene = ChangeSceneToPlay;
 
 export default class Game {
   activeScene: SceneType;
@@ -30,20 +21,15 @@ export default class Game {
   }
 
   start = () => {
-    this.scenes[this.activeScene].start();
+    this.scenes['title'].start();
     requestAnimationFrame(this.#update);
     this.#observeEvents();
   };
 
-  #changeScene = (type: SceneType) => {
+  #changeScene: ChangeScene = (type, state) => {
     this.scenes[this.activeScene].end();
     this.activeScene = type;
-    this.scenes[this.activeScene].start();
-  };
-
-  #click = (payload: ClickEvent['payload']) => {
-    console.log('canvas click');
-    console.log(payload);
+    this.scenes[this.activeScene].start(state);
   };
 
   #update = (time: number) => {
@@ -55,15 +41,14 @@ export default class Game {
   #observeEvents = () => {
     window.addEventListener(
       'message',
-      (event: MessageEvent<ObservableEventType>) => {
+      (event: MessageEvent<EventType>) => {
         if (!event.data) return;
         const { type, payload } = event.data;
 
         switch (type) {
-          case 'change-scene': this.#changeScene(payload);
-          break;
-          case 'click-canvas': this.#click(payload);
-          break;
+          case 'change-scene':
+            this.#changeScene(payload.type, payload.state);
+            break;
         }
       },
     );

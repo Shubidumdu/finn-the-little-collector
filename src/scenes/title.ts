@@ -1,5 +1,6 @@
 import { Scene, SceneType } from '.';
 import canvas, { drawLayer } from '../canvas';
+import { postEvent } from '../event';
 import playEffectSound from '../sounds/effects';
 import Music from '../sounds/music';
 import titleMusic from '../sounds/musics/title';
@@ -13,7 +14,20 @@ export default class TitleScene implements Scene {
   menus = [
     {
       key: 'start',
-      action: () => this.#changeScene('play'),
+      action: () => postEvent({
+        type: 'change-scene',
+        payload: {
+          type: 'play',
+          state: {
+            activeBackground: 'road',
+            stage: 1,
+            timeout: 60_000,
+            lifeCount: 5,
+            personCount: 100,
+            wantedPersonCount: 3,
+          }
+        }
+      }),
     },
     {
       key: 'sound',
