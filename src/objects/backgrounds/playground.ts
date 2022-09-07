@@ -31,12 +31,6 @@ export default class Playground implements GameObject {
       context.transform(1, 0, 0, 1, 0, verticalMiddle);
       context.fillStyle = '#0cae75';
       context.fillRect(0, 0, canvas.width, verticalMiddle);
-
-      // person 이동 영역
-      context.setTransform(1, 0, -0.5, 1, canvas.width / 2 - 280, 240);
-      context.beginPath();
-      context.strokeRect(0, 0, 800, 600);
-      context.closePath();
     });
   };
 

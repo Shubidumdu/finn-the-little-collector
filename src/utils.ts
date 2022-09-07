@@ -1,4 +1,4 @@
-import { Rect } from './types/rect';
+import { RectType } from './types/rect';
 
 export const degreeToRadian = (degree: number) => (Math.PI / 180) * degree;
 
@@ -67,7 +67,7 @@ export const calculateHex = (start: string, delta: number) =>
 
 export const isInsideRect = (
   position: { x: number; y: number },
-  rect: Rect,
+  rect: RectType,
 ) => {
   const { left, right, top, bottom } = rect;
   const { x, y } = position;

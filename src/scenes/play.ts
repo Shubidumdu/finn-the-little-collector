@@ -4,12 +4,13 @@ import { GameObject } from '../objects';
 import { BackgroundType, Playground, Pool, Road } from '../objects/backgrounds';
 import PlayInfo from '../objects/playInfo';
 import Magnifier from '../objects/magnifier';
-import Person, { EYE_COLORS, SKIN_COLORS } from '../objects/person';
-import { getRandomColor, getRandomInt, pickRandomOption } from '../utils';
+import Person, { EYE_COLORS, LOWER_BODY_SIZE, SKIN_COLORS } from '../objects/person';
+import { getRandomColor, getRandomInteger, pickRandomOption } from '../utils';
 import WantedPoster from '../objects/wantedPoster';
 import Music from '../sounds/music';
 import playMusic from '../sounds/musics/play';
 import playEffectSound from '../sounds/effects';
+import { Rect } from '../types/rect';
 
 export default class PlayScene implements Scene {
   activeBackground: BackgroundType;
@@ -20,9 +21,10 @@ export default class PlayScene implements Scene {
   persons: Person[];
   wantedPoster: WantedPoster;
   music = new Music(playMusic);
+  barrier: Rect;
 
   constructor() {
-    this.activeBackground = 'road';
+    this.activeBackground = 'pool';
     this.backgrounds = {
       playground: new Playground(),
       pool: new Pool(),
@@ -33,6 +35,12 @@ export default class PlayScene implements Scene {
     this.persons = [];
     this.layer1 = canvas.get('layer1');
     this.wantedPoster = new WantedPoster();
+    this.barrier = new Rect({
+      left: this.layer1.width / 5,
+      top: this.layer1.height / 5,
+      width: this.layer1.width / 5 * 3,
+      height: this.layer1.height / 5 * 3,
+    })
   }
 
   start = () => {
@@ -49,8 +57,8 @@ export default class PlayScene implements Scene {
       person.init({
         id: index,
         position: {
-          x: getRandomInt(this.layer1.width),
-          y: getRandomInt(this.layer1.height),
+          x: getRandomInteger(this.barrier.left, this.barrier.right),
+          y: getRandomInteger(this.barrier.top, this.barrier.bottom - LOWER_BODY_SIZE),
           z: 0,
         },
         colors: {
@@ -61,6 +69,7 @@ export default class PlayScene implements Scene {
           bottom: getRandomColor(),
           shoe: getRandomColor(),
         },
+        barrier: this.barrier,
       });
     });
     this.magnifier.init({

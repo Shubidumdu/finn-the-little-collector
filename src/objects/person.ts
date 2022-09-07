@@ -1,6 +1,6 @@
 import { GameObject } from '.';
 import canvas, { drawLayer } from '../canvas';
-import { Rect } from '../types/rect';
+import { RectType, Rect } from '../types/rect';
 import { degreeToRadian, getRandomInteger, getTimings } from '../utils';
 
 type ColorState = {
@@ -20,6 +20,7 @@ type PersonState = {
     z: number;
   };
   colors: ColorState;
+  barrier: Rect;
 };
 
 export const EYE_COLORS = ['#634e34', '#2e536f', '#1c7847'];
@@ -31,6 +32,7 @@ export const SKIN_COLORS = [
   '#ffdbac',
 ];
 
+export const LOWER_BODY_SIZE = 18
 const PADDING = 10;
 const SPEED_MAX_MULTIPLE = 0.3;
 const SPEED_MIN_MULTIPLE = -1;
@@ -60,8 +62,9 @@ export default class Person implements GameObject, PersonState {
   defaultSpeed: number;
   colors: ColorState;
   moves: any[];
+  barrier: Rect;
 
-  hitBoxPosition: Rect;
+  hitBoxPosition: RectType;
   isHit: boolean = false;
 
   correctAt: number = 0;
@@ -72,7 +75,7 @@ export default class Person implements GameObject, PersonState {
   }
 
   init = (state: PersonState) => {
-    const { id, position, colors } = state;
+    const { id, position, colors, barrier } = state;
     this.id = id;
     this.position = position;
     this.move = {
@@ -83,6 +86,7 @@ export default class Person implements GameObject, PersonState {
       },
     };
     this.colors = colors;
+    this.barrier = barrier;
 
     const moves = [
       ...Array.from({ length: 12 }, () => this.#moveIdle),
@@ -153,7 +157,7 @@ export default class Person implements GameObject, PersonState {
     this.isMoving = true;
     this.#moveX(this.defaultSpeed * (1 + this.randomX));
 
-    this.#stayInViewport();
+    this.#stayInBarrier();
   };
 
   #moveRandomXY = () => {
@@ -161,7 +165,7 @@ export default class Person implements GameObject, PersonState {
     this.#moveX(this.defaultSpeed * (1 + this.randomX));
     this.#moveY(this.defaultSpeed * (1 + this.randomY) * 0.6);
 
-    this.#stayInViewport();
+    this.#stayInBarrier();
   };
 
   #moveGentleSlope = () => {
@@ -169,7 +173,7 @@ export default class Person implements GameObject, PersonState {
     this.#moveX(this.defaultSpeed);
     this.#moveY(this.defaultSpeed * 0.2);
 
-    this.#stayInViewport();
+    this.#stayInBarrier();
   };
 
   #moveSteepSlope = () => {
@@ -177,7 +181,7 @@ export default class Person implements GameObject, PersonState {
     this.#moveX(this.defaultSpeed);
     this.#moveY(this.defaultSpeed * 1.2);
 
-    this.#stayInViewport();
+    this.#stayInBarrier();
   };
 
   #moveSpeedDownGentleSlope = (progress?: number) => {
@@ -186,7 +190,7 @@ export default class Person implements GameObject, PersonState {
     this.#moveX(this.defaultSpeed * (1 - progress));
     this.#moveY(this.defaultSpeed * 0.2 * (1 - progress));
 
-    this.#stayInViewport();
+    this.#stayInBarrier();
   };
 
   #moveSpeedDownXY = (progress?: number) => {
@@ -197,7 +201,7 @@ export default class Person implements GameObject, PersonState {
     this.#moveX(this.defaultSpeed * (1 - naturalizedProgress));
     this.#moveY(this.defaultSpeed * (1 - naturalizedProgress));
 
-    this.#stayInViewport();
+    this.#stayInBarrier();
   };
 
   #moveSpeedUpGentleSlope = (progress?: number) => {
@@ -205,7 +209,7 @@ export default class Person implements GameObject, PersonState {
     this.#moveX(this.defaultSpeed * (1 + progress));
     this.#moveY(this.defaultSpeed * (1 + progress) * 0.2);
 
-    this.#stayInViewport();
+    this.#stayInBarrier();
   };
 
   #moveSpeedUpXY = (progress?: number) => {
@@ -214,7 +218,7 @@ export default class Person implements GameObject, PersonState {
     this.#moveX(this.defaultSpeed * (1 + naturalizedProgress));
     this.#moveY(this.defaultSpeed * (1 + naturalizedProgress) * 0.6);
 
-    this.#stayInViewport();
+    this.#stayInBarrier();
   };
 
   remove = () => {
@@ -552,18 +556,17 @@ export default class Person implements GameObject, PersonState {
     this.position.x = this.position.x + delta * this.move.direction.x;
   }
 
-  #stayInViewport() {
-    if (
-      this.position.x < PADDING * -2 ||
-      this.position.x >= document.body.clientWidth
+  #stayInBarrier() {
+    if (this.position.x < this.barrier.left || 
+      this.position.x >= this.barrier.right
     ) {
-      this.#changeDirectionX();
+      this.#changeDirectionX()
     }
-    if (
-      this.position.y < PADDING * -1 ||
-      this.position.y >= document.body.clientHeight
+
+    if (this.position.y < this.barrier.top ||
+      this.position.y >= this.barrier.bottom - LOWER_BODY_SIZE
     ) {
-      this.#changeDirectionY();
+      this.#changeDirectionY()
     }
   }
 
