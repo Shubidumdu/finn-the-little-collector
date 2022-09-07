@@ -9,6 +9,7 @@ import { getRandomColor, getRandomInt, pickRandomOption } from '../utils';
 import WantedPoster from '../objects/wantedPoster';
 import Music from '../sounds/music';
 import playMusic from '../sounds/musics/play';
+import playEffectSound from '../sounds/effects';
 
 export default class PlayScene implements Scene {
   activeBackground: BackgroundType;
@@ -90,16 +91,23 @@ export default class PlayScene implements Scene {
 
         if (person.isHit) {
           isPersonClicked = true;
-          if (person.id < this.wantedPoster.persons.length) {
+          if (person.id < wantedPersonCount) {
             isCorrect = true;
-            alert(`You hit PersonId:${person.id}!`);
             this.wantedPoster.removePerson(person.id);
+            person.correctAt = performance.now();
+          } else {
+            person.deadAt = performance.now();
           }
         }
       });
 
-      if (isPersonClicked && !isCorrect) {
-        this.info.lifeCount = Math.max(0, this.info.lifeCount - 1);
+      if (isPersonClicked) {
+        if (!isCorrect) {
+          playEffectSound('wrong');
+          this.info.lifeCount = Math.max(0, this.info.lifeCount - 1);
+        } else {
+          playEffectSound('correct');
+        }
       }
     });
   };
