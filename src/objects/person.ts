@@ -1,5 +1,6 @@
 import { GameObject } from '.';
 import canvas, { drawLayer } from '../canvas';
+import { Rect } from '../types/rect';
 import { degreeToRadian, getRandomInteger, getTimings } from '../utils';
 
 type ColorState = {
@@ -19,15 +20,6 @@ type PersonState = {
     z: number;
   };
   colors: ColorState;
-};
-
-type Rect = {
-  left: number;
-  width: number;
-  right: number;
-  top: number;
-  height: number;
-  bottom: number;
 };
 
 export const EYE_COLORS = ['#634e34', '#2e536f', '#1c7847'];
@@ -71,6 +63,9 @@ export default class Person implements GameObject, PersonState {
 
   hitBoxPosition: Rect;
   isHit: boolean = false;
+
+  correctAt: number = 0;
+  deadAt: number = 0;
 
   constructor(defaultSpeed: number = DEFAULT_SPEED) {
     this.defaultSpeed = defaultSpeed;
@@ -242,47 +237,55 @@ export default class Person implements GameObject, PersonState {
     const drawLayer2 = drawLayer(layer2);
 
     drawLayer1((context, canvas) => {
+      const sizeRatio = 0.6 + 0.4 * (this.position.z / canvas.height);
       this.#setHitBoxPosition();
+      this.#drawShadow(context, canvas, time, this.position, sizeRatio);
+
+      if (this.correctAt) {
+        this.#drawCorrect(context, canvas, time, this.position, sizeRatio);
+        return;
+      }
+
+      if (this.deadAt) {
+        this.#drawDead(context, canvas, time, this.position, sizeRatio);
+        return;
+      }
 
       if (this.isHit) {
-        this.#drawDeadMark(context);
+        this.#drawDeadMark(context, canvas, time, this.position, sizeRatio);
       }
 
       if (this.isMoving) {
-        this.drawMovement(
-          context,
-          canvas,
-          time,
-          this.position,
-          0.6 + 0.4 * (this.position.z / canvas.height),
-        );
+        this.drawMovement(context, canvas, time, this.position, sizeRatio);
       } else {
-        this.drawIdle(
-          context,
-          canvas,
-          time,
-          this.position,
-          0.6 + 0.4 * (this.position.z / canvas.height),
-        );
+        this.drawIdle(context, canvas, time, this.position, sizeRatio);
       }
     });
     drawLayer2((context, canvas) => {
+      const sizeRatio = 0.3 + 0.2 * (this.position.z / canvas.height);
+
+      this.#drawShadow(context, canvas, time, this.position, sizeRatio);
+
+      if (this.correctAt) {
+        this.#drawCorrect(context, canvas, time, this.position, sizeRatio);
+        return;
+      }
+
+      if (this.deadAt) {
+        this.#drawCorrect(context, canvas, time, this.position, sizeRatio);
+        return;
+      }
+
+      this.#drawShadow(context, canvas, time, this.position, sizeRatio);
+
+      if (this.isHit) {
+        this.#drawDeadMark(context, canvas, time, this.position, sizeRatio);
+      }
+
       if (this.isMoving) {
-        this.drawMovement(
-          context,
-          canvas,
-          time,
-          this.position,
-          0.3 + 0.2 * (this.position.z / canvas.height),
-        );
+        this.drawMovement(context, canvas, time, this.position, sizeRatio);
       } else {
-        this.drawIdle(
-          context,
-          canvas,
-          time,
-          this.position,
-          0.3 + 0.2 * (this.position.z / canvas.height),
-        );
+        this.drawIdle(context, canvas, time, this.position, sizeRatio);
       }
     });
   };
@@ -484,32 +487,30 @@ export default class Person implements GameObject, PersonState {
     };
   };
 
-  #drawDeadMark = (context: CanvasRenderingContext2D) => {
+  #drawDeadMark = (
+    context: CanvasRenderingContext2D,
+    canvas: HTMLCanvasElement,
+    time: number,
+    position: { x: number; y: number },
+    sizeRatio: number,
+  ) => {
+    context.setTransform(
+      sizeRatio,
+      0,
+      0,
+      sizeRatio,
+      position.x,
+      position.y + (-74 + Math.sin(time / 128) * 2) * sizeRatio,
+    );
     context.strokeStyle = '#b6d9e9';
     context.beginPath();
-    context.ellipse(
-      this.position.x,
-      this.position.y - 50 + 1,
-      12,
-      5,
-      Math.PI,
-      0,
-      Math.PI * 2,
-    );
+    context.ellipse(0, 0, 12, 5, Math.PI, 0, Math.PI * 2);
     context.lineWidth = 3;
     context.stroke();
 
     context.strokeStyle = '#fff';
     context.beginPath();
-    context.ellipse(
-      this.position.x,
-      this.position.y - 50,
-      10,
-      5,
-      Math.PI,
-      0,
-      Math.PI * 2,
-    );
+    context.ellipse(0, 0, 10, 5, Math.PI, 0, Math.PI * 2);
     context.lineWidth = 3;
     context.stroke();
   };
@@ -573,4 +574,224 @@ export default class Person implements GameObject, PersonState {
   #changeDirectionX() {
     this.move.direction.x = (-1 * this.move.direction.x) as -1 | 1;
   }
+
+  #drawCorrect = (
+    context: CanvasRenderingContext2D,
+    canvas: HTMLCanvasElement,
+    time: number,
+    position: { x: number; y: number },
+    sizeRatio: number,
+  ) => {
+    const { isProgressing, progress } = getTimings({
+      time,
+      start: this.correctAt,
+      duration: 500,
+    });
+    if (!isProgressing || progress < 0) return;
+    const curvedProgress = Math.cos((1 - progress) * Math.PI * (2 / 3));
+    context.setTransform(
+      sizeRatio,
+      0,
+      0,
+      sizeRatio,
+      position.x,
+      position.y + -74 * sizeRatio,
+    );
+    context.scale(2, 1);
+    context.arc(
+      0,
+      120,
+      24 * Math.sin(progress * Math.PI),
+      0,
+      degreeToRadian(360),
+    );
+    context.fillStyle = '#000';
+    context.fill();
+    context.filter = `opacity(${100 * (1 - curvedProgress)}%) hue-rotate(${
+      180 * curvedProgress
+    }deg)`;
+    context.setTransform(
+      -sizeRatio * this.move.direction.x,
+      0,
+      0,
+      sizeRatio * (1 - curvedProgress),
+      position.x + (-2 + 4 * Number(this.move.direction.x === 1)) * sizeRatio,
+      position.y + (-28 + 80 * curvedProgress) * sizeRatio,
+    );
+    this.#drawArm(context);
+    context.setTransform(
+      -sizeRatio * this.move.direction.x,
+      0,
+      0,
+      sizeRatio * (1 - curvedProgress),
+      position.x,
+      position.y + (24 + 28 * curvedProgress) * sizeRatio,
+    );
+    this.#drawUpperBody(context);
+    context.setTransform(
+      -sizeRatio * this.move.direction.x,
+      0,
+      0,
+      sizeRatio * (1 - curvedProgress),
+      position.x,
+      position.y + (63 + -11 * curvedProgress) * sizeRatio,
+    );
+    this.#drawLowerBody(context);
+    context.setTransform(
+      -sizeRatio * this.move.direction.x,
+      0,
+      0,
+      sizeRatio * (1 - curvedProgress),
+      position.x,
+      position.y + (16 + 36 * curvedProgress) * sizeRatio,
+    );
+    this.#drawLeg(context);
+    context.setTransform(
+      -sizeRatio * this.move.direction.x,
+      0,
+      0,
+      sizeRatio * (1 - curvedProgress),
+      position.x + (14 + -28 * Number(this.move.direction.x === 1)) * sizeRatio,
+      position.y + (16 + 36 * curvedProgress) * sizeRatio,
+    );
+    this.#drawLeg(context);
+    context.setTransform(
+      -sizeRatio * this.move.direction.x,
+      0,
+      0,
+      sizeRatio * (1 - curvedProgress),
+      position.x,
+      position.y + 52 * curvedProgress * sizeRatio,
+    );
+    this.#drawHead(context);
+    context.setTransform(
+      -sizeRatio * this.move.direction.x,
+      0,
+      0,
+      sizeRatio * (1 - curvedProgress),
+      position.x + (18 + -36 * Number(this.move.direction.x === 1)) * sizeRatio,
+      position.y + (-28 + 80 * curvedProgress) * sizeRatio,
+    );
+    this.#drawArm(context);
+  };
+
+  #drawDead = (
+    context: CanvasRenderingContext2D,
+    canvas: HTMLCanvasElement,
+    time: number,
+    position: { x: number; y: number },
+    sizeRatio: number,
+  ) => {
+    const { isProgressing, progress } = getTimings({
+      time,
+      start: this.deadAt,
+      duration: 200,
+    });
+    if (!isProgressing || progress < 0) return;
+    context.setTransform(
+      sizeRatio,
+      0,
+      0,
+      sizeRatio,
+      position.x,
+      position.y + -74 * sizeRatio,
+    );
+    context.filter = `grayscale(${100 * progress}%) opacity(${
+      100 * (1 - progress)
+    }%)`;
+    context.setTransform(
+      -sizeRatio * this.move.direction.x,
+      0,
+      0,
+      sizeRatio,
+      position.x + (-2 + 4 * Number(this.move.direction.x === 1)) * sizeRatio,
+      position.y + (-28 + Math.sin(time / 128)) * sizeRatio,
+    );
+    this.#drawArm(context);
+    context.setTransform(
+      -sizeRatio * this.move.direction.x,
+      0,
+      0,
+      sizeRatio,
+      position.x,
+      position.y + (24 + Math.sin(time / 128)) * sizeRatio,
+    );
+    this.#drawUpperBody(context);
+    context.setTransform(
+      -sizeRatio * this.move.direction.x,
+      0,
+      0,
+      sizeRatio,
+      position.x,
+      position.y + (63 + Math.sin(time / 128)) * sizeRatio,
+    );
+    this.#drawLowerBody(context);
+    context.setTransform(
+      -sizeRatio * this.move.direction.x,
+      0,
+      0,
+      sizeRatio,
+      position.x,
+      position.y + 16 * sizeRatio,
+    );
+    this.#drawLeg(context);
+    context.setTransform(
+      -sizeRatio * this.move.direction.x,
+      0,
+      0,
+      sizeRatio,
+      position.x + (14 + -28 * Number(this.move.direction.x === 1)) * sizeRatio,
+      position.y + 16 * sizeRatio,
+    );
+    this.#drawLeg(context);
+    context.setTransform(
+      -sizeRatio * this.move.direction.x,
+      0,
+      0,
+      sizeRatio,
+      position.x,
+      position.y + Math.sin(time / 128) * sizeRatio,
+    );
+    this.#drawHead(context);
+    context.setTransform(
+      -sizeRatio * this.move.direction.x,
+      0,
+      0,
+      sizeRatio,
+      position.x + (18 + -36 * Number(this.move.direction.x === 1)) * sizeRatio,
+      position.y + (-28 + Math.sin(time / 128)) * sizeRatio,
+    );
+    this.#drawArm(context);
+  };
+
+  #drawShadow = (
+    context: CanvasRenderingContext2D,
+    canvas: HTMLCanvasElement,
+    time: number,
+    position: { x: number; y: number },
+    sizeRatio: number,
+  ) => {
+    const deadTiming = getTimings({
+      time,
+      start: this.deadAt,
+      duration: 200,
+    });
+    if (deadTiming.isEnded && this.deadAt) return;
+    if (this.correctAt) return;
+
+    context.setTransform(
+      -sizeRatio * this.move.direction.x,
+      0,
+      0,
+      sizeRatio,
+      position.x + (-2 + 4 * Number(this.move.direction.x === 1)) * sizeRatio,
+      position.y + 44 * sizeRatio,
+    );
+    context.scale(2, 1);
+    context.arc(0, 0, 18, 0, degreeToRadian(360));
+    context.fillStyle = deadTiming.isProgressing
+      ? `rgba(0, 0, 0, ${0.1 * (1 - deadTiming.progress)})`
+      : 'rgba(0, 0, 0, 0.1)';
+    context.fill();
+  };
 }
