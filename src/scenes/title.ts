@@ -5,7 +5,8 @@ import Music from '../sounds/music';
 import titleMusic from '../sounds/musics/title';
 import store from '../store';
 import { setIsSoundOn } from '../store/mutation';
-import { getFont } from '../utils';
+import { Rect } from '../types/rect';
+import { getFont, isInsideRect } from '../utils';
 
 export default class TitleScene implements Scene {
   activeMenuIndex = 0;
@@ -29,6 +30,14 @@ export default class TitleScene implements Scene {
   ];
   music = new Music(titleMusic);
 
+  hitBoxes: {
+    start: Rect;
+    sound: Rect;
+  } = {
+    start: {} as Rect,
+    sound: {} as Rect,
+  };
+
   start = () => {
     this.activeMenuIndex = 0;
     this.#addEvents();
@@ -49,6 +58,22 @@ export default class TitleScene implements Scene {
   #addEvents = () => {
     window.addEventListener('keydown', this.#changeMenuIndexEvent);
     window.addEventListener('keydown', this.#actionEvent);
+
+    window.addEventListener('click', (e: PointerEvent) => {
+      const { clientX, clientY } = e;
+
+      if (isInsideRect({ x: clientX, y: clientY }, this.hitBoxes.start)) {
+        this.activeMenuIndex = 0;
+        const currentMenu = this.menus[this.activeMenuIndex];
+        currentMenu.action();
+      }
+
+      if (isInsideRect({ x: clientX, y: clientY }, this.hitBoxes.sound)) {
+        this.activeMenuIndex = 1;
+        const currentMenu = this.menus[this.activeMenuIndex];
+        currentMenu.action();
+      }
+    });
   };
 
   #removeEvents = () => {
@@ -60,7 +85,10 @@ export default class TitleScene implements Scene {
     playEffectSound('pick');
 
     if (e.code === 'ArrowDown') {
-      this.activeMenuIndex = Math.min(this.activeMenuIndex + 1, this.menus.length - 1);
+      this.activeMenuIndex = Math.min(
+        this.activeMenuIndex + 1,
+        this.menus.length - 1,
+      );
     }
 
     if (e.code === 'ArrowUp') {
@@ -74,7 +102,7 @@ export default class TitleScene implements Scene {
     const currentMenu = this.menus[this.activeMenuIndex];
     currentMenu.action();
   };
-  
+
   #changeScene = (sceneType: SceneType) => {
     window.postMessage(
       {
@@ -109,15 +137,57 @@ export default class TitleScene implements Scene {
     const drawLayer1 = drawLayer(layer1);
 
     drawLayer1((context, canvas) => {
+      const hitBoxpadding = 3;
+      const fontSize = 12;
+      const startTextWidth = 45 + hitBoxpadding * 2;
+      const startTextHeight = fontSize + hitBoxpadding * 2;
+      const soundTextWidth = 104 + hitBoxpadding * 2;
+      const soundTextHeight = fontSize + hitBoxpadding * 2;
+
+      const startTextPosition = {
+        x: canvas.width / 2 - 20,
+        y: canvas.height / 2 - 100,
+      };
+
+      const soundTextOffsetFromStartText = {
+        x: -20,
+        y: 40,
+      };
+
+      const soundTextPosition = {
+        x: startTextPosition.x + soundTextOffsetFromStartText.x,
+        y: startTextPosition.y + soundTextOffsetFromStartText.y,
+      };
+
+      this.hitBoxes.start = {
+        left: startTextPosition.x - hitBoxpadding,
+        width: startTextWidth,
+        right: startTextPosition.x - hitBoxpadding + startTextWidth,
+        top: startTextPosition.y - startTextHeight + hitBoxpadding,
+        height: startTextHeight,
+        bottom:
+          startTextPosition.y - startTextHeight + hitBoxpadding + startTextHeight,
+      };
+
+      this.hitBoxes.sound = {
+        left: soundTextPosition.x - hitBoxpadding,
+        width: soundTextWidth,
+        right: soundTextPosition.x - hitBoxpadding + soundTextWidth,
+        top: soundTextPosition.y - soundTextHeight + hitBoxpadding,
+        height: soundTextHeight,
+        bottom:
+          soundTextPosition.y - soundTextHeight + hitBoxpadding + soundTextHeight,
+      };
+
       context.setTransform(
         1,
         0,
         0,
         1,
-        canvas.width / 2 - 20,
-        canvas.height / 2 - 100,
+        startTextPosition.x,
+        startTextPosition.y,
       );
-      context.font = getFont(12);
+      context.font = getFont(fontSize);
       context.fillText('Start', 0, 0);
 
       context.transform(
@@ -125,10 +195,10 @@ export default class TitleScene implements Scene {
         0,
         0,
         1,
-        -20,
-        40,
+        soundTextOffsetFromStartText.x,
+        soundTextOffsetFromStartText.y,
       );
-      context.font = getFont(12);
+      context.font = getFont(fontSize);
 
       const isSoundOn = store.isSoundOn ? 'on' : 'off';
 
@@ -173,5 +243,23 @@ export default class TitleScene implements Scene {
       context.font = getFont(12);
       context.fillText('Press spacebar to act', 0, 0);
     });
+  };
+
+  // debug
+  #drawHitBoxes = (context: CanvasRenderingContext2D) => {
+    context.fillStyle = 'white';
+    context.fillRect(
+    this.hitBoxes.start.left,
+    this.hitBoxes.start.top,
+    this.hitBoxes.start.width,
+    this.hitBoxes.start.height
+    );
+    context.fillRect(
+    this.hitBoxes.sound.left,
+    this.hitBoxes.sound.top,
+    this.hitBoxes.sound.width,
+    this.hitBoxes.sound.height
+    );
+    context.fillStyle = '#000';
   };
 }
