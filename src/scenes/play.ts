@@ -24,7 +24,7 @@ export default class PlayScene implements Scene {
   music = new Music(playMusic);
 
   constructor() {
-    this.activeBackground = 'road';
+    this.activeBackground = 'playground';
     this.backgrounds = {
       playground: new Playground(),
       pool: new Pool(),
