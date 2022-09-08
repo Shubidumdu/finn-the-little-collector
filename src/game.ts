@@ -1,5 +1,5 @@
 import { resetAllLayers } from './canvas';
-import { ChangeSceneEvent, listenEvent } from './event';
+import { ChangeSceneEvent, listenGlobalEvent } from './event';
 import { PlayScene, TitleScene, Scene, SceneType } from './scenes';
 import GameOverScene from './scenes/gameover';
 
@@ -19,7 +19,7 @@ export default class Game {
   start = () => {
     this.scenes[this.activeScene].start();
     requestAnimationFrame(this.#update);
-    this.#listenEvents();
+    this.#listenGlobalEvents();
   };
 
   #changeScene = (
@@ -37,8 +37,8 @@ export default class Game {
     requestAnimationFrame(this.#update);
   };
 
-  #listenEvents = () => {
-    listenEvent(({ type, payload }) => {
+  #listenGlobalEvents = () => {
+    listenGlobalEvent(({ type, payload }) => {
       if (type === 'change-scene') {
         this.#changeScene(payload.type, payload.state);
       }

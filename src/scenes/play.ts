@@ -11,7 +11,7 @@ import Music from '../sounds/music';
 import playMusic from '../sounds/musics/play';
 import playEffectSound from '../sounds/effects';
 import { Rect } from '../types/rect';
-import { postEvent } from '../event';
+import { postGlobalEvent } from '../event';
 
 export type PlaySceneState = {
   activeBackground: BackgroundType;
@@ -131,7 +131,7 @@ export default class PlayScene implements Scene {
   #checkGameOver = () => {
     if(!this.info.lifeCount || this.info.timeout < 0) {
       this.music.stop();
-      postEvent({
+      postGlobalEvent({
         type: 'change-scene',
         payload: {
           type: 'gameover',

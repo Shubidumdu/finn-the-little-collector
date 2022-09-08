@@ -1,7 +1,7 @@
 import { Scene } from ".";
 import canvasMap, { drawLayer } from "../canvas";
 import { STAGE_STATES } from "../constants";
-import { postEvent } from "../event";
+import { postGlobalEvent } from "../event";
 import Music from "../sounds/music";
 import gameoverMusic from "../sounds/musics/gameover";
 import { getFont } from "../utils";
@@ -82,7 +82,7 @@ export default class GameOverScene implements Scene {
   }
 
   #handleClickRetry = () => {
-    postEvent({
+    postGlobalEvent({
       type: 'change-scene',
       payload: {
         type: 'play',
@@ -92,7 +92,7 @@ export default class GameOverScene implements Scene {
   }
 
   #handleClickMenu = () => {
-    postEvent({
+    postGlobalEvent({
       type: 'change-scene',
       payload: {
         type: 'title',

@@ -5,16 +5,19 @@ export type EventType = ChangeSceneEvent | ClickCanvasEvent;
 
 export type ChangeSceneEvent = {
   type: 'change-scene';
-  payload: {
-    type: 'play';
-    state: PlaySceneState;
-  } | {
-    type: 'gameover',
-    state: GameOverSceneState;
-  } | {
-    type: 'title',
-    state: null,
-  }
+  payload:
+    | {
+        type: 'play';
+        state: PlaySceneState;
+      }
+    | {
+        type: 'gameover';
+        state: GameOverSceneState;
+      }
+    | {
+        type: 'title';
+        state: null;
+      };
 };
 
 export type ClickCanvasEvent = {
@@ -26,7 +29,7 @@ export type ClickCanvasEvent = {
   };
 };
 
-export const postEvent = ({ type, payload }: EventType) => {
+export const postGlobalEvent = ({ type, payload }: EventType) => {
   window.postMessage(
     {
       type,
@@ -36,7 +39,9 @@ export const postEvent = ({ type, payload }: EventType) => {
   );
 };
 
-export const listenEvent = (handleEventData: (data: EventType) => void) => {
+export const listenGlobalEvent = (
+  handleEventData: (data: EventType) => void,
+) => {
   window.addEventListener('message', (event: MessageEvent<EventType>) => {
     if (!event.data) return;
     handleEventData(event.data);
