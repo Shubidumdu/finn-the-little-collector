@@ -4,12 +4,13 @@ import { GameObject } from '../objects';
 import { BackgroundType, Playground, Pool, Road } from '../objects/backgrounds';
 import PlayInfo from '../objects/playInfo';
 import Magnifier from '../objects/magnifier';
-import Person, { EYE_COLORS, SKIN_COLORS } from '../objects/person';
-import { getRandomColor, getRandomInt, pickRandomOption } from '../utils';
+import Person, { EYE_COLORS, LOWER_BODY_SIZE, SKIN_COLORS } from '../objects/person';
+import { getRandomColor, getRandomIntegerFromRange, pickRandomOption } from '../utils';
 import WantedPoster from '../objects/wantedPoster';
 import Music from '../sounds/music';
 import playMusic from '../sounds/musics/play';
 import playEffectSound from '../sounds/effects';
+import { Rect } from '../types/rect';
 
 export type PlaySceneState = {
   activeBackground: BackgroundType;
@@ -29,6 +30,7 @@ export default class PlayScene implements Scene {
   persons: Person[];
   wantedPoster: WantedPoster;
   music: Music;
+  barrier: Rect;
 
   constructor() {
     this.activeBackground = 'road';
@@ -43,6 +45,12 @@ export default class PlayScene implements Scene {
     this.layer1 = canvas.get('layer1');
     this.wantedPoster = new WantedPoster();
     this.music = new Music(playMusic);
+    this.barrier = new Rect({
+      left: this.layer1.width / 5,
+      top: this.layer1.height / 5,
+      width: this.layer1.width / 5 * 3,
+      height: this.layer1.height / 5 * 3,
+    })
   }
 
   start = ({
@@ -67,8 +75,8 @@ export default class PlayScene implements Scene {
       person.init({
         id: index,
         position: {
-          x: getRandomInt(this.layer1.width),
-          y: getRandomInt(this.layer1.height),
+          x: getRandomIntegerFromRange(this.barrier.left, this.barrier.right),
+          y: getRandomIntegerFromRange(this.barrier.top, this.barrier.bottom - LOWER_BODY_SIZE),
           z: 0,
         },
         colors: {
@@ -79,6 +87,7 @@ export default class PlayScene implements Scene {
           bottom: getRandomColor(),
           shoe: getRandomColor(),
         },
+        barrier: this.barrier,
       });
     });
     this.magnifier.init({
@@ -151,5 +160,13 @@ export default class PlayScene implements Scene {
     if(!this.info.lifeCount || this.info.timeout < 0) {
       this.music.stop();
     }
+  }
+  
+  // debug
+  #drawPersonBarrier = (context: CanvasRenderingContext2D) => {
+    context.resetTransform()
+    context.beginPath();
+    context.strokeRect(this.barrier.left, this.barrier.top, this.barrier.width, this.barrier.height);
+    context.closePath();
   }
 }

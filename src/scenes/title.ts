@@ -6,7 +6,7 @@ import Music from '../sounds/music';
 import titleMusic from '../sounds/musics/title';
 import store from '../store';
 import { setIsSoundOn } from '../store/mutation';
-import { Rect } from '../types/rect';
+import { RectType } from '../types/rect';
 import { getFont, isInsideRect } from '../utils';
 
 export default class TitleScene implements Scene {
@@ -45,11 +45,11 @@ export default class TitleScene implements Scene {
   music = new Music(titleMusic);
 
   hitBoxes: {
-    start: Rect;
-    sound: Rect;
+    start: RectType;
+    sound: RectType;
   } = {
-    start: {} as Rect,
-    sound: {} as Rect,
+    start: {} as RectType,
+    sound: {} as RectType,
   };
 
   start = () => {

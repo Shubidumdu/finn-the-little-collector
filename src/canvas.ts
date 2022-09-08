@@ -37,8 +37,6 @@ const handleResize = () => {
   [...canvasMap.values()].map((canvas) => {
     resizeCanvas(canvas);
   });
-
-  setViewPort();
 };
 
 window.addEventListener('resize', handleResize);
@@ -81,8 +79,8 @@ export const removeCanvas = (id: string) => {
 };
 
 export const resizeCanvas = (canvas: HTMLCanvasElement) => {
-  canvas.width = window.innerWidth;
-  canvas.height = window.innerHeight;
+  canvas.width = Math.min( window.innerWidth, window.innerHeight);
+  canvas.height = Math.min( window.innerWidth, window.innerHeight);
 };
 
 export const drawLayer = (canvas: HTMLCanvasElement) => {
