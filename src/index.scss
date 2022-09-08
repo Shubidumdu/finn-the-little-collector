@@ -16,6 +16,10 @@ canvas {
   transform: translateX(-50%);
 }
 
+#layer0 {
+  z-index: 10;
+}
+
 #layer1 {
   z-index: 0;
 }

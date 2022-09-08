@@ -69,6 +69,12 @@ export default class TitleScene implements Scene {
   };
 
   update = (time: number) => {
+    this.#drawLayer1((context, canvas) => {
+      context.setTransform(1, 0, 0, 1, 0, 0);
+      context.fillStyle = '#000';
+      context.fillRect(0, 0, canvas.width, canvas.height);
+    });
+
     this.#drawMagnifier();
     // this.#drawRuler();
     this.#drawTitle();
@@ -368,15 +374,9 @@ export default class TitleScene implements Scene {
   #drawMagnifier = () => {
     const drawLayer0 = drawLayer(canvas.get('layer0'));
 
-    this.#drawLayer1((context, canvas) => {
-      context.setTransform(1, 0, 0, 1, 0, 0);
-      context.fillStyle = '#000';
-      context.fillRect(0, 0, canvas.width, canvas.height);
-    });
-
     drawLayer0((context, canvas) => {
       const { x, y, scale } = this.magnifier;
-      context.setTransform(scale, 0, 0, scale, x + 32, y - 520);
+      context.setTransform(scale, 0, 0, scale, x + 24, y - 532);
       // context.setTransform(scale, 0, 0, scale, canvas.width / 2 + 32, -40);
       context.beginPath();
       context.rotate(degreeToRadian(48));
@@ -395,8 +395,8 @@ export default class TitleScene implements Scene {
       context.shadowOffsetX = 0;
       context.shadowOffsetY = 0;
       context.fillStyle = '#fff';
-      context.fillRect(-20, -2, 40, 4);
-      context.fillRect(-2, -20, 4, 40);
+      context.fillRect(-10, -1, 20, 2);
+      context.fillRect(-1, -10, 2, 20);
       context.fillStyle = '#000';
     });
   };
