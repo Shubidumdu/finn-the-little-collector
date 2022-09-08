@@ -25,13 +25,6 @@ export default class Pool implements GameObject {
       // 바닥
       const verticalQuater = (canvas.height - 340) / 4;
       this.#drawSand(context, canvas, verticalQuater);
-      
-      // person 이동 영역
-      context.setTransform(1, 0, -0.5, 1, canvas.width / 2 - 280, 240);
-      context.beginPath();
-      context.fillStyle = '#fff';
-      context.strokeRect(0, 0, 800, 600);
-      context.closePath();
     });
   };
 
