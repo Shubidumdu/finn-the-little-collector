@@ -1,19 +1,14 @@
 import { resetAllLayers } from './canvas';
-import { ChangeSceneEvent, EventType, listenEvent } from './event';
+import { ChangeSceneEvent, listenEvent } from './event';
 import { PlayScene, TitleScene, Scene, SceneType } from './scenes';
 import GameOverScene from './scenes/gameover';
-import { PlaySceneState } from './scenes/play';
-
-export type ChangeSceneToPlay = (type: 'play', state: PlaySceneState) => void;
-
-export type ChangeScene = ChangeSceneToPlay;
 
 export default class Game {
   activeScene: SceneType;
   scenes: { [name in SceneType]: Scene };
 
   constructor() {
-    this.activeScene = 'gameover';
+    this.activeScene = 'title';
     this.scenes = {
       play: new PlayScene(),
       title: new TitleScene(),
@@ -27,7 +22,10 @@ export default class Game {
     this.#listenEvents();
   };
 
-  #changeScene: ChangeScene = (type, state) => {
+  #changeScene = (
+    type: ChangeSceneEvent['payload']['type'],
+    state: ChangeSceneEvent['payload']['state'],
+  ) => {
     this.scenes[this.activeScene].end();
     this.activeScene = type;
     this.scenes[this.activeScene].start(state);
@@ -45,5 +43,5 @@ export default class Game {
         this.#changeScene(payload.type, payload.state);
       }
     });
-  }
+  };
 }

@@ -1,3 +1,4 @@
+import { GameOverSceneState } from './scenes/gameover';
 import { PlaySceneState } from './scenes/play';
 
 export type EventType = ChangeSceneEvent | ClickCanvasEvent;
@@ -7,7 +8,13 @@ export type ChangeSceneEvent = {
   payload: {
     type: 'play';
     state: PlaySceneState;
-  };
+  } | {
+    type: 'gameover',
+    state: GameOverSceneState;
+  } | {
+    type: 'title',
+    state: null,
+  }
 };
 
 export type ClickCanvasEvent = {

@@ -1,5 +1,6 @@
 import { Scene, SceneType } from '.';
 import canvas, { drawLayer } from '../canvas';
+import { STAGE_STATES } from '../constants';
 import { postEvent } from '../event';
 import playEffectSound from '../sounds/effects';
 import Music from '../sounds/music';
@@ -14,20 +15,14 @@ export default class TitleScene implements Scene {
   menus = [
     {
       key: 'start',
-      action: () => postEvent({
-        type: 'change-scene',
-        payload: {
-          type: 'play',
-          state: {
-            activeBackground: 'road',
-            stage: 1,
-            timeout: 60_000,
-            lifeCount: 5,
-            personCount: 100,
-            wantedPersonCount: 3,
-          }
-        }
-      }),
+      action: () =>
+        postEvent({
+          type: 'change-scene',
+          payload: {
+            type: 'play',
+            state: STAGE_STATES[1],
+          },
+        }),
     },
     {
       key: 'sound',
@@ -172,7 +167,10 @@ export default class TitleScene implements Scene {
         top: startTextPosition.y - startTextHeight + hitBoxpadding,
         height: startTextHeight,
         bottom:
-          startTextPosition.y - startTextHeight + hitBoxpadding + startTextHeight,
+          startTextPosition.y -
+          startTextHeight +
+          hitBoxpadding +
+          startTextHeight,
       };
 
       this.hitBoxes.sound = {
@@ -182,7 +180,10 @@ export default class TitleScene implements Scene {
         top: soundTextPosition.y - soundTextHeight + hitBoxpadding,
         height: soundTextHeight,
         bottom:
-          soundTextPosition.y - soundTextHeight + hitBoxpadding + soundTextHeight,
+          soundTextPosition.y -
+          soundTextHeight +
+          hitBoxpadding +
+          soundTextHeight,
       };
 
       context.setTransform(
@@ -255,16 +256,16 @@ export default class TitleScene implements Scene {
   #drawHitBoxes = (context: CanvasRenderingContext2D) => {
     context.fillStyle = 'white';
     context.fillRect(
-    this.hitBoxes.start.left,
-    this.hitBoxes.start.top,
-    this.hitBoxes.start.width,
-    this.hitBoxes.start.height
+      this.hitBoxes.start.left,
+      this.hitBoxes.start.top,
+      this.hitBoxes.start.width,
+      this.hitBoxes.start.height,
     );
     context.fillRect(
-    this.hitBoxes.sound.left,
-    this.hitBoxes.sound.top,
-    this.hitBoxes.sound.width,
-    this.hitBoxes.sound.height
+      this.hitBoxes.sound.left,
+      this.hitBoxes.sound.top,
+      this.hitBoxes.sound.width,
+      this.hitBoxes.sound.height,
     );
     context.fillStyle = '#000';
   };

@@ -1,20 +1,33 @@
 import { Scene } from ".";
 import canvasMap, { drawLayer } from "../canvas";
+import { STAGE_STATES } from "../constants";
+import { postEvent } from "../event";
 import Music from "../sounds/music";
 import gameoverMusic from "../sounds/musics/gameover";
 import { getFont } from "../utils";
 
+export type GameOverSceneState = {
+  stage: number;
+};
+
 export default class GameOverScene implements Scene {
-  buttonContainer: HTMLDivElement;
+  stage: number;
   music: Music;
-  
+  elements: {
+    buttonContainer: HTMLDivElement;
+    retryButton: HTMLButtonElement;
+    menuButton: HTMLButtonElement;  
+  };
+
   constructor() {
     this.music = new Music(gameoverMusic);
   }
 
   start = () => {
+    this.stage = 1;
     this.music.play(false);
     this.#appendButtons();
+    this.#addEventListeners();
   }
 
   update = (time: number) => {
@@ -29,7 +42,9 @@ export default class GameOverScene implements Scene {
   }
 
   end = () => {
-
+    this.music.stop();
+    this.#removeEventListeners();
+    this.elements.buttonContainer.remove();
   }
 
   #appendButtons = () => {
@@ -45,6 +60,7 @@ export default class GameOverScene implements Scene {
       background: none;
       border: none;
       font-size: 40px;
+      z-index: 1;
     `;
     retryButton.textContent = 'Retry';
     const menuButton = document.createElement('button');
@@ -52,10 +68,48 @@ export default class GameOverScene implements Scene {
       background: none;
       border: none;
       font-size: 40px;
+      z-index: 1;
     `;
     menuButton.textContent = 'Main Menu';
     buttonContainer.append(retryButton);
     buttonContainer.append(menuButton);
     document.body.append(buttonContainer);
+    this.elements = {
+      buttonContainer,
+      menuButton,
+      retryButton,
+    };
+  }
+
+  #handleClickRetry = () => {
+    console.log('click retry!');
+    postEvent({
+      type: 'change-scene',
+      payload: {
+        type: 'play',
+        state: STAGE_STATES[this.stage]
+      }
+    })
+  }
+
+  #handleClickMenu = () => {
+    console.log('click menu!');
+    postEvent({
+      type: 'change-scene',
+      payload: {
+        type: 'title',
+        state: null,
+      }
+    });
+  }
+
+  #addEventListeners = () => {
+    this.elements.retryButton.addEventListener('click', this.#handleClickRetry);
+    this.elements.menuButton.addEventListener('click', this.#handleClickMenu);
+  }
+
+  #removeEventListeners = () => {
+    this.elements.retryButton.removeEventListener('click', this.#handleClickRetry);
+    this.elements.menuButton.removeEventListener('click', this.#handleClickMenu);
   }
 }
