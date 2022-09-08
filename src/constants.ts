@@ -10,5 +10,21 @@ export const STAGE_STATES: {
     lifeCount: 5,
     personCount: 100,
     wantedPersonCount: 3,
-  }
+  },
+  2: {
+    activeBackground: 'playground',
+    stage: 2,
+    timeout: 70_000,
+    lifeCount: 4,
+    personCount: 150,
+    wantedPersonCount: 4,
+  },
+  3: {
+    activeBackground: 'road',
+    stage: 3,
+    timeout: 80_000,
+    lifeCount: 3,
+    personCount: 200,
+    wantedPersonCount: 5,
+  },
 };
