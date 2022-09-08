@@ -28,7 +28,7 @@ export default class PlayScene implements Scene {
   layer1: HTMLCanvasElement;
   persons: Person[];
   wantedPoster: WantedPoster;
-  music = new Music(playMusic);
+  music: Music;
 
   constructor() {
     this.activeBackground = 'road';
@@ -42,6 +42,7 @@ export default class PlayScene implements Scene {
     this.persons = [];
     this.layer1 = canvas.get('layer1');
     this.wantedPoster = new WantedPoster();
+    this.music = new Music(playMusic);
   }
 
   start = ({
@@ -136,6 +137,7 @@ export default class PlayScene implements Scene {
     });
     this.magnifier.update(time);
     this.wantedPoster.update(time);
+    this.#checkGameOver();
   };
 
   end = () => {
@@ -144,4 +146,10 @@ export default class PlayScene implements Scene {
     this.info.remove();
     this.persons.forEach((person) => person.remove());
   };
+
+  #checkGameOver = () => {
+    if(!this.info.lifeCount || this.info.timeout < 0) {
+      this.music.stop();
+    }
+  }
 }

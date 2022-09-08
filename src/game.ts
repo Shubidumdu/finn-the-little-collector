@@ -1,6 +1,7 @@
 import { resetAllLayers } from './canvas';
 import { ChangeSceneEvent, EventType, listenEvent } from './event';
 import { PlayScene, TitleScene, Scene, SceneType } from './scenes';
+import GameOverScene from './scenes/gameover';
 import { PlaySceneState } from './scenes/play';
 
 export type ChangeSceneToPlay = (type: 'play', state: PlaySceneState) => void;
@@ -12,15 +13,16 @@ export default class Game {
   scenes: { [name in SceneType]: Scene };
 
   constructor() {
-    this.activeScene = 'title';
+    this.activeScene = 'gameover';
     this.scenes = {
       play: new PlayScene(),
       title: new TitleScene(),
+      gameover: new GameOverScene(),
     };
   }
 
   start = () => {
-    this.scenes['title'].start();
+    this.scenes[this.activeScene].start();
     requestAnimationFrame(this.#update);
     this.#listenEvents();
   };

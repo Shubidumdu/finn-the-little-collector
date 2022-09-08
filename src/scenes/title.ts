@@ -72,27 +72,29 @@ export default class TitleScene implements Scene {
   #addEvents = () => {
     window.addEventListener('keydown', this.#changeMenuIndexEvent);
     window.addEventListener('keydown', this.#actionEvent);
-
-    window.addEventListener('click', (e: PointerEvent) => {
-      const { clientX, clientY } = e;
-
-      if (isInsideRect({ x: clientX, y: clientY }, this.hitBoxes.start)) {
-        this.activeMenuIndex = 0;
-        const currentMenu = this.menus[this.activeMenuIndex];
-        currentMenu.action();
-      }
-
-      if (isInsideRect({ x: clientX, y: clientY }, this.hitBoxes.sound)) {
-        this.activeMenuIndex = 1;
-        const currentMenu = this.menus[this.activeMenuIndex];
-        currentMenu.action();
-      }
-    });
+    window.addEventListener('click', this.#handleClickEvent);
   };
 
   #removeEvents = () => {
     window.removeEventListener('keydown', this.#changeMenuIndexEvent);
     window.removeEventListener('keydown', this.#actionEvent);
+    window.removeEventListener('click', this.#handleClickEvent);
+  };
+
+  #handleClickEvent = (e: PointerEvent) => {
+    const { clientX, clientY } = e;
+
+    if (isInsideRect({ x: clientX, y: clientY }, this.hitBoxes.start)) {
+      this.activeMenuIndex = 0;
+      const currentMenu = this.menus[this.activeMenuIndex];
+      currentMenu.action();
+    }
+
+    if (isInsideRect({ x: clientX, y: clientY }, this.hitBoxes.sound)) {
+      this.activeMenuIndex = 1;
+      const currentMenu = this.menus[this.activeMenuIndex];
+      currentMenu.action();
+    }
   };
 
   #changeMenuIndexEvent = (e: KeyboardEvent) => {
@@ -115,16 +117,6 @@ export default class TitleScene implements Scene {
 
     const currentMenu = this.menus[this.activeMenuIndex];
     currentMenu.action();
-  };
-
-  #changeScene = (sceneType: SceneType) => {
-    window.postMessage(
-      {
-        type: 'change-scene',
-        payload: sceneType,
-      },
-      window.origin,
-    );
   };
 
   #drawTitle = () => {
