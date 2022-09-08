@@ -1,4 +1,4 @@
-import { Rect } from './types/rect';
+import { RectType } from './types/rect';
 
 export const degreeToRadian = (degree: number) => (Math.PI / 180) * degree;
 
@@ -29,7 +29,7 @@ export const getFont = (
   type: string = 'Courier New, sans-serif',
 ) => `bold ${size}pt ${type}`;
 
-export const getRandomInteger = (min: number, max: number) => Math.round(Math.random() * (max - min) + min);
+export const getRandomIntegerFromRange = (min: number, max: number) => Math.round(Math.random() * (max - min) + min);
 
 export const getRandomColor = () =>
   `#${Math.floor(Math.random() * 16777215).toString(16).padEnd(6, '0')}`;
@@ -70,10 +70,25 @@ export const calculateHex = (start: string, delta: number) =>
 
 export const isInsideRect = (
   position: { x: number; y: number },
-  rect: Rect,
+  rect: RectType,
 ) => {
   const { left, right, top, bottom } = rect;
   const { x, y } = position;
 
   return left <= x && x <= right && top <= y && y <= bottom;
 };
+
+const sm = {
+  width: 640,
+  height: 380,
+}
+
+const md = {
+  width: 800,
+  height: 600,
+}
+
+export const getBarrierSize = (canvas: HTMLCanvasElement) => {
+  return canvas.width > md.width ? md : sm;
+}
+

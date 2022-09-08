@@ -1,5 +1,6 @@
 import { GameObject } from '..';
 import canvas, { drawLayer } from '../../canvas';
+import { RectType } from '../../types/rect';
 import { calculateHex } from '../../utils';
 import { drawSky } from './unit';
 
@@ -58,12 +59,6 @@ export default class Road implements GameObject {
       context.setTransform(1, 0, 0, 1, 0, 160);
       context.fillStyle = '#fff';
       context.fillRect(0, 40 * (base + 2), canvas.width, 10);
-
-      // // person 이동 영역
-      context.setTransform(1, 0, -0.5, 1, canvas.width / 2 - 280, 240);
-      context.beginPath();
-      context.strokeRect(0, 0, 800, 600);
-      context.closePath();
     });
   };
 
