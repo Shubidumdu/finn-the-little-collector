@@ -82,7 +82,6 @@ export default class GameOverScene implements Scene {
   }
 
   #handleClickRetry = () => {
-    console.log('click retry!');
     postEvent({
       type: 'change-scene',
       payload: {
@@ -93,7 +92,6 @@ export default class GameOverScene implements Scene {
   }
 
   #handleClickMenu = () => {
-    console.log('click menu!');
     postEvent({
       type: 'change-scene',
       payload: {

@@ -30,6 +30,7 @@ export default class PlayScene implements Scene {
   layer1: HTMLCanvasElement;
   persons: Person[];
   wantedPoster: WantedPoster;
+  wantedPersonCount: number;
   music: Music;
   barrier: Rect;
 
@@ -70,6 +71,7 @@ export default class PlayScene implements Scene {
       timeout,
       lifeCount,
     });
+    this.wantedPersonCount = wantedPersonCount;
 
     this.persons = [...new Array(personCount)].map(() => new Person());
     this.persons.forEach((person, index) => {
@@ -104,39 +106,7 @@ export default class PlayScene implements Scene {
       persons: [...wantedPersons],
     });
 
-    window.addEventListener('click', (e: PointerEvent) => {
-      let isPersonClicked = false;
-      let isCorrect = false;
-
-      this.persons.forEach((person) => {
-        if (person.isHit) return;
-
-        person.setIsHit({
-          x: e.clientX,
-          y: e.clientY,
-        });
-
-        if (person.isHit) {
-          isPersonClicked = true;
-          if (person.id < wantedPersonCount) {
-            isCorrect = true;
-            this.wantedPoster.removePerson(person.id);
-            person.correctAt = performance.now();
-          } else {
-            person.deadAt = performance.now();
-          }
-        }
-      });
-
-      if (isPersonClicked) {
-        if (!isCorrect) {
-          playEffectSound('wrong');
-          this.info.lifeCount = Math.max(0, this.info.lifeCount - 1);
-        } else {
-          playEffectSound('correct');
-        }
-      }
-    });
+    window.addEventListener('click', this.#handleClickPerson);
   };
 
   update = (time: number) => {
@@ -155,6 +125,7 @@ export default class PlayScene implements Scene {
     this.music.stop();
     this.info.remove();
     this.persons.forEach((person) => person.remove());
+    window.removeEventListener('click', this.#handleClickPerson);
   };
 
   #checkGameOver = () => {
@@ -178,5 +149,39 @@ export default class PlayScene implements Scene {
     context.beginPath();
     context.strokeRect(this.barrier.left, this.barrier.top, this.barrier.width, this.barrier.height);
     context.closePath();
+  }
+
+  #handleClickPerson = (e: PointerEvent) => {
+    let isPersonClicked = false;
+    let isCorrect = false;
+
+    this.persons.forEach((person) => {
+      if (person.isHit) return;
+
+      person.setIsHit({
+        x: e.clientX,
+        y: e.clientY,
+      });
+
+      if (person.isHit) {
+        isPersonClicked = true;
+        if (person.id < this.wantedPersonCount) {
+          isCorrect = true;
+          this.wantedPoster.removePerson(person.id);
+          person.correctAt = performance.now();
+        } else {
+          person.deadAt = performance.now();
+        }
+      }
+    });
+
+    if (isPersonClicked) {
+      if (!isCorrect) {
+        playEffectSound('wrong');
+        this.info.lifeCount = Math.max(0, this.info.lifeCount - 1);
+      } else {
+        playEffectSound('correct');
+      }
+    }
   }
 }
