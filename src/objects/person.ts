@@ -1,7 +1,7 @@
 import { GameObject } from '.';
 import canvas, { drawLayer } from '../canvas';
 import { RectType, Rect } from '../types/rect';
-import { degreeToRadian, getRandomIntegerFromRange, getTimings } from '../utils';
+import { degreeToRadian, getBarrierSize, getRandomIntegerFromRange, getTimings } from '../utils';
 
 type ColorState = {
   hair: string;
@@ -239,8 +239,19 @@ export default class Person implements GameObject, PersonState {
     const drawLayer1 = drawLayer(layer1);
     const layer2 = canvas.get('layer2'); // 축소
     const drawLayer2 = drawLayer(layer2);
-
+    
     drawLayer1((context, canvas) => {
+      const { width, height } = getBarrierSize(canvas)
+      this.barrier = new Rect({
+        left: canvas.width / 2 - width / 2,
+        top: canvas.height / 2 - height / 2,
+        width,
+        height,
+      })
+
+      this.#drawBarrier(context)
+      
+
       const sizeRatio = 0.6 + 0.4 * (this.position.z / canvas.height);
       this.#setHitBoxPosition();
       this.#drawShadow(context, canvas, time, this.position, sizeRatio);
@@ -266,6 +277,36 @@ export default class Person implements GameObject, PersonState {
       }
     });
     drawLayer2((context, canvas) => {
+      const { width, height } = getBarrierSize(canvas)
+      this.barrier = new Rect({
+        left: canvas.width / 2 - width / 2,
+        top: canvas.height / 2 - height / 2,
+        width,
+        height,
+      })
+
+      this.#drawBarrier(context)
+
+      if (this.position.x <= this.barrier.left) {
+        this.position.x = this.barrier.left + 10;
+        this.move.direction.x = 1;
+      }
+
+      if (this.position.x >= this.barrier.right) {
+        this.position.x = this.barrier.right - 10;
+        this.move.direction.x = -1;
+      }
+
+      if (this.position.y <= this.barrier.top) {
+        this.position.y = this.barrier.top + 10;
+        this.move.direction.y = 1;
+      }
+
+      if (this.position.y >= this.barrier.bottom) {
+        this.position.y = this.barrier.bottom - 10;
+        this.move.direction.y = -1;
+      }
+
       const sizeRatio = 0.3 + 0.2 * (this.position.z / canvas.height);
 
       this.#drawShadow(context, canvas, time, this.position, sizeRatio);
@@ -797,4 +838,11 @@ export default class Person implements GameObject, PersonState {
       : 'rgba(0, 0, 0, 0.1)';
     context.fill();
   };
+
+  #drawBarrier = (context: CanvasRenderingContext2D) => {
+    context.resetTransform()
+    context.beginPath();
+    context.strokeRect(this.barrier.left, this.barrier.top, this.barrier.width, this.barrier.height);
+    context.closePath();
+  }
 }

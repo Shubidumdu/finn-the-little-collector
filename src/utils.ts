@@ -74,3 +74,18 @@ export const isInsideRect = (
 
   return left <= x && x <= right && top <= y && y <= bottom;
 };
+
+const sm = {
+  width: 640,
+  height: 380,
+}
+
+const md = {
+  width: 800,
+  height: 600,
+}
+
+export const getBarrierSize = (canvas: HTMLCanvasElement) => {
+  return canvas.width > md.width ? md : sm;
+}
+

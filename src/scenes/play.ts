@@ -137,4 +137,12 @@ export default class PlayScene implements Scene {
     this.info.remove();
     this.persons.forEach((person) => person.remove());
   };
+
+  // debug
+  #drawPersonBarrier = (context: CanvasRenderingContext2D) => {
+    context.resetTransform()
+    context.beginPath();
+    context.strokeRect(this.barrier.left, this.barrier.top, this.barrier.width, this.barrier.height);
+    context.closePath();
+  }
 }
