@@ -42,7 +42,7 @@ export default class Magnifier implements GameObject, MagnifierState {
       context.setTransform(1, 0, 0, 1, this.position.x, this.position.y);
       context.beginPath();
       context.globalCompositeOperation = 'destination-in';
-      context.arc(0, 0, this.range, 0, Math.PI * 2, true);
+      context.arc(0, 0, this.range - 1, 0, Math.PI * 2, true);
       context.fill();
       context.closePath();
     });
@@ -51,7 +51,7 @@ export default class Magnifier implements GameObject, MagnifierState {
       context.setTransform(1, 0, 0, 1, this.position.x, this.position.y);
       context.beginPath();
       context.globalCompositeOperation = 'destination-out';
-      context.arc(0, 0, this.range, 0, Math.PI * 2, true);
+      context.arc(0, 0, this.range + 5, 0, Math.PI * 2, true);
       context.fill();
     });
 
