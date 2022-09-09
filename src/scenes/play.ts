@@ -122,6 +122,7 @@ export default class PlayScene implements Scene {
   update = (time: number) => {
     this.backgrounds[this.activeBackground].update(time);
     this.info.update(time);
+    this.persons.sort((person1, person2) => person1.position.y - person2.position.y);
     this.persons.forEach((person) => {
       person.update(time);
     });
