@@ -1,7 +1,7 @@
 import { GameObject } from '.';
 import canvas, { drawLayer } from '../canvas';
 import { RectType, Rect } from '../types/rect';
-import { degreeToRadian, getBarrierSize, getRandomIntegerFromRange, getTimings } from '../utils';
+import { degreeToRadian, barrierRectFactory, getRandomIntegerFromRange, getTimings } from '../utils';
 
 type ColorState = {
   hair: string;
@@ -241,17 +241,6 @@ export default class Person implements GameObject, PersonState {
     const drawLayer2 = drawLayer(layer2);
     
     drawLayer1((context, canvas) => {
-      const { width, height } = getBarrierSize(canvas)
-      this.barrier = new Rect({
-        left: canvas.width / 2 - width / 2,
-        top: canvas.height / 2 - height / 2,
-        width,
-        height,
-      })
-
-      this.#drawBarrier(context)
-      
-
       const sizeRatio = 0.6 + 0.4 * (this.position.z / canvas.height);
       this.#setHitBoxPosition();
       this.#drawShadow(context, canvas, time, this.position, sizeRatio);
@@ -277,33 +266,28 @@ export default class Person implements GameObject, PersonState {
       }
     });
     drawLayer2((context, canvas) => {
-      const { width, height } = getBarrierSize(canvas)
-      this.barrier = new Rect({
-        left: canvas.width / 2 - width / 2,
-        top: canvas.height / 2 - height / 2,
-        width,
-        height,
-      })
+      this.barrier = barrierRectFactory(canvas)
 
-      this.#drawBarrier(context)
+      // debug
+      // this.#drawBarrier(context)
 
       if (this.position.x <= this.barrier.left) {
-        this.position.x = this.barrier.left + 10;
+        this.position.x = this.barrier.left + 1;
         this.move.direction.x = 1;
       }
 
       if (this.position.x >= this.barrier.right) {
-        this.position.x = this.barrier.right - 10;
+        this.position.x = this.barrier.right - 1;
         this.move.direction.x = -1;
       }
 
       if (this.position.y <= this.barrier.top) {
-        this.position.y = this.barrier.top + 10;
+        this.position.y = this.barrier.top + 1;
         this.move.direction.y = 1;
       }
 
       if (this.position.y >= this.barrier.bottom) {
-        this.position.y = this.barrier.bottom - 10;
+        this.position.y = this.barrier.bottom - 1;
         this.move.direction.y = -1;
       }
 
