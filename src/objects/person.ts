@@ -23,6 +23,8 @@ type PersonState = {
   barrier: Rect;
 };
 
+type Variation = 'glasses' | 'bald';
+
 export const EYE_COLORS = ['#634e34', '#2e536f', '#1c7847'];
 export const SKIN_COLORS = [
   '#8d5524',
@@ -70,6 +72,13 @@ export default class Person implements GameObject, PersonState {
 
   correctAt: number = 0;
   deadAt: number = 0;
+
+  variations: {
+    [key in Variation]: boolean;
+  } = {
+    glasses: true,
+    bald: true,
+  }
 
   constructor(defaultSpeed: number = DEFAULT_SPEED) {
     this.defaultSpeed = defaultSpeed;
@@ -465,9 +474,17 @@ export default class Person implements GameObject, PersonState {
     context.fillStyle = this.colors.eye;
     context.fillRect(-8, -46, 4, 4);
     context.fillRect(0, -46, 4, 4);
-    context.fillStyle = this.colors.hair;
-    context.fillRect(-16, -62, 28, 12);
-    context.fillRect(8, -58, 6, 20);
+    if (this.variations.bald) {
+      context.fillStyle = this.colors.skin;
+      context.fillRect(-10, -56, 21, 6);
+    } else {
+      context.fillStyle = this.colors.hair;
+      context.fillRect(-16, -62, 28, 12);
+      context.fillRect(8, -58, 6, 20);
+    }
+    if (this.variations.glasses) {
+      this.#drawGlasses(context);
+    }
   };
 
   #drawArm = (context: CanvasRenderingContext2D) => {
@@ -814,6 +831,20 @@ export default class Person implements GameObject, PersonState {
       : 'rgba(0, 0, 0, 0.1)';
     context.fill();
   };
+
+  #drawGlasses = (context: CanvasRenderingContext2D) => {
+    context.fillStyle = '#000'
+    context.strokeStyle = '#000';
+    context.beginPath();
+    context.arc(-8, -43, 6, 0, degreeToRadian(360));
+    context.closePath();
+    context.stroke();
+    context.beginPath();
+    context.arc(4, -43, 6, 0, degreeToRadian(360));
+    context.stroke();
+    context.fillRect(9, -45, 4, 2);
+    context.closePath();
+  }
 
   #drawBarrier = (context: CanvasRenderingContext2D) => {
     context.resetTransform()
