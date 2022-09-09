@@ -10,10 +10,7 @@ export default class Pool implements GameObject {
   init = () => {};
 
   update = (time: DOMHighResTimeStamp) => {
-    this.#draw((
-      context,
-      canvas,
-    ) => {
+    this.#draw((context, canvas) => {
       // 하늘
       context.setTransform(1, 0, 0, 1, 0, 0);
       drawSky(context, canvas);
@@ -53,20 +50,25 @@ export default class Pool implements GameObject {
     context.fillStyle = '#9ef8ff';
     context.fillRect(0, 0, canvas.width, 20);
     context.transform(1, 0, 0, 1, 0, 20);
-    context.globalAlpha = .8;
+    context.globalAlpha = 0.9;
     context.fillStyle = '#b4f9ff';
     context.fillRect(0, 0, canvas.width, 20);
     context.transform(1, 0, 0, 1, 0, 20);
     context.fillStyle = '#d5f9f9';
     context.fillRect(0, 0, canvas.width, 20);
     context.transform(1, 0, 0, 1, 0, 20);
-    context.globalAlpha = .6;
+    context.globalAlpha = 0.8;
     context.fillStyle = '#dbfdfb';
     context.fillRect(0, 0, canvas.width, 20);
   };
 
-  #drawSand: DrawFunc<[HTMLCanvasElement, number]> = (context, canvas, height) => {
+  #drawSand: DrawFunc<[HTMLCanvasElement, number]> = (
+    context,
+    canvas,
+    height,
+  ) => {
     context.fillStyle = '#fffbf0';
+    context.globalAlpha = 1;
     context.fillRect(0, 0, canvas.width, height);
     context.transform(1, 0, 0, 1, 0, height);
     context.fillStyle = '#f2efe7';

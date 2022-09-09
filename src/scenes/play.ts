@@ -4,14 +4,25 @@ import { GameObject } from '../objects';
 import { BackgroundType, Playground, Pool, Road } from '../objects/backgrounds';
 import PlayInfo from '../objects/playInfo';
 import Magnifier from '../objects/magnifier';
-import Person, { EYE_COLORS, LOWER_BODY_SIZE, SKIN_COLORS } from '../objects/person';
-import { barrierRectFactory, getRandomColor, getRandomIntegerFromRange, isInsideRect, pickRandomOption } from '../utils';
+import Person, {
+  EYE_COLORS,
+  LOWER_BODY_SIZE,
+  SKIN_COLORS,
+} from '../objects/person';
+import {
+  barrierRectFactory,
+  getRandomColor,
+  getRandomIntegerFromRange,
+  pickRandomOption,
+  isInsideRect,
+} from '../utils';
 import WantedPoster from '../objects/wantedPoster';
 import Music from '../sounds/music';
 import playMusic from '../sounds/musics/play';
 import playEffectSound from '../sounds/effects';
 import { Rect } from '../types/rect';
 import { postGlobalEvent } from '../event';
+import { STAGE_STATES } from '../constants';
 
 export type PlaySceneState = {
   activeBackground: BackgroundType;
@@ -56,8 +67,8 @@ export default class PlayScene implements Scene {
     timeout,
     lifeCount,
     personCount,
-    wantedPersonCount
-  }: PlaySceneState) => {
+    wantedPersonCount,
+  }: PlaySceneState = STAGE_STATES[1]) => {
     this.activeBackground = activeBackground;
     this.backgrounds[this.activeBackground].init();
     this.music.play(true);
@@ -74,7 +85,10 @@ export default class PlayScene implements Scene {
         id: index,
         position: {
           x: getRandomIntegerFromRange(this.barrier.left, this.barrier.right),
-          y: getRandomIntegerFromRange(this.barrier.top, this.barrier.bottom - LOWER_BODY_SIZE),
+          y: getRandomIntegerFromRange(
+            this.barrier.top,
+            this.barrier.bottom - LOWER_BODY_SIZE,
+          ),
           z: 0,
         },
         colors: {
@@ -88,9 +102,10 @@ export default class PlayScene implements Scene {
         barrier: this.barrier,
       });
     });
+
     this.magnifier.init({
       position: { x: 0, y: 0 },
-      range: 120,
+      range: 100,
     });
 
     const wantedPersons = this.persons.filter(
@@ -101,7 +116,7 @@ export default class PlayScene implements Scene {
       persons: [...wantedPersons],
     });
 
-    window.addEventListener('click', this.#handleClickPerson);
+    canvas.get('layer0').addEventListener('click', this.#handleClickPerson);
   };
 
   update = (time: number) => {
@@ -120,11 +135,12 @@ export default class PlayScene implements Scene {
     this.music.stop();
     this.info.remove();
     this.persons.forEach((person) => person.remove());
-    window.removeEventListener('click', this.#handleClickPerson);
+
+    canvas.get('layer0').removeEventListener('click', this.#handleClickPerson);
   };
 
   #checkGameOver = () => {
-    if(!this.info.lifeCount || this.info.timeout < 0) {
+    if (!this.info.lifeCount || this.info.timeout < 0) {
       this.music.stop();
       postGlobalEvent({
         type: 'change-scene',
@@ -132,11 +148,11 @@ export default class PlayScene implements Scene {
           type: 'gameover',
           state: {
             stage: this.info.stage,
-          }
-        }
-      })
+          },
+        },
+      });
     }
-  }
+  };
 
   #handleClickPerson = (e: PointerEvent) => {
     let isPersonClicked = false;

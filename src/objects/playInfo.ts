@@ -1,6 +1,6 @@
 import { GameObject } from '.';
 import canvas, { drawLayer } from '../canvas';
-import { getFont } from '../utils';
+import { degreeToRadian, getFont } from '../utils';
 
 type PlayInfoState = {
   stage: number;
@@ -34,7 +34,7 @@ export default class PlayInfo implements GameObject, PlayInfoState {
 
     this.#drawStage();
     this.#drawTimer(time);
-    this.#drawLife();
+    this.#drawLife(28);
   };
 
   #drawStage = () => {
@@ -57,35 +57,41 @@ export default class PlayInfo implements GameObject, PlayInfoState {
 
       context.setTransform(1, 0, 0, 1, canvas.width, 0);
       context.font = getFont(24);
-      context.fillText(remainTime + '', -120, 56);
+      context.fillText(remainTime + '', -(40 + 92), 56);
     });
   };
 
-  #drawLife = () => {
+  #drawLife = (r: number) => {
     const draw = drawLayer(this.layer);
-    const width = 50;
-    const height = 50;
-    const offset = 80;
-    const d = Math.min(width, height);
+    const offset = r / 2;
+
     [...new Array(this.lifeCount)].forEach((_, index) => {
       draw((context, canvas) => {
-        context.strokeStyle = '#000000';
-        context.shadowOffsetX = 4.0;
-        context.shadowOffsetY = 4.0;
-        context.lineWidth = 6.0;
-        context.fillStyle = '#FF0000';
-        context.setTransform(1, 0, 0, 1, 40 + offset * index, canvas.height - 100);
-        context.moveTo(0, d / 4);
-        context.quadraticCurveTo(0, 0, d / 4, 0);
-        context.quadraticCurveTo(d / 2, 0, d / 2, d / 4);
-        context.quadraticCurveTo(d / 2, 0, (d * 3) / 4, 0);
-        context.quadraticCurveTo(d, 0, d, d / 4);
-        context.quadraticCurveTo(d, d / 2, (d * 3) / 4, (d * 3) / 4);
-        context.lineTo(d / 2, d);
-        context.lineTo(d / 4, (d * 3) / 4);
-        context.quadraticCurveTo(0, d / 2, 0, d / 4);
+        context.setTransform(1, 0, 0, 1, 40 + (offset + r * 2) * index, canvas.height - 40);
+        context.beginPath();
+        context.shadowOffsetX = 4;
+        context.shadowOffsetY = 4;
+        context.lineWidth = 6;
+        context.arc(r, -r, r, 0, degreeToRadian(360));
+        context.strokeStyle = '#000';
         context.stroke();
+        context.fillStyle = 'rgba(255, 255, 255, 0.9)';
         context.fill();
+        context.closePath();
+
+        context.beginPath();
+        context.shadowOffsetX = 0;
+        context.shadowOffsetY = 0;
+        context.lineWidth = 2;
+        context.globalAlpha = 1;
+        context.arc(r, -r, (r - 4), degreeToRadian(-24), degreeToRadian(48));
+        context.stroke();
+        context.closePath();
+
+        context.beginPath();
+        context.lineCap = 'round';;
+        context.fillStyle = '#000';
+        context.fillRect(r - 2, 0, 4, 20);
       });
     })
   };
