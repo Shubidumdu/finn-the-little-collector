@@ -5,7 +5,7 @@ import { BackgroundType, Playground, Pool, Road } from '../objects/backgrounds';
 import PlayInfo from '../objects/playInfo';
 import Magnifier from '../objects/magnifier';
 import Person, { EYE_COLORS, LOWER_BODY_SIZE, SKIN_COLORS } from '../objects/person';
-import { getRandomColor, getRandomIntegerFromRange, pickRandomOption } from '../utils';
+import { barrierRectFactory, getRandomColor, getRandomIntegerFromRange, pickRandomOption } from '../utils';
 import WantedPoster from '../objects/wantedPoster';
 import Music from '../sounds/music';
 import playMusic from '../sounds/musics/play';
@@ -47,12 +47,7 @@ export default class PlayScene implements Scene {
     this.layer1 = canvas.get('layer1');
     this.wantedPoster = new WantedPoster();
     this.music = new Music(playMusic);
-    this.barrier = new Rect({
-      left: this.layer1.width / 5,
-      top: this.layer1.height / 5,
-      width: this.layer1.width / 5 * 3,
-      height: this.layer1.height / 5 * 3,
-    })
+    this.barrier = barrierRectFactory(this.layer1)
   }
 
   start = ({
