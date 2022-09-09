@@ -1,4 +1,4 @@
-import { RectType } from './types/rect';
+import { Rect, RectType } from './types/rect';
 
 export const degreeToRadian = (degree: number) => (Math.PI / 180) * degree;
 
@@ -78,17 +78,16 @@ export const isInsideRect = (
   return left <= x && x <= right && top <= y && y <= bottom;
 };
 
-const sm = {
-  width: 640,
-  height: 380,
-}
+export const barrierRectFactory = (canvas: HTMLCanvasElement) => {
+  const skyHeight = 150;
+  const posterHeight = 200;
+  const width = canvas.width * 0.99;
 
-const md = {
-  width: 800,
-  height: 600,
-}
-
-export const getBarrierSize = (canvas: HTMLCanvasElement) => {
-  return canvas.width > md.width ? md : sm;
+  return new Rect({
+    left: canvas.width / 2 - width / 2,
+    top: skyHeight,
+    width,
+    height: canvas.height - skyHeight - posterHeight,
+  })
 }
 

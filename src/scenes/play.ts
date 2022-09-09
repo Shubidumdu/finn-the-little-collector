@@ -10,9 +10,11 @@ import Person, {
   SKIN_COLORS,
 } from '../objects/person';
 import {
+  barrierRectFactory,
   getRandomColor,
   getRandomIntegerFromRange,
   pickRandomOption,
+  isInsideRect,
 } from '../utils';
 import WantedPoster from '../objects/wantedPoster';
 import Music from '../sounds/music';
@@ -20,6 +22,7 @@ import playMusic from '../sounds/musics/play';
 import playEffectSound from '../sounds/effects';
 import { Rect } from '../types/rect';
 import { postGlobalEvent } from '../event';
+import { STAGE_STATES } from '../constants';
 
 export type PlaySceneState = {
   activeBackground: BackgroundType;
@@ -55,22 +58,17 @@ export default class PlayScene implements Scene {
     this.layer1 = canvas.get('layer1');
     this.wantedPoster = new WantedPoster();
     this.music = new Music(playMusic);
-    this.barrier = new Rect({
-      left: this.layer1.width / 5,
-      top: this.layer1.height / 5,
-      width: (this.layer1.width / 5) * 3,
-      height: (this.layer1.height / 5) * 3,
-    });
+    this.barrier = barrierRectFactory(this.layer1)
   }
 
   start = ({
-    activeBackground = 'playground',
-    stage = 1,
-    timeout = 1000 * 60,
-    lifeCount = 5,
-    personCount = 100,
-    wantedPersonCount = 3,
-  }: Partial<PlaySceneState> = {}) => {
+    activeBackground,
+    stage,
+    timeout,
+    lifeCount,
+    personCount,
+    wantedPersonCount,
+  }: PlaySceneState = STAGE_STATES[1]) => {
     this.activeBackground = activeBackground;
     this.backgrounds[this.activeBackground].init();
     this.music.play(true);
@@ -156,42 +154,33 @@ export default class PlayScene implements Scene {
     }
   };
 
-  // debug
-  #drawPersonBarrier = (context: CanvasRenderingContext2D) => {
-    context.resetTransform();
-    context.beginPath();
-    context.strokeRect(
-      this.barrier.left,
-      this.barrier.top,
-      this.barrier.width,
-      this.barrier.height,
-    );
-    context.closePath();
-  };
-
   #handleClickPerson = (e: PointerEvent) => {
     let isPersonClicked = false;
     let isCorrect = false;
+    let clickedPersons: Person[] = [];
 
     this.persons.forEach((person) => {
       if (person.isHit) return;
 
-      person.setIsHit({
+      isInsideRect({
         x: e.offsetX,
         y: e.offsetY,
-      });
+      }, person.hitBoxPosition) && clickedPersons.push(person);
+    })
 
-      if (person.isHit) {
-        isPersonClicked = true;
-        if (person.id < this.wantedPersonCount) {
-          isCorrect = true;
-          this.wantedPoster.removePerson(person.id);
-          person.correctAt = performance.now();
-        } else {
-          person.deadAt = performance.now();
-        }
+    const [frontPerson] = clickedPersons.sort((a, b) => b.position.y - a.position.y);
+    frontPerson.isHit = true;
+
+    if (frontPerson.isHit) {
+      isPersonClicked = true;
+      if (frontPerson.id < this.wantedPersonCount) {
+        isCorrect = true;
+        this.wantedPoster.removePerson(frontPerson.id);
+        frontPerson.correctAt = performance.now();
+      } else {
+        frontPerson.deadAt = performance.now();
       }
-    });
+    }
 
     if (isPersonClicked) {
       if (!isCorrect) {
@@ -201,5 +190,13 @@ export default class PlayScene implements Scene {
         playEffectSound('correct');
       }
     }
-  };
+  }
+
+  // debug
+  #drawPersonBarrier = (context: CanvasRenderingContext2D) => {
+    context.resetTransform()
+    context.beginPath();
+    context.strokeRect(this.barrier.left, this.barrier.top, this.barrier.width, this.barrier.height);
+    context.closePath();
+  }
 }
