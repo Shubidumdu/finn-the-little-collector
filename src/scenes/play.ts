@@ -5,7 +5,7 @@ import { BackgroundType, Playground, Pool, Road } from '../objects/backgrounds';
 import PlayInfo from '../objects/playInfo';
 import Magnifier from '../objects/magnifier';
 import Person, { EYE_COLORS, LOWER_BODY_SIZE, SKIN_COLORS } from '../objects/person';
-import { barrierRectFactory, getRandomColor, getRandomIntegerFromRange, pickRandomOption } from '../utils';
+import { barrierRectFactory, getRandomColor, getRandomIntegerFromRange, isInsideRect, pickRandomOption } from '../utils';
 import WantedPoster from '../objects/wantedPoster';
 import Music from '../sounds/music';
 import playMusic from '../sounds/musics/play';
@@ -138,37 +138,33 @@ export default class PlayScene implements Scene {
     }
   }
 
-  // debug
-  #drawPersonBarrier = (context: CanvasRenderingContext2D) => {
-    context.resetTransform()
-    context.beginPath();
-    context.strokeRect(this.barrier.left, this.barrier.top, this.barrier.width, this.barrier.height);
-    context.closePath();
-  }
-
   #handleClickPerson = (e: PointerEvent) => {
     let isPersonClicked = false;
     let isCorrect = false;
+    let clickedPersons: Person[] = [];
 
     this.persons.forEach((person) => {
       if (person.isHit) return;
 
-      person.setIsHit({
-        x: e.clientX,
-        y: e.clientY,
-      });
+      isInsideRect({
+        x: e.offsetX,
+        y: e.offsetY,
+      }, person.hitBoxPosition) && clickedPersons.push(person);
+    })
 
-      if (person.isHit) {
-        isPersonClicked = true;
-        if (person.id < this.wantedPersonCount) {
-          isCorrect = true;
-          this.wantedPoster.removePerson(person.id);
-          person.correctAt = performance.now();
-        } else {
-          person.deadAt = performance.now();
-        }
+    const [frontPerson] = clickedPersons.sort((a, b) => b.position.y - a.position.y);
+    frontPerson.isHit = true;
+
+    if (frontPerson.isHit) {
+      isPersonClicked = true;
+      if (frontPerson.id < this.wantedPersonCount) {
+        isCorrect = true;
+        this.wantedPoster.removePerson(frontPerson.id);
+        frontPerson.correctAt = performance.now();
+      } else {
+        frontPerson.deadAt = performance.now();
       }
-    });
+    }
 
     if (isPersonClicked) {
       if (!isCorrect) {
@@ -178,5 +174,13 @@ export default class PlayScene implements Scene {
         playEffectSound('correct');
       }
     }
+  }
+
+  // debug
+  #drawPersonBarrier = (context: CanvasRenderingContext2D) => {
+    context.resetTransform()
+    context.beginPath();
+    context.strokeRect(this.barrier.left, this.barrier.top, this.barrier.width, this.barrier.height);
+    context.closePath();
   }
 }

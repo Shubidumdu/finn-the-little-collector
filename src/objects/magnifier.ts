@@ -67,8 +67,8 @@ export default class Magnifier implements GameObject, MagnifierState {
 
   #handleMouseMove = (e: MouseEvent) => {
     this.position = {
-      x: e.clientX,
-      y: e.clientY,
+      x: e.offsetX,
+      y: e.offsetY,
     };
   };
 }
