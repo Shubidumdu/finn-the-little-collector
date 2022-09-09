@@ -255,6 +255,7 @@ export default class TitleScene implements Scene {
       );
       context.font = getFont(32);
       context.fillText('Finn:', 0, 0);
+
       context.setTransform(
         1,
         0,
