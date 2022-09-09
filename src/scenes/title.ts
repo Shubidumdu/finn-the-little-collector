@@ -97,16 +97,6 @@ export default class TitleScene implements Scene {
         0,
         0,
         1,
-        canvas.width / 2 - 102,
-        canvas.height / 2 + 80 + 2 * Math.sin(time / 60),
-      );
-      this.#drawSubTitle(context);
-
-      context.setTransform(
-        1,
-        0,
-        0,
-        1,
         canvas.width / 2 - 43,
         canvas.height / 2 - 92 + this.activeMenuIndex * 58,
       );
@@ -139,7 +129,6 @@ export default class TitleScene implements Scene {
         canvas.width / 2 - 102,
         canvas.height / 2 + 80 + 2 * Math.sin(time / 60),
       );
-      this.#drawSubTitle(context);
 
       context.setTransform(
         1,
@@ -160,15 +149,11 @@ export default class TitleScene implements Scene {
   };
 
   #addEvents = () => {
-    window.addEventListener('keydown', this.#changeMenuIndexEvent);
-    window.addEventListener('keydown', this.#actionEvent);
     window.addEventListener('click', this.#handleClickEvent);
     canvas.get('layer0').addEventListener('pointermove', this.#pointerEvent);
   };
 
   #removeEvents = () => {
-    window.removeEventListener('keydown', this.#changeMenuIndexEvent);
-    window.removeEventListener('keydown', this.#actionEvent);
     window.removeEventListener('click', this.#handleClickEvent);
     canvas.get('layer0').removeEventListener('pointermove', this.#pointerEvent);
   };
@@ -187,28 +172,8 @@ export default class TitleScene implements Scene {
       const currentMenu = this.menus[this.activeMenuIndex];
       currentMenu.action();
     }
-  };
 
-  #changeMenuIndexEvent = (e: KeyboardEvent) => {
     playEffectSound('pick');
-
-    if (e.code === 'ArrowDown') {
-      this.activeMenuIndex = Math.min(
-        this.activeMenuIndex + 1,
-        this.menus.length - 1,
-      );
-    }
-
-    if (e.code === 'ArrowUp') {
-      this.activeMenuIndex = Math.max(this.activeMenuIndex - 1, 0);
-    }
-  };
-
-  #actionEvent = (e: KeyboardEvent) => {
-    if (e.code !== 'Space') return;
-
-    const currentMenu = this.menus[this.activeMenuIndex];
-    currentMenu.action();
   };
 
   #pointerEvent = (e: PointerEvent) => {
@@ -376,20 +341,11 @@ export default class TitleScene implements Scene {
     context.font = getFont(fontSize);
 
     const isSoundOn = store.isSoundOn ? 'on' : 'off';
-    const offsetX = 0 + (this.activeMenuIndex === 1 ? -18 : 0) + (store.isSoundOn ? 2 : 0);
+    const offsetX = 0 + (store.isSoundOn ? 2 : 0);
 
     context.transform(1, 0, 0, 1, offsetX, 0);
-
-    if (this.activeMenuIndex === 1) {
-      context.fillText(`Sound [ ${isSoundOn} ]`, 0, 0);
-    } else {
-      context.fillText(`Sound ${isSoundOn}`, 0, 0);
-    }
-  };
-
-  #drawSubTitle: DrawFunc = (context) => {
-    context.font = getFont(12);
-    context.fillText('Press spacebar to act', 0, 0);
+    context.fillText(`Sound ${isSoundOn}`, 0, 0);
+    
   };
 
   #drawUUave: DrawFunc = (context) => {
