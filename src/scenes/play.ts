@@ -4,8 +4,16 @@ import { GameObject } from '../objects';
 import { BackgroundType, Playground, Pool, Road } from '../objects/backgrounds';
 import PlayInfo from '../objects/playInfo';
 import Magnifier from '../objects/magnifier';
-import Person, { EYE_COLORS, LOWER_BODY_SIZE, SKIN_COLORS } from '../objects/person';
-import { getRandomColor, getRandomIntegerFromRange, pickRandomOption } from '../utils';
+import Person, {
+  EYE_COLORS,
+  LOWER_BODY_SIZE,
+  SKIN_COLORS,
+} from '../objects/person';
+import {
+  getRandomColor,
+  getRandomIntegerFromRange,
+  pickRandomOption,
+} from '../utils';
 import WantedPoster from '../objects/wantedPoster';
 import Music from '../sounds/music';
 import playMusic from '../sounds/musics/play';
@@ -50,19 +58,19 @@ export default class PlayScene implements Scene {
     this.barrier = new Rect({
       left: this.layer1.width / 5,
       top: this.layer1.height / 5,
-      width: this.layer1.width / 5 * 3,
-      height: this.layer1.height / 5 * 3,
-    })
+      width: (this.layer1.width / 5) * 3,
+      height: (this.layer1.height / 5) * 3,
+    });
   }
 
   start = ({
-    activeBackground,
-    stage,
-    timeout,
-    lifeCount,
-    personCount,
-    wantedPersonCount
-  }: PlaySceneState) => {
+    activeBackground = 'playground',
+    stage = 1,
+    timeout = 1000 * 60,
+    lifeCount = 5,
+    personCount = 100,
+    wantedPersonCount = 3,
+  }: Partial<PlaySceneState> = {}) => {
     this.activeBackground = activeBackground;
     this.backgrounds[this.activeBackground].init();
     this.music.play(true);
@@ -79,7 +87,10 @@ export default class PlayScene implements Scene {
         id: index,
         position: {
           x: getRandomIntegerFromRange(this.barrier.left, this.barrier.right),
-          y: getRandomIntegerFromRange(this.barrier.top, this.barrier.bottom - LOWER_BODY_SIZE),
+          y: getRandomIntegerFromRange(
+            this.barrier.top,
+            this.barrier.bottom - LOWER_BODY_SIZE,
+          ),
           z: 0,
         },
         colors: {
@@ -93,9 +104,10 @@ export default class PlayScene implements Scene {
         barrier: this.barrier,
       });
     });
+
     this.magnifier.init({
       position: { x: 0, y: 0 },
-      range: 120,
+      range: 100,
     });
 
     const wantedPersons = this.persons.filter(
@@ -106,7 +118,7 @@ export default class PlayScene implements Scene {
       persons: [...wantedPersons],
     });
 
-    window.addEventListener('click', this.#handleClickPerson);
+    canvas.get('layer0').addEventListener('click', this.#handleClickPerson);
   };
 
   update = (time: number) => {
@@ -125,11 +137,12 @@ export default class PlayScene implements Scene {
     this.music.stop();
     this.info.remove();
     this.persons.forEach((person) => person.remove());
-    window.removeEventListener('click', this.#handleClickPerson);
+
+    canvas.get('layer0').removeEventListener('click', this.#handleClickPerson);
   };
 
   #checkGameOver = () => {
-    if(!this.info.lifeCount || this.info.timeout < 0) {
+    if (!this.info.lifeCount || this.info.timeout < 0) {
       this.music.stop();
       postGlobalEvent({
         type: 'change-scene',
@@ -137,19 +150,24 @@ export default class PlayScene implements Scene {
           type: 'gameover',
           state: {
             stage: this.info.stage,
-          }
-        }
-      })
+          },
+        },
+      });
     }
-  }
+  };
 
   // debug
   #drawPersonBarrier = (context: CanvasRenderingContext2D) => {
-    context.resetTransform()
+    context.resetTransform();
     context.beginPath();
-    context.strokeRect(this.barrier.left, this.barrier.top, this.barrier.width, this.barrier.height);
+    context.strokeRect(
+      this.barrier.left,
+      this.barrier.top,
+      this.barrier.width,
+      this.barrier.height,
+    );
     context.closePath();
-  }
+  };
 
   #handleClickPerson = (e: PointerEvent) => {
     let isPersonClicked = false;
@@ -159,8 +177,8 @@ export default class PlayScene implements Scene {
       if (person.isHit) return;
 
       person.setIsHit({
-        x: e.clientX,
-        y: e.clientY,
+        x: e.offsetX,
+        y: e.offsetY,
       });
 
       if (person.isHit) {
@@ -183,5 +201,5 @@ export default class PlayScene implements Scene {
         playEffectSound('correct');
       }
     }
-  }
+  };
 }
