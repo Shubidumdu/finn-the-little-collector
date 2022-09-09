@@ -35,15 +35,16 @@ export const SKIN_COLORS = [
 export const LOWER_BODY_SIZE = 18
 const PADDING = 10;
 const SPEED_MAX_MULTIPLE = 0.3;
-const SPEED_MIN_MULTIPLE = -1;
+const SPEED_MIN_MULTIPLE = -0.7;
 
 const DISTANCE_PER_SECOND = 24;
 const FRAME_RATE_PER_SECOND = 60;
 
 /**
- * @description 1초 동안 움직이는 픽셀 거리
+ * @description 1프레임 동안 움직이는 픽셀 거리
  */
 const DEFAULT_SPEED = DISTANCE_PER_SECOND / FRAME_RATE_PER_SECOND;
+const MIN_SPEED = 0.1
 
 export default class Person implements GameObject, PersonState {
   id: number;
@@ -155,15 +156,15 @@ export default class Person implements GameObject, PersonState {
 
   #moveRandomX = () => {
     this.isMoving = true;
-    this.#moveX(this.defaultSpeed * (1 + this.randomX));
+    this.#moveX(this.defaultSpeed * (1 + this.randomX) + MIN_SPEED);
 
     this.#stayInBarrier();
   };
 
   #moveRandomXY = () => {
     this.isMoving = true;
-    this.#moveX(this.defaultSpeed * (1 + this.randomX));
-    this.#moveY(this.defaultSpeed * (1 + this.randomY) * 0.6);
+    this.#moveX(this.defaultSpeed * (1 + this.randomX) + MIN_SPEED);
+    this.#moveY(this.defaultSpeed * (1 + this.randomY) * 0.6 + MIN_SPEED);
 
     this.#stayInBarrier();
   };
@@ -187,8 +188,8 @@ export default class Person implements GameObject, PersonState {
   #moveSpeedDownGentleSlope = (progress?: number) => {
     this.isMoving = true;
     if (progress === 1) return (this.isMoving = false);
-    this.#moveX(this.defaultSpeed * (1 - progress));
-    this.#moveY(this.defaultSpeed * 0.2 * (1 - progress));
+    this.#moveX(this.defaultSpeed * (1 - progress) + MIN_SPEED);
+    this.#moveY(this.defaultSpeed * 0.2 * (1 - progress) + MIN_SPEED);
 
     this.#stayInBarrier();
   };
@@ -198,8 +199,8 @@ export default class Person implements GameObject, PersonState {
     if (progress === 1) return (this.isMoving = false);
 
     const naturalizedProgress = Math.max(0.8, progress);
-    this.#moveX(this.defaultSpeed * (1 - naturalizedProgress));
-    this.#moveY(this.defaultSpeed * (1 - naturalizedProgress));
+    this.#moveX(this.defaultSpeed * (1 - naturalizedProgress) + MIN_SPEED);
+    this.#moveY(this.defaultSpeed * (1 - naturalizedProgress) + MIN_SPEED);
 
     this.#stayInBarrier();
   };
