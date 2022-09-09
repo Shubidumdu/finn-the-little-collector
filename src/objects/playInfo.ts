@@ -51,13 +51,13 @@ export default class PlayInfo implements GameObject, PlayInfoState {
     const draw = drawLayer(this.layer);
 
     draw((context, canvas) => {
-      const remainTime = (
-        Math.max(this.timeout - (time - this.startTime), 0) / 1000
-      ).toFixed(2);
+      const remainTime = Math.max(this.timeout - (time - this.startTime), 0) / 1000;
+      const offset = remainTime < 10 ? 72 : 92;
 
-      context.setTransform(1, 0, 0, 1, canvas.width, 0);
+      context.setTransform(1, 0, 0, 1, canvas.width - 40 - offset, 56);
       context.font = getFont(24);
-      context.fillText(remainTime + '', -(40 + 92), 56);
+      context.fillStyle = remainTime < 10 ? 'red' : '#000';
+      context.fillText(remainTime.toFixed(2), 0, 0);
     });
   };
 
@@ -84,14 +84,15 @@ export default class PlayInfo implements GameObject, PlayInfoState {
         context.shadowOffsetY = 0;
         context.lineWidth = 2;
         context.globalAlpha = 1;
-        context.arc(r, -r, (r - 4), degreeToRadian(-24), degreeToRadian(48));
+        context.arc(r, -r, (r - 4), degreeToRadian(24), degreeToRadian(72));
         context.stroke();
         context.closePath();
 
         context.beginPath();
         context.lineCap = 'round';;
         context.fillStyle = '#000';
-        context.fillRect(r - 2, 0, 4, 20);
+        context.rotate(degreeToRadian(60));
+        context.fillRect(-10, -10, 4, 20);
       });
     })
   };
