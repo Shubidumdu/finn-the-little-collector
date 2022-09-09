@@ -81,12 +81,12 @@ export const isInsideRect = (
 export const barrierRectFactory = (canvas: HTMLCanvasElement) => {
   const skyHeight = 150;
   const posterHeight = 200;
-  const width = canvas.width * 0.99
+  const width = canvas.width * 0.99;
 
   return new Rect({
     left: canvas.width / 2 - width / 2,
     top: skyHeight,
-    width: canvas.width * 0.99,
+    width,
     height: canvas.height - skyHeight - posterHeight,
   })
 }

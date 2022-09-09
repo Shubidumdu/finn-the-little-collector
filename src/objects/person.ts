@@ -226,15 +226,6 @@ export default class Person implements GameObject, PersonState {
     return;
   };
 
-  setIsHit = (shotPosition: { x: number; y: number }) => {
-    const { left, right, top, bottom } = this.hitBoxPosition;
-    const { x: shotX, y: shotY } = shotPosition;
-
-    left <= shotX && shotX <= right && top <= shotY && shotY <= bottom
-      ? (this.isHit = true)
-      : (this.isHit = false);
-  };
-
   draw = (time: number) => {
     const layer1 = canvas.get('layer1'); // 확대
     const drawLayer1 = drawLayer(layer1);
