@@ -26,7 +26,7 @@ export const getRandomInt = (size: number) => Math.floor(Math.random() * size);
 
 export const getFont = (
   size: number = 32,
-  type: string = 'Arial Black, Arial, sans-serif',
+  type: string = 'Courier New, sans-serif',
 ) => `bold ${size}pt ${type}`;
 
 export const getRandomIntegerFromRange = (min: number, max: number) => Math.round(Math.random() * (max - min) + min);
@@ -55,6 +55,9 @@ export const getLinearPosition = ({
   offset,
 }: LinearPosition) =>
   (x + time) % (maxWidth + offset) - offset;
+
+export const isMobileSize = (width: number) => width < 480;
+export const isTabletSize = (width: number) => width < 850;
 
 /**
  * 

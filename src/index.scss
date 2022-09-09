@@ -1,5 +1,5 @@
 body {
-  background-color: #ccc;
+  background-color: black;
 }
 
 body,
@@ -20,8 +20,20 @@ canvas {
   margin: auto;
 }
 
+#layer0 {
+  z-index: 10;
+}
+
 #layer1 {
-  z-index: 0;
+  z-index: 5;
+}
+
+#layer2 {
+  z-index: 4;
+}
+
+#layer3 {
+  z-index: 3;
 }
 
 #bg {
