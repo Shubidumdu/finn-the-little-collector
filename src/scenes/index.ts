@@ -1,10 +1,10 @@
 import PlayScene from './play';
 import TitleScene from './title';
 
-export type SceneType = 'play' | 'title';
+export type SceneType = 'play' | 'title' | 'gameover';
 
 export interface Scene {
-  start: () => void;
+  start: (...args: any) => void;
   update: (time: number) => void;
   end: () => void;
 }

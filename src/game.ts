@@ -1,21 +1,7 @@
 import { resetAllLayers } from './canvas';
+import { ChangeSceneEvent, listenGlobalEvent } from './event';
 import { PlayScene, TitleScene, Scene, SceneType } from './scenes';
-
-type ChangeScene = {
-  type: 'change-scene',
-  payload: SceneType,
-};
-
-type ClickEvent = {
-  type: 'click-canvas',
-  payload: {
-    id: string,
-    x: number,
-    y: number,
-  },
-};
-
-export type ObservableEventType = ChangeScene | ClickEvent;
+import GameOverScene from './scenes/gameover';
 
 export default class Game {
   activeScene: SceneType;
@@ -26,24 +12,23 @@ export default class Game {
     this.scenes = {
       play: new PlayScene(),
       title: new TitleScene(),
+      gameover: new GameOverScene(),
     };
   }
 
   start = () => {
     this.scenes[this.activeScene].start();
     requestAnimationFrame(this.#update);
-    this.#observeEvents();
+    this.#listenGlobalEvents();
   };
 
-  #changeScene = (type: SceneType) => {
+  #changeScene = (
+    type: ChangeSceneEvent['payload']['type'],
+    state: ChangeSceneEvent['payload']['state'],
+  ) => {
     this.scenes[this.activeScene].end();
     this.activeScene = type;
-    this.scenes[this.activeScene].start();
-  };
-
-  #click = (payload: ClickEvent['payload']) => {
-    console.log('canvas click');
-    console.log(payload);
+    this.scenes[this.activeScene].start(state);
   };
 
   #update = (time: number) => {
@@ -52,20 +37,11 @@ export default class Game {
     requestAnimationFrame(this.#update);
   };
 
-  #observeEvents = () => {
-    window.addEventListener(
-      'message',
-      (event: MessageEvent<ObservableEventType>) => {
-        if (!event.data) return;
-        const { type, payload } = event.data;
-
-        switch (type) {
-          case 'change-scene': this.#changeScene(payload);
-          break;
-          case 'click-canvas': this.#click(payload);
-          break;
-        }
-      },
-    );
+  #listenGlobalEvents = () => {
+    listenGlobalEvent(({ type, payload }) => {
+      if (type === 'change-scene') {
+        this.#changeScene(payload.type, payload.state);
+      }
+    });
   };
 }

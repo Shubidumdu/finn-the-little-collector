@@ -1,5 +1,7 @@
 import { Scene, SceneType } from '.';
 import canvas, { DrawFunc, drawLayer } from '../canvas';
+import { STAGE_STATES } from '../constants';
+import { postGlobalEvent } from '../event';
 import playEffectSound from '../sounds/effects';
 import Music from '../sounds/music';
 import titleMusic from '../sounds/musics/title';
@@ -28,7 +30,14 @@ export default class TitleScene implements Scene {
   menus = [
     {
       key: 'start',
-      action: () => this.#changeScene('play'),
+      action: () =>
+        postGlobalEvent({
+          type: 'change-scene',
+          payload: {
+            type: 'play',
+            state: STAGE_STATES[1],
+          },
+        }),
     },
     {
       key: 'sound',
@@ -153,30 +162,31 @@ export default class TitleScene implements Scene {
   #addEvents = () => {
     window.addEventListener('keydown', this.#changeMenuIndexEvent);
     window.addEventListener('keydown', this.#actionEvent);
-
-    window.addEventListener('click', (e: PointerEvent) => {
-      const { offsetX, offsetY } = e;
-
-      if (isInsideRect({ x: offsetX, y: offsetY }, this.hitBoxes.start)) {
-        this.activeMenuIndex = 0;
-        const currentMenu = this.menus[this.activeMenuIndex];
-        currentMenu.action();
-      }
-
-      if (isInsideRect({ x: offsetX, y: offsetY }, this.hitBoxes.sound)) {
-        this.activeMenuIndex = 1;
-        const currentMenu = this.menus[this.activeMenuIndex];
-        currentMenu.action();
-      }
-    });
-
+    window.addEventListener('click', this.#handleClickEvent);
     canvas.get('layer0').addEventListener('pointermove', this.#pointerEvent);
   };
 
   #removeEvents = () => {
     window.removeEventListener('keydown', this.#changeMenuIndexEvent);
     window.removeEventListener('keydown', this.#actionEvent);
+    window.removeEventListener('click', this.#handleClickEvent);
     canvas.get('layer0').removeEventListener('pointermove', this.#pointerEvent);
+  };
+
+  #handleClickEvent = (e: PointerEvent) => {
+    const { offsetX, offsetY } = e;
+
+    if (isInsideRect({ x: offsetX, y: offsetY }, this.hitBoxes.start)) {
+      this.activeMenuIndex = 0;
+      const currentMenu = this.menus[this.activeMenuIndex];
+      currentMenu.action();
+    }
+
+    if (isInsideRect({ x: offsetX, y: offsetY }, this.hitBoxes.sound)) {
+      this.activeMenuIndex = 1;
+      const currentMenu = this.menus[this.activeMenuIndex];
+      currentMenu.action();
+    }
   };
 
   #changeMenuIndexEvent = (e: KeyboardEvent) => {
@@ -245,6 +255,7 @@ export default class TitleScene implements Scene {
       );
       context.font = getFont(32);
       context.fillText('Finn:', 0, 0);
+
       context.setTransform(
         1,
         0,
