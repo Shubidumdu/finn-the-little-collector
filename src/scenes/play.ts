@@ -154,8 +154,8 @@ export default class PlayScene implements Scene {
       if (person.isHit) return;
 
       person.setIsHit({
-        x: e.clientX,
-        y: e.clientY,
+        x: e.offsetX,
+        y: e.offsetY,
       });
 
       if (person.isHit) {
