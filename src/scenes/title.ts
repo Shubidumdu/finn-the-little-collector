@@ -98,7 +98,7 @@ export default class TitleScene implements Scene {
         0,
         1,
         canvas.width / 2 - 43,
-        canvas.height / 2 - 92 + this.activeMenuIndex * 58,
+        canvas.height / 2 + 32 + this.activeMenuIndex * 58,
       );
       context.strokeStyle = '#fff';
       this.#drawUUave(context);
@@ -136,7 +136,7 @@ export default class TitleScene implements Scene {
         0,
         1,
         canvas.width / 2 - 43,
-        canvas.height / 2 - 92 + this.activeMenuIndex * 58,
+        canvas.height / 2 + 32 + this.activeMenuIndex * 58,
       );
       context.strokeStyle = '#000';
       this.#drawUUave(context);
@@ -216,7 +216,7 @@ export default class TitleScene implements Scene {
         0,
         1,
         canvas.width / 2 - 60,
-        canvas.height / 2 - 200,
+        canvas.height / 2 - 100,
       );
       context.font = getFont(32);
       context.fillText('Finn:', 0, 0);
@@ -227,20 +227,20 @@ export default class TitleScene implements Scene {
         0,
         1,
         canvas.width / 2 - 24,
-        canvas.height / 2 - 200 + 32,
+        canvas.height / 2 - 100,
       );
       context.font = getFont(20);
-      context.fillText('the', 0, 0);
+      context.fillText('the', 0, 32);
       context.setTransform(
         1,
         0,
         0,
         1,
         canvas.width / 2 - 152,
-        canvas.height / 2 - 200 + 64,
+        canvas.height / 2 - 100,
       );
       context.font = getFont(24);
-      context.fillText('Little Collector', 0, 0);
+      context.fillText('Little Collector', 0, 64);
     } else if (isTabletSize(canvas.width)) {
       context.setTransform(
         1,
@@ -248,7 +248,7 @@ export default class TitleScene implements Scene {
         0,
         1,
         canvas.width / 2 - 66,
-        canvas.height / 2 - 200,
+        canvas.height / 2 - 80,
       );
       context.font = getFont(36);
       context.fillText('Finn:', 0, 0);
@@ -258,7 +258,7 @@ export default class TitleScene implements Scene {
         0,
         1,
         canvas.width / 2 - 190,
-        canvas.height / 2 - 200,
+        canvas.height / 2 - 80,
       );
       context.font = getFont(24);
       context.fillText('the Little Collector', 0, 32);
@@ -269,7 +269,7 @@ export default class TitleScene implements Scene {
         0,
         1,
         canvas.width / 2 - 350,
-        canvas.height / 2 - 200,
+        canvas.height / 2 - 80,
       );
       context.font = getFont(40);
       context.fillText('Finn: ', 0, 0);
@@ -281,19 +281,19 @@ export default class TitleScene implements Scene {
 
   #drawMenus: DrawFunc<[HTMLCanvasElement]> = (context, canvas) => {
     const hitBoxpadding = 3;
-    const fontSize = 12;
+    const fontSize = isTabletSize(canvas.width) ? 12 : 16;
     const startTextWidth = 45 + hitBoxpadding * 2;
     const startTextHeight = fontSize + hitBoxpadding * 2;
     const soundTextWidth = 104 + hitBoxpadding * 2;
     const soundTextHeight = fontSize + hitBoxpadding * 2;
 
     const startTextPosition = {
-      x: canvas.width / 2 - 24,
-      y: canvas.height / 2 - 100,
+      x: canvas.width / 2 - (isTabletSize(canvas.width) ? 24 : 34),
+      y: canvas.height / 2 + 24,
     };
 
     const soundTextOffsetFromStartText = {
-      x: -18,
+      x: isTabletSize(canvas.width) ? -18 : -22,
       y: 58,
     };
 
@@ -340,12 +340,10 @@ export default class TitleScene implements Scene {
     );
     context.font = getFont(fontSize);
 
-    const isSoundOn = store.isSoundOn ? 'on' : 'off';
-    const offsetX = 0 + (store.isSoundOn ? 2 : 0);
+    const isSoundOn = store.isSoundOn ? 'On' : 'Off';
 
-    context.transform(1, 0, 0, 1, offsetX, 0);
+    context.transform(1, 0, 0, 1, store.isSoundOn ? 3 : 0, 0);
     context.fillText(`Sound ${isSoundOn}`, 0, 0);
-    
   };
 
   #drawUUave: DrawFunc = (context) => {
@@ -371,7 +369,14 @@ export default class TitleScene implements Scene {
 
   #drawMagnifier: DrawFunc<[HTMLCanvasElement]> = (context, canvas) => {
     const { x, y, scale } = this.magnifier;
-    context.setTransform(scale, 0, 0, scale, x + 24, y - 532);
+    context.setTransform(
+      scale,
+      0,
+      0,
+      scale,
+      x + 24,
+      y - 532,
+    );
     // context.setTransform(scale, 0, 0, scale, canvas.width / 2 + 32, -40);
     context.beginPath();
     context.rotate(degreeToRadian(48));
@@ -389,10 +394,6 @@ export default class TitleScene implements Scene {
     context.shadowBlur = 0;
     context.shadowOffsetX = 0;
     context.shadowOffsetY = 0;
-
-    context.fillStyle = '#000';
-    context.fillRect(-10, -1, 20, 2);
-    context.fillRect(-1, -10, 2, 20);
   };
 
   // debuging
