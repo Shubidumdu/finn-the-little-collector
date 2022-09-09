@@ -11,6 +11,16 @@ import Music from '../sounds/music';
 import playMusic from '../sounds/musics/play';
 import playEffectSound from '../sounds/effects';
 import { Rect } from '../types/rect';
+import { postGlobalEvent } from '../event';
+
+export type PlaySceneState = {
+  activeBackground: BackgroundType;
+  stage: number;
+  timeout: number;
+  lifeCount: number;
+  personCount: number;
+  wantedPersonCount: number;
+};
 
 export default class PlayScene implements Scene {
   activeBackground: BackgroundType;
@@ -20,7 +30,8 @@ export default class PlayScene implements Scene {
   layer1: HTMLCanvasElement;
   persons: Person[];
   wantedPoster: WantedPoster;
-  music = new Music(playMusic);
+  wantedPersonCount: number;
+  music: Music;
   barrier: Rect;
 
   constructor() {
@@ -35,6 +46,7 @@ export default class PlayScene implements Scene {
     this.persons = [];
     this.layer1 = canvas.get('layer1');
     this.wantedPoster = new WantedPoster();
+    this.music = new Music(playMusic);
     this.barrier = new Rect({
       left: this.layer1.width / 5,
       top: this.layer1.height / 5,
@@ -43,16 +55,25 @@ export default class PlayScene implements Scene {
     })
   }
 
-  start = () => {
+  start = ({
+    activeBackground,
+    stage,
+    timeout,
+    lifeCount,
+    personCount,
+    wantedPersonCount
+  }: PlaySceneState) => {
+    this.activeBackground = activeBackground;
     this.backgrounds[this.activeBackground].init();
     this.music.play(true);
     this.info.init({
-      stage: 1,
-      timeout: 10000,
-      lifeCount: 5,
+      stage,
+      timeout,
+      lifeCount,
     });
+    this.wantedPersonCount = wantedPersonCount;
 
-    this.persons = [...new Array(100)].map(() => new Person());
+    this.persons = [...new Array(personCount)].map(() => new Person());
     this.persons.forEach((person, index) => {
       person.init({
         id: index,
@@ -74,10 +95,9 @@ export default class PlayScene implements Scene {
     });
     this.magnifier.init({
       position: { x: 0, y: 0 },
-      range: 100,
+      range: 120,
     });
 
-    const wantedPersonCount = 3;
     const wantedPersons = this.persons.filter(
       (person) => person.id < wantedPersonCount,
     );
@@ -86,39 +106,7 @@ export default class PlayScene implements Scene {
       persons: [...wantedPersons],
     });
 
-    window.addEventListener('click', (e: PointerEvent) => {
-      let isPersonClicked = false;
-      let isCorrect = false;
-
-      this.persons.forEach((person) => {
-        if (person.isHit) return;
-
-        person.setIsHit({
-          x: e.clientX,
-          y: e.clientY,
-        });
-
-        if (person.isHit) {
-          isPersonClicked = true;
-          if (person.id < wantedPersonCount) {
-            isCorrect = true;
-            this.wantedPoster.removePerson(person.id);
-            person.correctAt = performance.now();
-          } else {
-            person.deadAt = performance.now();
-          }
-        }
-      });
-
-      if (isPersonClicked) {
-        if (!isCorrect) {
-          playEffectSound('wrong');
-          this.info.lifeCount = Math.max(0, this.info.lifeCount - 1);
-        } else {
-          playEffectSound('correct');
-        }
-      }
-    });
+    window.addEventListener('click', this.#handleClickPerson);
   };
 
   update = (time: number) => {
@@ -129,6 +117,7 @@ export default class PlayScene implements Scene {
     });
     this.magnifier.update(time);
     this.wantedPoster.update(time);
+    this.#checkGameOver();
   };
 
   end = () => {
@@ -136,7 +125,23 @@ export default class PlayScene implements Scene {
     this.music.stop();
     this.info.remove();
     this.persons.forEach((person) => person.remove());
+    window.removeEventListener('click', this.#handleClickPerson);
   };
+
+  #checkGameOver = () => {
+    if(!this.info.lifeCount || this.info.timeout < 0) {
+      this.music.stop();
+      postGlobalEvent({
+        type: 'change-scene',
+        payload: {
+          type: 'gameover',
+          state: {
+            stage: this.info.stage,
+          }
+        }
+      })
+    }
+  }
 
   // debug
   #drawPersonBarrier = (context: CanvasRenderingContext2D) => {
@@ -144,5 +149,39 @@ export default class PlayScene implements Scene {
     context.beginPath();
     context.strokeRect(this.barrier.left, this.barrier.top, this.barrier.width, this.barrier.height);
     context.closePath();
+  }
+
+  #handleClickPerson = (e: PointerEvent) => {
+    let isPersonClicked = false;
+    let isCorrect = false;
+
+    this.persons.forEach((person) => {
+      if (person.isHit) return;
+
+      person.setIsHit({
+        x: e.clientX,
+        y: e.clientY,
+      });
+
+      if (person.isHit) {
+        isPersonClicked = true;
+        if (person.id < this.wantedPersonCount) {
+          isCorrect = true;
+          this.wantedPoster.removePerson(person.id);
+          person.correctAt = performance.now();
+        } else {
+          person.deadAt = performance.now();
+        }
+      }
+    });
+
+    if (isPersonClicked) {
+      if (!isCorrect) {
+        playEffectSound('wrong');
+        this.info.lifeCount = Math.max(0, this.info.lifeCount - 1);
+      } else {
+        playEffectSound('correct');
+      }
+    }
   }
 }

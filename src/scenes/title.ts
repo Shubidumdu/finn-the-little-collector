@@ -1,5 +1,7 @@
 import { Scene, SceneType } from '.';
 import canvas, { drawLayer } from '../canvas';
+import { STAGE_STATES } from '../constants';
+import { postGlobalEvent } from '../event';
 import playEffectSound from '../sounds/effects';
 import Music from '../sounds/music';
 import titleMusic from '../sounds/musics/title';
@@ -13,7 +15,14 @@ export default class TitleScene implements Scene {
   menus = [
     {
       key: 'start',
-      action: () => this.#changeScene('play'),
+      action: () =>
+        postGlobalEvent({
+          type: 'change-scene',
+          payload: {
+            type: 'play',
+            state: STAGE_STATES[1],
+          },
+        }),
     },
     {
       key: 'sound',
@@ -58,27 +67,29 @@ export default class TitleScene implements Scene {
   #addEvents = () => {
     window.addEventListener('keydown', this.#changeMenuIndexEvent);
     window.addEventListener('keydown', this.#actionEvent);
-
-    window.addEventListener('click', (e: PointerEvent) => {
-      const { clientX, clientY } = e;
-
-      if (isInsideRect({ x: clientX, y: clientY }, this.hitBoxes.start)) {
-        this.activeMenuIndex = 0;
-        const currentMenu = this.menus[this.activeMenuIndex];
-        currentMenu.action();
-      }
-
-      if (isInsideRect({ x: clientX, y: clientY }, this.hitBoxes.sound)) {
-        this.activeMenuIndex = 1;
-        const currentMenu = this.menus[this.activeMenuIndex];
-        currentMenu.action();
-      }
-    });
+    window.addEventListener('click', this.#handleClickEvent);
   };
 
   #removeEvents = () => {
     window.removeEventListener('keydown', this.#changeMenuIndexEvent);
     window.removeEventListener('keydown', this.#actionEvent);
+    window.removeEventListener('click', this.#handleClickEvent);
+  };
+
+  #handleClickEvent = (e: PointerEvent) => {
+    const { clientX, clientY } = e;
+
+    if (isInsideRect({ x: clientX, y: clientY }, this.hitBoxes.start)) {
+      this.activeMenuIndex = 0;
+      const currentMenu = this.menus[this.activeMenuIndex];
+      currentMenu.action();
+    }
+
+    if (isInsideRect({ x: clientX, y: clientY }, this.hitBoxes.sound)) {
+      this.activeMenuIndex = 1;
+      const currentMenu = this.menus[this.activeMenuIndex];
+      currentMenu.action();
+    }
   };
 
   #changeMenuIndexEvent = (e: KeyboardEvent) => {
@@ -101,16 +112,6 @@ export default class TitleScene implements Scene {
 
     const currentMenu = this.menus[this.activeMenuIndex];
     currentMenu.action();
-  };
-
-  #changeScene = (sceneType: SceneType) => {
-    window.postMessage(
-      {
-        type: 'change-scene',
-        payload: sceneType,
-      },
-      window.origin,
-    );
   };
 
   #drawTitle = () => {
@@ -166,7 +167,10 @@ export default class TitleScene implements Scene {
         top: startTextPosition.y - startTextHeight + hitBoxpadding,
         height: startTextHeight,
         bottom:
-          startTextPosition.y - startTextHeight + hitBoxpadding + startTextHeight,
+          startTextPosition.y -
+          startTextHeight +
+          hitBoxpadding +
+          startTextHeight,
       };
 
       this.hitBoxes.sound = {
@@ -176,7 +180,10 @@ export default class TitleScene implements Scene {
         top: soundTextPosition.y - soundTextHeight + hitBoxpadding,
         height: soundTextHeight,
         bottom:
-          soundTextPosition.y - soundTextHeight + hitBoxpadding + soundTextHeight,
+          soundTextPosition.y -
+          soundTextHeight +
+          hitBoxpadding +
+          soundTextHeight,
       };
 
       context.setTransform(
@@ -249,16 +256,16 @@ export default class TitleScene implements Scene {
   #drawHitBoxes = (context: CanvasRenderingContext2D) => {
     context.fillStyle = 'white';
     context.fillRect(
-    this.hitBoxes.start.left,
-    this.hitBoxes.start.top,
-    this.hitBoxes.start.width,
-    this.hitBoxes.start.height
+      this.hitBoxes.start.left,
+      this.hitBoxes.start.top,
+      this.hitBoxes.start.width,
+      this.hitBoxes.start.height,
     );
     context.fillRect(
-    this.hitBoxes.sound.left,
-    this.hitBoxes.sound.top,
-    this.hitBoxes.sound.width,
-    this.hitBoxes.sound.height
+      this.hitBoxes.sound.left,
+      this.hitBoxes.sound.top,
+      this.hitBoxes.sound.width,
+      this.hitBoxes.sound.height,
     );
     context.fillStyle = '#000';
   };
