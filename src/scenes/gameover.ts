@@ -60,7 +60,7 @@ export default class GameOverScene implements Scene {
       background: none;
       border: none;
       font-size: 40px;
-      z-index: 1;
+      z-index: 11;
     `;
     retryButton.textContent = 'Retry';
     const menuButton = document.createElement('button');
@@ -68,7 +68,7 @@ export default class GameOverScene implements Scene {
       background: none;
       border: none;
       font-size: 40px;
-      z-index: 1;
+      z-index: 11;
     `;
     menuButton.textContent = 'Main Menu';
     buttonContainer.append(retryButton);
