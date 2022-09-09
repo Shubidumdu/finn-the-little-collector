@@ -23,7 +23,7 @@ type PersonState = {
   barrier: Rect;
 };
 
-type Variation = 'glasses' | 'bald';
+type Variation = 'glasses' | 'sunglassses' | 'bald'  ;
 
 export const EYE_COLORS = ['#634e34', '#2e536f', '#1c7847'];
 export const SKIN_COLORS = [
@@ -76,7 +76,8 @@ export default class Person implements GameObject, PersonState {
   variations: {
     [key in Variation]: boolean;
   } = {
-    glasses: true,
+    glasses: false,
+    sunglassses: true,
     bald: true,
   }
 
@@ -484,6 +485,8 @@ export default class Person implements GameObject, PersonState {
     }
     if (this.variations.glasses) {
       this.#drawGlasses(context);
+    } else if (this.variations.sunglassses) {
+      this.#drawSunGlasses(context);
     }
   };
 
@@ -844,6 +847,14 @@ export default class Person implements GameObject, PersonState {
     context.stroke();
     context.fillRect(9, -45, 4, 2);
     context.closePath();
+  }
+
+  #drawSunGlasses = (context: CanvasRenderingContext2D) => {
+    context.fillStyle = '#000'
+    context.fillRect(-2, -48, 10, 8);
+    context.fillRect(-12, -48, 8, 8);
+    context.fillRect(7, -46, 6, 2);
+    context.fillRect(-8, -46, 6, 2);
   }
 
   #drawBarrier = (context: CanvasRenderingContext2D) => {
