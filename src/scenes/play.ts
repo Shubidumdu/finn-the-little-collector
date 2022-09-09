@@ -1,5 +1,7 @@
 import { Scene } from '.';
 import canvas from '../canvas';
+import { STAGE_STATES } from '../constants';
+import { postGlobalEvent } from '../event';
 import { GameObject } from '../objects';
 import { BackgroundType, Playground, Pool, Road } from '../objects/backgrounds';
 import PlayInfo from '../objects/playInfo';
@@ -9,6 +11,13 @@ import Person, {
   LOWER_BODY_SIZE,
   SKIN_COLORS,
 } from '../objects/person';
+import WantedPoster from '../objects/wantedPoster';
+import Music from '../sounds/music';
+import playMusic from '../sounds/musics/play';
+import playEffectSound from '../sounds/effects';
+import store from '../store';
+import { setIsSoundOn } from '../store/mutation';
+import { Rect } from '../types/rect';
 import {
   barrierRectFactory,
   getRandomColor,
@@ -16,13 +25,6 @@ import {
   pickRandomOption,
   isInsideRect,
 } from '../utils';
-import WantedPoster from '../objects/wantedPoster';
-import Music from '../sounds/music';
-import playMusic from '../sounds/musics/play';
-import playEffectSound from '../sounds/effects';
-import { Rect } from '../types/rect';
-import { postGlobalEvent } from '../event';
-import { STAGE_STATES } from '../constants';
 
 export type PlaySceneState = {
   activeBackground: BackgroundType;
@@ -110,12 +112,11 @@ export default class PlayScene implements Scene {
     const wantedPersons = this.persons.filter(
       (person) => person.id < wantedPersonCount,
     );
-
     this.wantedPoster.init({
       persons: [...wantedPersons],
     });
 
-    canvas.get('layer0').addEventListener('click', this.#handleClickPerson);
+    this.#addEvents();
   };
 
   update = (time: number) => {
@@ -135,8 +136,19 @@ export default class PlayScene implements Scene {
     this.music.stop();
     this.info.remove();
     this.persons.forEach((person) => person.remove());
+    this.#removeEvents();
+  };
 
-    canvas.get('layer0').removeEventListener('click', this.#handleClickPerson);
+  #addEvents = () => {
+    const layer0 = canvas.get('layer0');
+    layer0.addEventListener('click', this.#handleClickPerson);
+    layer0.addEventListener('click', this.#handleClickSpeacker);
+  };
+  
+  #removeEvents = () => {
+    const layer0 = canvas.get('layer0');
+    layer0.removeEventListener('click', this.#handleClickPerson);
+    layer0.removeEventListener('click', this.#handleClickSpeacker);
   };
 
   #checkGameOver = () => {
@@ -151,6 +163,21 @@ export default class PlayScene implements Scene {
           },
         },
       });
+    }
+  };
+
+  #handleClickSpeacker = (e: PointerEvent) => {
+    const { offsetX: x, offsetY: y } = e;
+    const isHit = this.info.speacker.isInside({ x, y });
+    
+    if (!isHit) return;
+
+    const { isSoundOn } = store;
+    setIsSoundOn(!isSoundOn);
+    if (store.isSoundOn) {
+      this.music.play(true);
+    } else {
+      this.music.stop();
     }
   };
 
