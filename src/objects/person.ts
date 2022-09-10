@@ -36,7 +36,8 @@ type Variation =
   | 'cap'
   | 'hat'
   | 'longHair'
-  | 'short';
+  | 'short'
+  | 'sleeveless';
 
 export const EYE_COLORS = ['#634e34', '#2e536f', '#1c7847'];
 export const SKIN_COLORS = [
@@ -96,7 +97,8 @@ export default class Person implements GameObject, PersonState {
     cap: false,
     hat: false,
     longHair: false,
-    short: true,
+    short: false,
+    sleeveless: true,
   };
 
   constructor(defaultSpeed: number = DEFAULT_SPEED) {
@@ -539,15 +541,30 @@ export default class Person implements GameObject, PersonState {
   };
 
   #drawArm = (context: CanvasRenderingContext2D) => {
-    context.fillStyle = this.colors.top;
-    context.fillRect(-12, 0, 8, 38);
-    context.fillStyle = this.colors.skin;
-    context.fillRect(-12, 38, 8, 8);
+    if (this.variations.sleeveless) {
+      context.fillStyle = this.colors.skin;
+      context.fillRect(-12, 0, 8, 38);
+      context.fillStyle = this.colors.skin;
+      context.fillRect(-12, 38, 8, 8);
+    } else {
+      context.fillStyle = this.colors.top;
+      context.fillRect(-12, 0, 8, 38);
+      context.fillStyle = this.colors.skin;
+      context.fillRect(-12, 38, 8, 8);
+    }
   };
 
   #drawUpperBody = (context: CanvasRenderingContext2D) => {
-    context.fillStyle = this.colors.top;
-    context.fillRect(-12, -54, 24, 40);
+    if (this.variations.sleeveless) {
+      context.fillStyle = this.colors.top;
+      context.fillRect(-12, -54, 24, 40);
+      context.fillStyle = this.colors.skin;
+      context.fillRect(-8, -56, 14, 8);
+      context.fillRect(-7, -56, 10, 12);
+    } else {
+      context.fillStyle = this.colors.top;
+      context.fillRect(-12, -54, 24, 40);
+    }
   };
 
   #drawLowerBody = (context: CanvasRenderingContext2D) => {
