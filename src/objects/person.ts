@@ -35,7 +35,8 @@ type Variation =
   | 'beanie'
   | 'cap'
   | 'hat'
-  | 'longHair';
+  | 'longHair'
+  | 'short';
 
 export const EYE_COLORS = ['#634e34', '#2e536f', '#1c7847'];
 export const SKIN_COLORS = [
@@ -94,7 +95,8 @@ export default class Person implements GameObject, PersonState {
     beanie: false,
     cap: false,
     hat: false,
-    longHair: true,
+    longHair: false,
+    short: true,
   };
 
   constructor(defaultSpeed: number = DEFAULT_SPEED) {
@@ -512,6 +514,11 @@ export default class Person implements GameObject, PersonState {
       context.fillRect(-10, -62, 24, 12);
       context.fillRect(-14, -62, 4, 16);
       context.fillRect(8, -58, 12, 48);
+    } else if (this.variations.short) {
+      context.fillStyle = this.colors.hair;
+      context.fillRect(-8, -62, 20, 12);
+      context.fillRect(-14, -60, 9, 16);
+      context.fillRect(8, -58, 6, 8);
     } else {
       context.fillStyle = this.colors.hair;
       context.fillRect(-16, -62, 28, 12);
@@ -524,11 +531,9 @@ export default class Person implements GameObject, PersonState {
     }
     if (this.variations.beanie) {
       this.#drawBeanie(context);
-    }
-    if (this.variations.cap) {
+    } else if (this.variations.cap) {
       this.#drawCap(context);
-    }
-    if (this.variations.hat) {
+    } else if (this.variations.hat) {
       this.#drawHat(context);
     }
   };
