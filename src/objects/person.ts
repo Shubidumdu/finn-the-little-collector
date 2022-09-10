@@ -1,7 +1,12 @@
 import { GameObject } from '.';
 import canvas, { drawLayer } from '../canvas';
 import { RectType, Rect } from '../types/rect';
-import { degreeToRadian, barrierRectFactory, getRandomIntegerFromRange, getTimings } from '../utils';
+import {
+  degreeToRadian,
+  barrierRectFactory,
+  getRandomIntegerFromRange,
+  getTimings,
+} from '../utils';
 
 type ColorState = {
   hair: string;
@@ -23,7 +28,7 @@ type PersonState = {
   barrier: Rect;
 };
 
-type Variation = 'glasses' | 'sunglassses' | 'bald' | 'beanie' | 'cap';
+type Variation = 'glasses' | 'sunglassses' | 'bald' | 'beanie' | 'cap' | 'hat';
 
 export const EYE_COLORS = ['#634e34', '#2e536f', '#1c7847'];
 export const SKIN_COLORS = [
@@ -34,7 +39,7 @@ export const SKIN_COLORS = [
   '#ffdbac',
 ];
 
-export const LOWER_BODY_SIZE = 18
+export const LOWER_BODY_SIZE = 18;
 const PADDING = 10;
 const SPEED_MAX_MULTIPLE = 0.3;
 const SPEED_MIN_MULTIPLE = -0.7;
@@ -46,7 +51,7 @@ const FRAME_RATE_PER_SECOND = 60;
  * @description 1프레임 동안 움직이는 픽셀 거리
  */
 const DEFAULT_SPEED = DISTANCE_PER_SECOND / FRAME_RATE_PER_SECOND;
-const MIN_SPEED = 0.1
+const MIN_SPEED = 0.1;
 
 export default class Person implements GameObject, PersonState {
   id: number;
@@ -81,7 +86,8 @@ export default class Person implements GameObject, PersonState {
     bald: false,
     beanie: false,
     cap: false,
-  }
+    hat: '#000',
+  };
 
   constructor(defaultSpeed: number = DEFAULT_SPEED) {
     this.defaultSpeed = defaultSpeed;
@@ -114,7 +120,9 @@ export default class Person implements GameObject, PersonState {
     ];
 
     const getRandomMoveIndex = () => {
-      const randomIndex = Math.floor(getRandomIntegerFromRange(0, moves.length - 1));
+      const randomIndex = Math.floor(
+        getRandomIntegerFromRange(0, moves.length - 1),
+      );
       return randomIndex;
     };
     const randomizeMoves = () => {
@@ -124,8 +132,14 @@ export default class Person implements GameObject, PersonState {
       this.intervals = [getRandomIntegerFromRange(4_000, 7_000)];
     };
     const randomizeXandY = () => {
-      this.randomX = getRandomIntegerFromRange(SPEED_MIN_MULTIPLE, SPEED_MAX_MULTIPLE);
-      this.randomY = getRandomIntegerFromRange(SPEED_MIN_MULTIPLE, SPEED_MAX_MULTIPLE);
+      this.randomX = getRandomIntegerFromRange(
+        SPEED_MIN_MULTIPLE,
+        SPEED_MAX_MULTIPLE,
+      );
+      this.randomY = getRandomIntegerFromRange(
+        SPEED_MIN_MULTIPLE,
+        SPEED_MAX_MULTIPLE,
+      );
     };
     const randomizeDirection = () => {
       getRandomIntegerFromRange(-1, 1) > 0 && this.#changeDirectionX();
@@ -243,9 +257,9 @@ export default class Person implements GameObject, PersonState {
     const drawLayer1 = drawLayer(layer1);
     const layer2 = canvas.get('layer2'); // 축소
     const drawLayer2 = drawLayer(layer2);
-    
+
     drawLayer1((context, canvas) => {
-      const sizeRatio = 0.6 + 0.4 * (this.position.z / canvas.height);
+      const sizeRatio = 0.4 + 0. * (this.position.y / canvas.offsetHeight);
       this.#setHitBoxPosition();
       this.#drawShadow(context, canvas, time, this.position, sizeRatio);
 
@@ -270,7 +284,7 @@ export default class Person implements GameObject, PersonState {
       }
     });
     drawLayer2((context, canvas) => {
-      this.barrier = barrierRectFactory(canvas)
+      this.barrier = barrierRectFactory(canvas);
 
       // debug
       // this.#drawBarrier(context)
@@ -295,7 +309,7 @@ export default class Person implements GameObject, PersonState {
         this.move.direction.y = -1;
       }
 
-      const sizeRatio = 0.3 + 0.2 * (this.position.z / canvas.height);
+      const sizeRatio = 0.2 + 0.3 * (this.position.y / canvas.offsetHeight);
 
       this.#drawShadow(context, canvas, time, this.position, sizeRatio);
 
@@ -477,7 +491,12 @@ export default class Person implements GameObject, PersonState {
     context.fillStyle = this.colors.eye;
     context.fillRect(-8, -46, 4, 4);
     context.fillRect(0, -46, 4, 4);
-    if (this.variations.bald || this.variations.beanie || this.variations.cap) {
+    if (
+      this.variations.bald ||
+      this.variations.beanie ||
+      this.variations.cap ||
+      this.variations.hat
+    ) {
       context.fillStyle = this.colors.skin;
       context.fillRect(-10, -56, 21, 6);
     } else {
@@ -495,6 +514,9 @@ export default class Person implements GameObject, PersonState {
     }
     if (this.variations.cap) {
       this.#drawCap(context);
+    }
+    if (this.variations.hat) {
+      this.#drawHat(context);
     }
   };
 
@@ -602,16 +624,18 @@ export default class Person implements GameObject, PersonState {
   }
 
   #stayInBarrier() {
-    if (this.position.x < this.barrier.left || 
+    if (
+      this.position.x < this.barrier.left ||
       this.position.x >= this.barrier.right
     ) {
-      this.#changeDirectionX()
+      this.#changeDirectionX();
     }
 
-    if (this.position.y < this.barrier.top ||
+    if (
+      this.position.y < this.barrier.top ||
       this.position.y >= this.barrier.bottom - LOWER_BODY_SIZE
     ) {
-      this.#changeDirectionY()
+      this.#changeDirectionY();
     }
   }
 
@@ -844,7 +868,7 @@ export default class Person implements GameObject, PersonState {
   };
 
   #drawGlasses = (context: CanvasRenderingContext2D) => {
-    context.fillStyle = '#000'
+    context.fillStyle = '#000';
     context.strokeStyle = '#000';
     context.beginPath();
     context.arc(-8, -43, 6, 0, degreeToRadian(360));
@@ -855,15 +879,15 @@ export default class Person implements GameObject, PersonState {
     context.stroke();
     context.fillRect(9, -45, 4, 2);
     context.closePath();
-  }
+  };
 
   #drawSunGlasses = (context: CanvasRenderingContext2D) => {
-    context.fillStyle = '#000'
+    context.fillStyle = '#000';
     context.fillRect(-2, -48, 10, 8);
     context.fillRect(-12, -48, 8, 8);
     context.fillRect(7, -46, 6, 2);
     context.fillRect(-8, -46, 6, 2);
-  }
+  };
 
   #drawBeanie = (context: CanvasRenderingContext2D) => {
     context.fillStyle = this.variations.beanie as string;
@@ -871,18 +895,29 @@ export default class Person implements GameObject, PersonState {
     context.fillRect(-8, -63, 22, 4);
     context.fillRect(-4, -67, 20, 4);
     context.fillRect(12, -71, 6, 6);
-  }
+  };
 
   #drawCap = (context: CanvasRenderingContext2D) => {
     context.fillStyle = this.variations.cap as string;
     context.fillRect(-18, -52, 30, 4);
     context.fillRect(-12, -59, 24, 8);
-  }
+  };
+
+  #drawHat = (context: CanvasRenderingContext2D) => {
+    context.fillStyle = this.variations.hat as string;
+    context.fillRect(-18, -58, 36, 6);
+    context.fillRect(-12, -67, 24, 10);
+  };
 
   #drawBarrier = (context: CanvasRenderingContext2D) => {
-    context.resetTransform()
+    context.resetTransform();
     context.beginPath();
-    context.strokeRect(this.barrier.left, this.barrier.top, this.barrier.width, this.barrier.height);
+    context.strokeRect(
+      this.barrier.left,
+      this.barrier.top,
+      this.barrier.width,
+      this.barrier.height,
+    );
     context.closePath();
-  }
+  };
 }
