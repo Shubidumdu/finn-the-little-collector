@@ -26,11 +26,12 @@ type PersonState = {
   };
   colors: ColorState;
   barrier: Rect;
+  variations: VariationState;
 };
 
 type Variation =
   | 'glasses'
-  | 'sunglassses'
+  | 'sunglasses'
   | 'bald'
   | 'beanie'
   | 'cap'
@@ -40,6 +41,10 @@ type Variation =
   | 'sleeveless'
   | 'shortSleeve'
   | 'shortPants';
+  
+export type VariationState = {
+  [key in Variation]: boolean | string;
+};
 
 export const EYE_COLORS = ['#634e34', '#2e536f', '#1c7847'];
 export const SKIN_COLORS = [
@@ -89,28 +94,14 @@ export default class Person implements GameObject, PersonState {
   correctAt: number = 0;
   deadAt: number = 0;
 
-  variations: {
-    [key in Variation]: boolean | string;
-  } = {
-    glasses: false,
-    sunglassses: false,
-    bald: false,
-    beanie: false,
-    cap: false,
-    hat: false,
-    longHair: false,
-    shortHair: false,
-    sleeveless: false,
-    shortSleeve: true,
-    shortPants: true,
-  };
+  variations: VariationState;
 
   constructor(defaultSpeed: number = DEFAULT_SPEED) {
     this.defaultSpeed = defaultSpeed;
   }
 
   init = (state: PersonState) => {
-    const { id, position, colors, barrier } = state;
+    const { id, position, colors, barrier, variations } = state;
     this.id = id;
     this.position = position;
     this.move = {
@@ -122,6 +113,7 @@ export default class Person implements GameObject, PersonState {
     };
     this.colors = colors;
     this.barrier = barrier;
+    this.variations = variations;
 
     const moves = [
       ...Array.from({ length: 12 }, () => this.#moveIdle),
@@ -518,8 +510,9 @@ export default class Person implements GameObject, PersonState {
     } else if (this.variations.longHair) {
       context.fillStyle = this.colors.hair;
       context.fillRect(-10, -62, 24, 12);
-      context.fillRect(-14, -62, 4, 16);
-      context.fillRect(8, -58, 12, 48);
+      context.fillRect(-14, -60, 8, 12);
+      context.fillRect(10, -58, 10, 48);
+      context.fillRect(10, -44, 14, 48);
     } else if (this.variations.shortHair) {
       context.fillStyle = this.colors.hair;
       context.fillRect(-8, -62, 20, 12);
@@ -532,7 +525,7 @@ export default class Person implements GameObject, PersonState {
     }
     if (this.variations.glasses) {
       this.#drawGlasses(context);
-    } else if (this.variations.sunglassses) {
+    } else if (this.variations.sunglasses) {
       this.#drawSunGlasses(context);
     }
     if (this.variations.beanie) {
@@ -946,7 +939,7 @@ export default class Person implements GameObject, PersonState {
     context.fillStyle = this.variations.beanie as string;
     context.fillRect(-12, -60, 24, 6);
     context.fillRect(-8, -63, 22, 4);
-    context.fillRect(-4, -67, 20, 4);
+    context.fillRect(-4, -67, 20, 5);
     context.fillRect(12, -71, 6, 6);
   };
 

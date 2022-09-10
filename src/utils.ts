@@ -1,3 +1,4 @@
+import { VariationState } from './objects/person';
 import { Rect, RectType } from './types/rect';
 
 export const degreeToRadian = (degree: number) => (Math.PI / 180) * degree;
@@ -91,3 +92,49 @@ export const barrierRectFactory = (canvas: HTMLCanvasElement) => {
   })
 }
 
+export const pickPersonVariations = (): VariationState => {
+  const pickEyeWear = () => {
+    const randomInt = getRandomInt(10);
+    return {
+      glasses: randomInt < 2,
+      sunglasses: randomInt > 7,
+    };
+  }
+  const pickHead = () => {
+    const randomInt = getRandomInt(10);
+    return {
+      bald: randomInt === 0,
+      beanie: randomInt === 1 && getRandomColor(),
+      cap: randomInt === 2 && getRandomColor(),
+      hat: randomInt === 3 && getRandomColor(),
+    };
+  }
+  const pickHair = () => {
+    const randomInt = getRandomInt(3);
+    return {
+      longHair: randomInt === 0,
+      shortHair: randomInt === 1,
+    };
+  }
+  const pickTopWear = () => {
+    const randomInt = getRandomInt(3);
+    return {
+      sleeveless: randomInt === 0,
+      shortSleeve: randomInt === 1,
+    };
+  }
+  const pickBottomWear = () => {
+    const randomInt = getRandomInt(2);
+    return {
+      shortPants: randomInt === 0,
+    };
+  }
+  
+  return {
+    ...pickEyeWear(),
+    ...pickHead(),
+    ...pickHair(),
+    ...pickTopWear(),
+    ...pickBottomWear(),
+  };
+};

@@ -15,6 +15,7 @@ import {
   getRandomIntegerFromRange,
   pickRandomOption,
   isInsideRect,
+  pickPersonVariations,
 } from '../utils';
 import WantedPoster from '../objects/wantedPoster';
 import Music from '../sounds/music';
@@ -100,6 +101,7 @@ export default class PlayScene implements Scene {
           shoe: getRandomColor(),
         },
         barrier: this.barrier,
+        variations: pickPersonVariations(),
       });
     });
 
