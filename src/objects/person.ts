@@ -23,7 +23,7 @@ type PersonState = {
   barrier: Rect;
 };
 
-type Variation = 'glasses' | 'sunglassses' | 'bald'  ;
+type Variation = 'glasses' | 'sunglassses' | 'bald' | 'beanie' | 'cap';
 
 export const EYE_COLORS = ['#634e34', '#2e536f', '#1c7847'];
 export const SKIN_COLORS = [
@@ -74,11 +74,13 @@ export default class Person implements GameObject, PersonState {
   deadAt: number = 0;
 
   variations: {
-    [key in Variation]: boolean;
+    [key in Variation]: boolean | string;
   } = {
     glasses: false,
-    sunglassses: true,
-    bald: true,
+    sunglassses: false,
+    bald: false,
+    beanie: false,
+    cap: false,
   }
 
   constructor(defaultSpeed: number = DEFAULT_SPEED) {
@@ -475,7 +477,7 @@ export default class Person implements GameObject, PersonState {
     context.fillStyle = this.colors.eye;
     context.fillRect(-8, -46, 4, 4);
     context.fillRect(0, -46, 4, 4);
-    if (this.variations.bald) {
+    if (this.variations.bald || this.variations.beanie || this.variations.cap) {
       context.fillStyle = this.colors.skin;
       context.fillRect(-10, -56, 21, 6);
     } else {
@@ -487,6 +489,12 @@ export default class Person implements GameObject, PersonState {
       this.#drawGlasses(context);
     } else if (this.variations.sunglassses) {
       this.#drawSunGlasses(context);
+    }
+    if (this.variations.beanie) {
+      this.#drawBeanie(context);
+    }
+    if (this.variations.cap) {
+      this.#drawCap(context);
     }
   };
 
@@ -855,6 +863,20 @@ export default class Person implements GameObject, PersonState {
     context.fillRect(-12, -48, 8, 8);
     context.fillRect(7, -46, 6, 2);
     context.fillRect(-8, -46, 6, 2);
+  }
+
+  #drawBeanie = (context: CanvasRenderingContext2D) => {
+    context.fillStyle = this.variations.beanie as string;
+    context.fillRect(-12, -60, 24, 6);
+    context.fillRect(-8, -63, 22, 4);
+    context.fillRect(-4, -67, 20, 4);
+    context.fillRect(12, -71, 6, 6);
+  }
+
+  #drawCap = (context: CanvasRenderingContext2D) => {
+    context.fillStyle = this.variations.cap as string;
+    context.fillRect(-18, -52, 30, 4);
+    context.fillRect(-12, -59, 24, 8);
   }
 
   #drawBarrier = (context: CanvasRenderingContext2D) => {
