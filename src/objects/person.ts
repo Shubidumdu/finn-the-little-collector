@@ -37,7 +37,8 @@ type Variation =
   | 'hat'
   | 'longHair'
   | 'short'
-  | 'sleeveless';
+  | 'sleeveless'
+  | 'shortSleeve';
 
 export const EYE_COLORS = ['#634e34', '#2e536f', '#1c7847'];
 export const SKIN_COLORS = [
@@ -98,7 +99,8 @@ export default class Person implements GameObject, PersonState {
     hat: false,
     longHair: false,
     short: false,
-    sleeveless: true,
+    sleeveless: false,
+    shortSleeve: true,
   };
 
   constructor(defaultSpeed: number = DEFAULT_SPEED) {
@@ -546,6 +548,11 @@ export default class Person implements GameObject, PersonState {
       context.fillRect(-12, 0, 8, 38);
       context.fillStyle = this.colors.skin;
       context.fillRect(-12, 38, 8, 8);
+    } else if (this.variations.shortSleeve) {
+      context.fillStyle = this.colors.skin;
+      context.fillRect(-12, 0, 8, 46);
+      context.fillStyle = this.colors.top;
+      context.fillRect(-14, -1, 12, 20);
     } else {
       context.fillStyle = this.colors.top;
       context.fillRect(-12, 0, 8, 38);
