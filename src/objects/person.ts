@@ -259,7 +259,7 @@ export default class Person implements GameObject, PersonState {
     const drawLayer2 = drawLayer(layer2);
 
     drawLayer1((context, canvas) => {
-      const sizeRatio = 0.4 + 0. * (this.position.y / canvas.offsetHeight);
+      const sizeRatio = 0.4 + 0.6 * (this.position.y / canvas.offsetHeight);
       this.#setHitBoxPosition();
       this.#drawShadow(context, canvas, time, this.position, sizeRatio);
 
