@@ -28,7 +28,14 @@ type PersonState = {
   barrier: Rect;
 };
 
-type Variation = 'glasses' | 'sunglassses' | 'bald' | 'beanie' | 'cap' | 'hat';
+type Variation =
+  | 'glasses'
+  | 'sunglassses'
+  | 'bald'
+  | 'beanie'
+  | 'cap'
+  | 'hat'
+  | 'longHair';
 
 export const EYE_COLORS = ['#634e34', '#2e536f', '#1c7847'];
 export const SKIN_COLORS = [
@@ -86,7 +93,8 @@ export default class Person implements GameObject, PersonState {
     bald: false,
     beanie: false,
     cap: false,
-    hat: '#000',
+    hat: false,
+    longHair: true,
   };
 
   constructor(defaultSpeed: number = DEFAULT_SPEED) {
@@ -499,6 +507,11 @@ export default class Person implements GameObject, PersonState {
     ) {
       context.fillStyle = this.colors.skin;
       context.fillRect(-10, -56, 21, 6);
+    } else if (this.variations.longHair) {
+      context.fillStyle = this.colors.hair;
+      context.fillRect(-10, -62, 24, 12);
+      context.fillRect(-14, -62, 4, 16);
+      context.fillRect(8, -58, 12, 48);
     } else {
       context.fillStyle = this.colors.hair;
       context.fillRect(-16, -62, 28, 12);
