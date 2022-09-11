@@ -3,7 +3,11 @@ import canvas, { DrawFunc, drawLayer } from '../../canvas';
 import { drawSky } from './unit';
 
 export default class Pool implements GameObject {
-  constructor() {}
+  hueRotate: number;
+  
+  constructor(hueRotate: number = 0) {
+    this.hueRotate = hueRotate;
+  }
 
   #draw = drawLayer(canvas.get('bg'));
 

@@ -1,11 +1,14 @@
 import { GameObject } from '..';
 import canvas, { drawLayer } from '../../canvas';
-import { RectType } from '../../types/rect';
 import { calculateHex } from '../../utils';
 import { drawSky } from './unit';
 
 export default class Road implements GameObject {
-  constructor() {}
+  hueRotate: number;
+  
+  constructor(hueRotate: number = 0) {
+    this.hueRotate = hueRotate;
+  }
 
   #draw = drawLayer(canvas.get('bg'));
 
@@ -15,7 +18,7 @@ export default class Road implements GameObject {
     this.#draw((context, canvas) => {
       // 하늘
       context.setTransform(1, 0, 0, 1, 0, 0);
-      drawSky(context, canvas);
+      drawSky(context, canvas, this.hueRotate);
 
       context.transform(1, 0, 0, 1, 0, 160);
       const base = Math.floor((canvas.height - 160) / 40 / 2) + 2;

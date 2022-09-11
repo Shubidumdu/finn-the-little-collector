@@ -39,7 +39,7 @@ export type PlaySceneState = {
 
 export default class PlayScene implements Scene {
   activeBackground: BackgroundType;
-  backgrounds: { [background in BackgroundType]: GameObject };
+  backgrounds: GameObject[];
   info: PlayInfo;
   magnifier: Magnifier;
   layer1: HTMLCanvasElement;
@@ -50,12 +50,14 @@ export default class PlayScene implements Scene {
   barrier: Rect;
 
   constructor() {
-    this.activeBackground = 'playground';
-    this.backgrounds = {
-      playground: new Playground(),
-      pool: new Pool(),
-      road: new Road(),
-    };
+    this.backgrounds = [
+      new Playground(),
+      new Pool(),
+      new Road(),
+      new Playground(175),
+      new Pool(175),
+      new Road(175),
+    ],
     this.info = new PlayInfo();
     this.magnifier = new Magnifier();
     this.persons = [];
@@ -76,7 +78,7 @@ export default class PlayScene implements Scene {
     }: PlaySceneState = STAGE_STATES[1],
   ) => {
     this.activeBackground = activeBackground;
-    this.backgrounds[this.activeBackground].init();
+    this.backgrounds[stage].init();
     this.music.play(true);
     this.info.init({
       stage,
@@ -128,7 +130,7 @@ export default class PlayScene implements Scene {
   };
 
   update = (time: number) => {
-    this.backgrounds[this.activeBackground].update(time);
+    this.backgrounds[this.info.stage].update(time);
     this.info.update(time);
     this.persons.sort(
       (person1, person2) => person1.position.y - person2.position.y,
@@ -143,7 +145,7 @@ export default class PlayScene implements Scene {
   };
 
   end = () => {
-    this.backgrounds[this.activeBackground].remove();
+    this.backgrounds[this.info.stage].remove();
     this.music.stop();
     this.info.remove();
     this.persons.forEach((person) => person.remove());
