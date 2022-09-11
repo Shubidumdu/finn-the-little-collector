@@ -1,5 +1,5 @@
 import { GameResultSceneState } from './scenes/gameResult';
-import { GameOverSceneState } from './scenes/gameover';
+import { GameOverSceneState } from './scenes/gameOver';
 import { PlaySceneState } from './scenes/play';
 
 export type EventType = ChangeSceneEvent | ClickCanvasEvent;
@@ -12,7 +12,7 @@ export type ChangeSceneEvent = {
         state: PlaySceneState;
       }
     | {
-        type: 'gameover';
+        type: 'gameOver';
         state: GameOverSceneState;
       }
     | {

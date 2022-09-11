@@ -1,102 +1,125 @@
-import { Scene } from ".";
-import canvasMap, { drawLayer } from "../canvas";
-import { STAGE_STATES } from "../constants";
-import { postGlobalEvent } from "../event";
-import Music from "../sounds/music";
-import resultMusic from "../sounds/musics/result";
-import { getFont } from "../utils";
+import { Scene } from '.';
+import canvasMap, { drawLayer } from '../canvas';
+import { STAGE_STATES } from '../constants';
+import { postGlobalEvent } from '../event';
+import Person from '../objects/person';
+import Music from '../sounds/music';
+import resultMusic from '../sounds/musics/result';
+import { getFont } from '../utils';
 
-const lastStage = Math.max(...Object.keys(STAGE_STATES).map(Number))
+const lastStage = Math.max(...Object.keys(STAGE_STATES).map(Number));
 
 export type GameResultSceneState = {
-  stage: number;
   clearTime: string;
+  stage: number;
+  wantedPersons: Person[];
+};
+
+const person = new Person();
+person.move = {
+  direction: {
+    x: -1,
+    y: 1,
+    z: 1,
+  },
+};
+person.colors = {
+  hair: 'red',
+  eye: '#634e34',
+  skin: '#8d5524',
+  top: 'red',
+  bottom: 'red',
+  shoe: 'red',
 };
 
 export default class GameResultScene implements Scene {
+  clearTime: string;
   stage: number;
   music: Music;
+  wantedPersons: Person[];
   elements: {
-    buttonContainer: HTMLDivElement;
+    container: HTMLDivElement,
     nextButton: HTMLButtonElement;
   };
   nextStage: number | undefined;
-  clearTime: string;
 
   constructor() {
     this.music = new Music(resultMusic);
   }
 
-  start = ({ stage, clearTime }: GameResultScene) => {
-    this.stage = stage;
+  start = (
+    { stage, clearTime, wantedPersons }: GameResultScene = {
+      stage: 0,
+      clearTime: '10:00',
+      wantedPersons: [person, person, person],
+    },
+  ) => {
     this.clearTime = clearTime;
+    this.stage = stage;
+    this.wantedPersons = wantedPersons;
     this.nextStage = this.stage < lastStage ? this.stage + 1 : undefined;
 
     this.music.play(false);
-    this.#appendButtons();
+    this.#createContainer();
     this.#addEventListeners();
-  }
+  };
 
   update = (time: number) => {
     const layer1 = canvasMap.get('layer1');
     const drawLayer1 = drawLayer(layer1);
 
     drawLayer1((context, canvas) => {
-      context.setTransform(1, 0, 0, 1, canvas.width / 2, canvas.height / 2)
-      this.#drawTitle(context);
+      // context.fillStyle = '#fff';
+      // context.setTransform(1, 0, 0, 1, canvas.width / 2, 0);
+      // context.fillRect(-1, 0, 2, canvas.height);
+      // context.setTransform(1, 0, 0, 1, 0, canvas.height / 2);
+      // context.fillRect(0, -1, canvas.width, 2);
 
-      context.transform(1, 0, 0, 1, 0, 140)
-      this.#drawResult(context);
+      this.wantedPersons.forEach((person, index) => {
+        person.drawIdle(
+          context,
+          canvas,
+          time,
+          { x: canvas.width / 2 + 152 + index * 20, y: canvas.height / 2 - 140 },
+          .5,
+        );
+      })
     });
-  }
+  };
 
   end = () => {
     this.music.stop();
     this.#removeEventListeners();
-    this.elements.buttonContainer.remove();
-  }
+    this.elements.container.remove();
+  };
 
-  #drawTitle = (context: CanvasRenderingContext2D) => {
-    const title = this.nextStage ? 'Stage Clear' : 'Complete';
-    context.font = getFont(64)
-    context.fillStyle = 'white';
-    context.fillText(title, context.measureText(title).width / 2 * -1, -120); 
-  }
+  #createContainer = () => {
+    const container = document.createElement('div');
+    container.id = 'container';
 
-  #drawResult = (context: CanvasRenderingContext2D) => {
-    const result = `Time: ${this.clearTime}`;
-    context.font = getFont(28)
-    context.fillStyle = 'white';
-    context.fillText(result, context.measureText(result).width / 2 * -1, -120);
-  }
+    const h1 = document.createElement('h1');
+    h1.textContent = this.nextStage ? 'Stage Clear' : 'Complete';
 
-  #appendButtons = () => {
+    const result = document.createElement('h2');
+    result.textContent = `Clear Time: ${this.clearTime}`;
+
+    container.append(h1);
+    container.append(result);
+
     const buttonContainer = document.createElement('div');
-    buttonContainer.style.cssText = `
-      display: flex;  
-      width: 480px;
-      height: 80%;
-      margin: 0 auto;
-      justify-content: center;
-      align-items: flex-end;
-    `;
+    buttonContainer.classList.add('buttonContainer');
+
     const nextButton = document.createElement('button');
-    nextButton.style.cssText = `
-      background: none;
-      border: none;
-      font-size: 40px;
-      color: #fff;
-      z-index: 11;
-      cursor: pointer;
-    `;
-    nextButton.textContent = this.nextStage ? 'Next' : 'Menu';
+    nextButton.textContent = this.nextStage ? 'Next' : 'Title';
     buttonContainer.append(nextButton);
-    document.body.append(buttonContainer);
+    container.append(buttonContainer);
+    document.body.append(container);
+
     this.elements = {
-      buttonContainer,
-      nextButton: nextButton,
+      container,
+      nextButton,
     };
-  }
+  };
 
   #handleClickNext = () => {
     if (!this.nextStage) {
@@ -105,8 +128,8 @@ export default class GameResultScene implements Scene {
         payload: {
           type: 'title',
           state: null,
-        }
-      })  
+        },
+      });
       return;
     }
 
@@ -114,16 +137,19 @@ export default class GameResultScene implements Scene {
       type: 'change-scene',
       payload: {
         type: 'play',
-        state: STAGE_STATES[this.nextStage]
-      }
-    })
-  }
+        state: STAGE_STATES[this.nextStage],
+      },
+    });
+  };
 
   #addEventListeners = () => {
     this.elements.nextButton.addEventListener('click', this.#handleClickNext);
-  }
+  };
 
   #removeEventListeners = () => {
-    this.elements.nextButton.removeEventListener('click', this.#handleClickNext);
-  }
+    this.elements.nextButton.removeEventListener(
+      'click',
+      this.#handleClickNext,
+    );
+  };
 }

@@ -1,7 +1,7 @@
 import PlayScene from './play';
 import TitleScene from './title';
 
-export type SceneType = 'play' | 'title' | 'gameover' | 'gameResult';
+export type SceneType = 'play' | 'title' | 'gameOver' | 'gameResult';
 
 export interface Scene {
   start: (...args: any) => void;

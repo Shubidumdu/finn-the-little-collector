@@ -2,18 +2,18 @@ import { resetAllLayers } from './canvas';
 import { ChangeSceneEvent, listenGlobalEvent } from './event';
 import { PlayScene, TitleScene, Scene, SceneType } from './scenes';
 import GameResultScene from './scenes/gameResult';
-import GameOverScene from './scenes/gameover';
+import GameOverScene from './scenes/gameOver';
 
 export default class Game {
   activeScene: SceneType;
   scenes: { [name in SceneType]: Scene };
 
   constructor() {
-    this.activeScene = 'title';
+    this.activeScene = 'gameOver';
     this.scenes = {
       play: new PlayScene(),
       title: new TitleScene(),
-      gameover: new GameOverScene(),
+      gameOver: new GameOverScene(),
       gameResult: new GameResultScene(),
     };
   }
