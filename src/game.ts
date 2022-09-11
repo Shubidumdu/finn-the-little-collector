@@ -9,7 +9,7 @@ export default class Game {
   scenes: { [name in SceneType]: Scene };
 
   constructor() {
-    this.activeScene = 'gameOver';
+    this.activeScene = 'play';
     this.scenes = {
       play: new PlayScene(),
       title: new TitleScene(),
