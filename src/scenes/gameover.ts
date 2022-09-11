@@ -4,7 +4,6 @@ import { STAGE_STATES } from '../constants';
 import { postGlobalEvent } from '../event';
 import Music from '../sounds/music';
 import gameoverMusic from '../sounds/musics/gameover';
-import { getFont, isMobileSize, isTabletSize } from '../utils';
 
 export type GameOverSceneState = {
   stage: number;
@@ -14,9 +13,9 @@ export default class GameOverScene implements Scene {
   stage: number;
   music: Music;
   elements: {
-    buttonContainer: HTMLDivElement;
+    container: HTMLDivElement;
     retryButton: HTMLButtonElement;
-    menuButton: HTMLButtonElement;
+    titleButton: HTMLButtonElement;
   };
 
   constructor() {
@@ -26,48 +25,45 @@ export default class GameOverScene implements Scene {
   start = () => {
     this.stage = 1;
     this.music.play(false);
-    this.#appendButtons();
+    this.#createContainer();
     this.#addEventListeners();
   };
 
   update = (time: number) => {
-    const layer1 = canvasMap.get('layer1');
-    const drawLayer1 = drawLayer(layer1);
-
-    drawLayer1((context, canvas) => {
-      context.fillStyle = '#fff';
-      context.setTransform(1, 0, 0, 1, canvas.width / 2, canvas.height / 2);
-
-      if (isTabletSize(canvas.width)) {
-        context.font = getFont(48);
-        context.fillText('Game Over', -172, -44);
-      } else {
-        context.font = getFont(64);
-        context.fillText('Game Over', -236, -32);
-      }
-    });
   };
 
   end = () => {
     this.music.stop();
     this.#removeEventListeners();
-    this.elements.buttonContainer.remove();
+    this.elements.container.remove();
   };
 
-  #appendButtons = () => {
+  #createContainer = () => {
+    const container = document.createElement('div');
+    container.id = 'container';
+
+    const h1 = document.createElement('h1');
+    h1.textContent = 'Game Over';
+
+    container.append(h1);
+
     const buttonContainer = document.createElement('div');
     buttonContainer.classList.add('buttonContainer');
+
     const retryButton = document.createElement('button');
     retryButton.textContent = 'Retry';
-    const menuButton = document.createElement('button');
-    menuButton.textContent = 'Title';
+
+    const titleButton = document.createElement('button');
+    titleButton.textContent = 'Title';
     buttonContainer.append(retryButton);
-    buttonContainer.append(menuButton);
-    document.body.append(buttonContainer);
+    buttonContainer.append(titleButton);
+    container.append(buttonContainer);
+    document.body.append(container);
+
     this.elements = {
-      buttonContainer,
-      menuButton,
+      container,
       retryButton,
+      titleButton,
     };
   };
 
@@ -93,7 +89,7 @@ export default class GameOverScene implements Scene {
 
   #addEventListeners = () => {
     this.elements.retryButton.addEventListener('click', this.#handleClickRetry);
-    this.elements.menuButton.addEventListener('click', this.#handleClickTitle);
+    this.elements.titleButton.addEventListener('click', this.#handleClickTitle);
   };
 
   #removeEventListeners = () => {
@@ -101,7 +97,7 @@ export default class GameOverScene implements Scene {
       'click',
       this.#handleClickRetry,
     );
-    this.elements.menuButton.removeEventListener(
+    this.elements.titleButton.removeEventListener(
       'click',
       this.#handleClickTitle,
     );

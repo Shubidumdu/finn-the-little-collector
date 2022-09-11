@@ -147,7 +147,7 @@ export default class PlayScene implements Scene {
       postGlobalEvent({
         type: 'change-scene',
         payload: {
-          type: 'gameover',
+          type: 'gameOver',
           state: {
             stage: this.info.stage,
           },
@@ -166,6 +166,7 @@ export default class PlayScene implements Scene {
           state: {
             stage: this.info.stage,
             clearTime: this.info.remainTime,
+            wantedPersons: this.wantedPoster.persons,
           },
         },
       });
