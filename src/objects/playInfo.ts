@@ -24,15 +24,12 @@ export default class PlayInfo implements GameObject, PlayInfoState {
     this.stage = stage;
     this.timeout = timeout;
     this.lifeCount = lifeCount;
+    this.startTime = performance.now();
   };
 
   remove = () => {};
 
   update = (time: number) => {
-    if (!this.startTime) {
-      this.startTime = time;
-    }
-
     this.#drawStage();
     this.#drawTimer(time);
     this.#drawLife(28);

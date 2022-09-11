@@ -4,7 +4,7 @@ export const STAGE_STATES: {
   [key: number] : PlaySceneState
  } = {
   1: {
-    activeBackground: 'road',
+    activeBackground: 'playground',
     stage: 1,
     timeout: 60_000,
     lifeCount: 5,
@@ -12,7 +12,7 @@ export const STAGE_STATES: {
     wantedPersonCount: 3,
   },
   2: {
-    activeBackground: 'playground',
+    activeBackground: 'pool',
     stage: 2,
     timeout: 70_000,
     lifeCount: 4,

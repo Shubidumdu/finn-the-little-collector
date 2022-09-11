@@ -60,17 +60,19 @@ export default class PlayScene implements Scene {
     this.layer1 = canvas.get('layer1');
     this.wantedPoster = new WantedPoster();
     this.music = new Music(playMusic);
-    this.barrier = barrierRectFactory(this.layer1)
+    this.barrier = barrierRectFactory(this.layer1);
   }
 
-  start = ({
-    activeBackground,
-    stage,
-    timeout,
-    lifeCount,
-    personCount,
-    wantedPersonCount,
-  }: PlaySceneState = STAGE_STATES[1]) => {
+  start = (
+    {
+      activeBackground,
+      stage,
+      timeout,
+      lifeCount,
+      personCount,
+      wantedPersonCount,
+    }: PlaySceneState = STAGE_STATES[1],
+  ) => {
     this.activeBackground = activeBackground;
     this.backgrounds[this.activeBackground].init();
     this.music.play(true);
@@ -125,13 +127,15 @@ export default class PlayScene implements Scene {
   update = (time: number) => {
     this.backgrounds[this.activeBackground].update(time);
     this.info.update(time);
-    this.persons.sort((person1, person2) => person1.position.y - person2.position.y);
+    this.persons.sort(
+      (person1, person2) => person1.position.y - person2.position.y,
+    );
     this.persons.forEach((person) => {
       person.update(time);
     });
     this.magnifier.update(time);
     this.wantedPoster.update(time);
-    this.#checkGameOver();
+    this.#checkGameOver(time);
     this.#checkGameResult();
   };
 
@@ -144,8 +148,11 @@ export default class PlayScene implements Scene {
     canvas.get('layer0').removeEventListener('click', this.#handleClickPerson);
   };
 
-  #checkGameOver = () => {
-    if (!this.info.lifeCount || this.info.timeout < 0) {
+  #checkGameOver = (time: number) => {
+    if (
+      !this.info.lifeCount ||
+      Math.max(this.info.timeout - (time - this.info.startTime)) < 0
+    ) {
       this.music.stop();
       postGlobalEvent({
         type: 'change-scene',
@@ -211,13 +218,18 @@ export default class PlayScene implements Scene {
         playEffectSound('correct');
       }
     }
-  }
+  };
 
   // debug
   #drawPersonBarrier = (context: CanvasRenderingContext2D) => {
-    context.resetTransform()
+    context.resetTransform();
     context.beginPath();
-    context.strokeRect(this.barrier.left, this.barrier.top, this.barrier.width, this.barrier.height);
+    context.strokeRect(
+      this.barrier.left,
+      this.barrier.top,
+      this.barrier.width,
+      this.barrier.height,
+    );
     context.closePath();
-  }
+  };
 }
