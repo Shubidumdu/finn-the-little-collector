@@ -132,6 +132,7 @@ export default class PlayScene implements Scene {
     this.magnifier.update(time);
     this.wantedPoster.update(time);
     this.#checkGameOver();
+    this.#checkGameResult();
   };
 
   end = () => {
@@ -158,6 +159,22 @@ export default class PlayScene implements Scene {
     }
   };
 
+  #checkGameResult = () => {
+    if (this.wantedPoster.persons.length === 0) {
+      this.music.stop();
+      postGlobalEvent({
+        type: 'change-scene',
+        payload: {
+          type: 'gameResult',
+          state: {
+            stage: this.info.stage,
+            clearTime: this.info.elapsedTime,
+          },
+        },
+      });
+    }
+  };
+
   #handleClickPerson = (e: PointerEvent) => {
     let isPersonClicked = false;
     let isCorrect = false;
@@ -172,6 +189,7 @@ export default class PlayScene implements Scene {
     })
 
     const [frontPerson] = clickedPersons.sort((a, b) => b.position.y - a.position.y);
+    if (!frontPerson) return;
     frontPerson.isHit = true;
 
     if (frontPerson.isHit) {

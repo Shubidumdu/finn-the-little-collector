@@ -14,6 +14,7 @@ export default class PlayInfo implements GameObject, PlayInfoState {
   startTime: number; // ms
   timeout: number; // ms
   lifeCount: number;
+  elapsedTime: string;
 
   constructor() {
     this.layer = canvas.get('layer3');
@@ -54,6 +55,8 @@ export default class PlayInfo implements GameObject, PlayInfoState {
       const remainTime = (
         Math.max(this.timeout - (time - this.startTime), 0) / 1000
       ).toFixed(2);
+
+      this.elapsedTime = ((time - this.startTime) / 1000).toFixed(2);
 
       context.setTransform(1, 0, 0, 1, canvas.width, 0);
       context.font = getFont(24);
