@@ -1,5 +1,6 @@
 import { GameObject } from '.';
 import canvas, { drawLayer } from '../canvas';
+import { getMousePosition } from '../utils';
 
 type MagnifierState = {
   position: {
@@ -75,9 +76,6 @@ export default class Magnifier implements GameObject, MagnifierState {
   };
 
   #handlePointerMove = (e: MouseEvent) => {
-    this.position = {
-      x: e.offsetX,
-      y: e.offsetY,
-    };
+    this.position = getMousePosition(this.layer1, e);
   };
 }

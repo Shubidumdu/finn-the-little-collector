@@ -1,6 +1,7 @@
 import { resetAllLayers } from './canvas';
 import { ChangeSceneEvent, listenGlobalEvent } from './event';
 import { PlayScene, TitleScene, Scene, SceneType } from './scenes';
+import GameResultScene from './scenes/gameResult';
 import GameOverScene from './scenes/gameover';
 
 export default class Game {
@@ -13,6 +14,7 @@ export default class Game {
       play: new PlayScene(),
       title: new TitleScene(),
       gameover: new GameOverScene(),
+      gameResult: new GameResultScene(),
     };
   }
 
