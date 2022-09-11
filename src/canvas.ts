@@ -55,20 +55,6 @@ export const createCanvas = (id: string) => {
 
   resizeCanvas(canvas);
 
-  canvas.addEventListener('click', (event: PointerEvent) => {
-    window.postMessage(
-      {
-        type: 'click-canvas',
-        payload: {
-          id,
-          x: event.clientX,
-          y: event.clientY,
-        },
-      },
-      window.origin,
-    );
-  });
-
   return canvas;
 };
 
@@ -79,8 +65,25 @@ export const removeCanvas = (id: string) => {
 };
 
 export const resizeCanvas = (canvas: HTMLCanvasElement) => {
-  canvas.width = Math.min( window.innerWidth, window.innerHeight);
-  canvas.height = Math.min( window.innerWidth, window.innerHeight);
+  canvas.width = 920;
+  canvas.height = 920;
+  if (window.innerWidth > window.innerHeight) {
+    Object.assign(
+      canvas.style,
+      {
+        width: 'auto',
+        height: '100%',
+      }
+    )
+  } else {
+    Object.assign(
+      canvas.style,
+      {
+        width: '100%',
+        height: 'auto',
+      }
+    )
+  }
 };
 
 export const drawLayer = (canvas: HTMLCanvasElement) => {
