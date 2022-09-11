@@ -165,7 +165,7 @@ export default class PlayScene implements Scene {
           type: 'gameResult',
           state: {
             stage: this.info.stage,
-            clearTime: this.info.remainTime,
+            clearTime: this.info.elapsedTime,
           },
         },
       });
