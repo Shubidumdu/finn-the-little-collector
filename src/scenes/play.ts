@@ -16,6 +16,7 @@ import {
   pickRandomOption,
   isInsideRect,
   pickPersonVariations,
+  getMousePosition,
 } from '../utils';
 import WantedPoster from '../objects/wantedPoster';
 import Music from '../sounds/music';
@@ -165,10 +166,9 @@ export default class PlayScene implements Scene {
     this.persons.forEach((person) => {
       if (person.isHit) return;
 
-      isInsideRect({
-        x: e.offsetX,
-        y: e.offsetY,
-      }, person.hitBoxPosition) && clickedPersons.push(person);
+      const position = getMousePosition(this.layer1, e);
+
+      isInsideRect(position, person.hitBoxPosition) && clickedPersons.push(person);
     })
 
     const [frontPerson] = clickedPersons.sort((a, b) => b.position.y - a.position.y);

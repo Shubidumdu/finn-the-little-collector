@@ -138,3 +138,11 @@ export const pickPersonVariations = (): VariationState => {
     ...pickBottomWear(),
   };
 };
+
+export const getMousePosition = (canvas: HTMLCanvasElement, e: MouseEvent) => {
+  const rect = canvas.getBoundingClientRect();
+  return {
+      x: (e.clientX - rect.left) / (rect.right - rect.left) * canvas.width,
+      y: (e.clientY - rect.top) / (rect.bottom - rect.top) * canvas.height
+  };
+}
