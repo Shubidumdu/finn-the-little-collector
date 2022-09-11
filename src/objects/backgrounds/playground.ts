@@ -17,7 +17,7 @@ export default class Playground implements GameObject {
     this.#draw((context, canvas) => {
       // 하늘
       context.setTransform(1, 0, 0, 1, 0, 0);
-      drawSky(context, canvas);
+      drawSky(context, canvas, this.hueRotate);
 
       // 풀
       context.transform(1, 0, 0, 1, 0, 160);
