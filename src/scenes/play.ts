@@ -25,6 +25,8 @@ import playEffectSound from '../sounds/effects';
 import { Rect } from '../types/rect';
 import { postGlobalEvent } from '../event';
 import { STAGE_STATES } from '../constants';
+import { setIsSoundOn } from '../store/mutation';
+import store from '../store';
 
 export type PlaySceneState = {
   activeBackground: BackgroundType;
@@ -121,6 +123,7 @@ export default class PlayScene implements Scene {
       persons: [...wantedPersons],
     });
 
+    this.#addEvents();
     canvas.get('layer0').addEventListener('click', this.#handleClickPerson);
   };
 
@@ -144,6 +147,7 @@ export default class PlayScene implements Scene {
     this.music.stop();
     this.info.remove();
     this.persons.forEach((person) => person.remove());
+    this.#removeEvents();
 
     canvas.get('layer0').removeEventListener('click', this.#handleClickPerson);
   };
@@ -179,6 +183,34 @@ export default class PlayScene implements Scene {
           },
         },
       });
+    }
+  };
+
+  #addEvents = () => {
+    const layer0 = canvas.get('layer0');
+    layer0.addEventListener('click', this.#handleClickPerson);
+    layer0.addEventListener('click', this.#handleClickSpeacker);
+  };
+
+  #removeEvents = () => {
+    const layer0 = canvas.get('layer0');
+    layer0.removeEventListener('click', this.#handleClickPerson);
+    layer0.removeEventListener('click', this.#handleClickSpeacker);
+  };
+
+  #handleClickSpeacker = (e: PointerEvent) => {
+    const layer0 = canvas.get('layer0');
+    const position = getMousePosition(layer0, e);
+    const isHit = this.info.speaker.isInside(position);
+
+    if (!isHit) return;
+
+    const { isSoundOn } = store;
+    setIsSoundOn(!isSoundOn);
+    if (store.isSoundOn) {
+      this.music.play(true);
+    } else {
+      this.music.stop();
     }
   };
 

@@ -12,7 +12,7 @@ type PlayInfoState = {
 
 export default class PlayInfo implements GameObject, PlayInfoState {
   layer: HTMLCanvasElement;
-  speacker = new Rect({
+  speaker = new Rect({
     left: 200,
     top: 56 - 24,
     width: 40,
@@ -44,10 +44,10 @@ export default class PlayInfo implements GameObject, PlayInfoState {
       context.setTransform(1, 0, 0, 1, 0, 0);
       this.#drawStage(context);
 
-      const { left, top } = this.speacker;
+      const { left, top } = this.speaker;
       const { isSoundOn } = store;
       context.setTransform(1, 0, 0, 1, left, top);
-      this.#drawSpeacker(context, isSoundOn);
+      this.#drawSpeaker(context, isSoundOn);
 
       context.setTransform(1, 0, 0, 1, canvas.width - 40, 56);
       this.#drawTimer(context, time);
@@ -62,15 +62,15 @@ export default class PlayInfo implements GameObject, PlayInfoState {
     context.fillText(`Stage ${this.stage}`, 40, 56);
   };
 
-  #drawSpeacker: DrawFunc<[boolean]> = (context, on) => {
-    const speacker = new Path2D(
+  #drawSpeaker: DrawFunc<[boolean]> = (context, on) => {
+    const speaker = new Path2D(
       'M2.25112 20.2562C1.20355 20.2562 0.981342 19.4292 1.00118 19.0157V10.9843C0.981342 10.5708 1.20355 9.74378 2.25112 9.74378H6.83399L16.7145 2.18239C18.143 1.11907 21 -0.19236 21 3.06849V15V26.9315C21 30.1924 18.143 28.881 16.7145 27.8176L6.83399 20.2562H2.25112Z',
     );
     context.lineWidth = 2;
     context.fillStyle = '#fff';
     context.beginPath();
-    context.fill(speacker);
-    context.stroke(speacker);
+    context.fill(speaker);
+    context.stroke(speaker);
     context.closePath();
 
     context.beginPath();
