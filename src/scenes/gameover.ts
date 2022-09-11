@@ -1,5 +1,4 @@
 import { Scene } from '.';
-import canvasMap, { drawLayer } from '../canvas';
 import { STAGE_STATES } from '../constants';
 import { postGlobalEvent } from '../event';
 import Music from '../sounds/music';
@@ -22,8 +21,8 @@ export default class GameOverScene implements Scene {
     this.music = new Music(gameoverMusic);
   }
 
-  start = () => {
-    this.stage = 1;
+  start = ({ stage }: GameOverSceneState) => {
+    this.stage = stage;
     this.music.play(false);
     this.#createContainer();
     this.#addEventListeners();
