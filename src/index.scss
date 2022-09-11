@@ -1,7 +1,3 @@
-body {
-  background-color: black;
-}
-
 body,
 html {
   position: relative;
@@ -10,6 +6,11 @@ html {
   padding: 0;
   width: 100%;
   height: 100%;
+  font-family: 'Courier New', sans-serif;
+}
+
+body {
+  background-color: black;
 }
 
 canvas {
@@ -18,6 +19,32 @@ canvas {
   top: 50%;
   transform: translate3d(-50%, -50%, 0);
   margin: auto;
+}
+
+button {
+  font-family: inherit;
+  font-weight: bold;
+  font-size: 32px;
+  color: white;
+  background: none;
+  border: none;
+  z-index: 11;
+
+  @media (max-width: 850px) {
+    font-size: 24px;
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    display: none;
+  }
+  
+  to {
+    opacity: 1;
+    display: block;
+  }
 }
 
 #layer0 {
@@ -38,4 +65,13 @@ canvas {
 
 #bg {
   z-index: -1;
+}
+
+.buttonContainer {
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 40px;
+  margin: 40px auto 0;
 }
