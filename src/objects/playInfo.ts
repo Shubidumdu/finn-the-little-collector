@@ -22,6 +22,7 @@ export default class PlayInfo implements GameObject, PlayInfoState {
   startTime: number; // ms
   timeout: number; // ms
   lifeCount: number;
+  elapsedTime: string;
 
   constructor() {
     this.layer = canvas.get('layer3');
@@ -31,16 +32,13 @@ export default class PlayInfo implements GameObject, PlayInfoState {
     this.stage = stage;
     this.timeout = timeout;
     this.lifeCount = lifeCount;
+    this.startTime = performance.now();
   };
 
   remove = () => {};
 
   update = (time: number) => {
     const draw = drawLayer(this.layer);
-
-    if (!this.startTime) {
-      this.startTime = time;
-    }
 
     draw((context, canvas) => {
       context.setTransform(1, 0, 0, 1, 0, 0);
@@ -101,6 +99,8 @@ export default class PlayInfo implements GameObject, PlayInfoState {
     context.font = getFont(24);
     context.fillStyle = remainTime < 10 ? 'red' : '#000';
     context.fillText(remainTime.toFixed(2), 0, 0);
+
+    this.elapsedTime = ((time - this.startTime) / 1000).toFixed(2);
   };
 
   #drawLife: DrawFunc<[HTMLCanvasElement, number]> = (context, canvas, r) => {

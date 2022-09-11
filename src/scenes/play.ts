@@ -1,7 +1,5 @@
 import { Scene } from '.';
 import canvas from '../canvas';
-import { STAGE_STATES } from '../constants';
-import { postGlobalEvent } from '../event';
 import { GameObject } from '../objects';
 import { BackgroundType, Playground, Pool, Road } from '../objects/backgrounds';
 import PlayInfo from '../objects/playInfo';
@@ -11,20 +9,22 @@ import Person, {
   LOWER_BODY_SIZE,
   SKIN_COLORS,
 } from '../objects/person';
-import WantedPoster from '../objects/wantedPoster';
-import Music from '../sounds/music';
-import playMusic from '../sounds/musics/play';
-import playEffectSound from '../sounds/effects';
-import store from '../store';
-import { setIsSoundOn } from '../store/mutation';
-import { Rect } from '../types/rect';
 import {
   barrierRectFactory,
   getRandomColor,
   getRandomIntegerFromRange,
   pickRandomOption,
   isInsideRect,
+  pickPersonVariations,
+  getMousePosition,
 } from '../utils';
+import WantedPoster from '../objects/wantedPoster';
+import Music from '../sounds/music';
+import playMusic from '../sounds/musics/play';
+import playEffectSound from '../sounds/effects';
+import { Rect } from '../types/rect';
+import { postGlobalEvent } from '../event';
+import { STAGE_STATES } from '../constants';
 
 export type PlaySceneState = {
   activeBackground: BackgroundType;
@@ -48,6 +48,7 @@ export default class PlayScene implements Scene {
   barrier: Rect;
 
   constructor() {
+    this.activeBackground = 'playground';
     this.backgrounds = {
       playground: new Playground(),
       pool: new Pool(),
@@ -59,17 +60,19 @@ export default class PlayScene implements Scene {
     this.layer1 = canvas.get('layer1');
     this.wantedPoster = new WantedPoster();
     this.music = new Music(playMusic);
-    this.barrier = barrierRectFactory(this.layer1)
+    this.barrier = barrierRectFactory(this.layer1);
   }
 
-  start = ({
-    activeBackground,
-    stage,
-    timeout,
-    lifeCount,
-    personCount,
-    wantedPersonCount,
-  }: PlaySceneState = STAGE_STATES[1]) => {
+  start = (
+    {
+      activeBackground,
+      stage,
+      timeout,
+      lifeCount,
+      personCount,
+      wantedPersonCount,
+    }: PlaySceneState = STAGE_STATES[1],
+  ) => {
     this.activeBackground = activeBackground;
     this.backgrounds[this.activeBackground].init();
     this.music.play(true);
@@ -101,6 +104,7 @@ export default class PlayScene implements Scene {
           shoe: getRandomColor(),
         },
         barrier: this.barrier,
+        variations: pickPersonVariations(),
       });
     });
 
@@ -112,23 +116,27 @@ export default class PlayScene implements Scene {
     const wantedPersons = this.persons.filter(
       (person) => person.id < wantedPersonCount,
     );
+
     this.wantedPoster.init({
       persons: [...wantedPersons],
     });
 
-    this.#addEvents();
+    canvas.get('layer0').addEventListener('click', this.#handleClickPerson);
   };
 
   update = (time: number) => {
     this.backgrounds[this.activeBackground].update(time);
     this.info.update(time);
-    this.persons.sort((person1, person2) => person1.position.y - person2.position.y);
+    this.persons.sort(
+      (person1, person2) => person1.position.y - person2.position.y,
+    );
     this.persons.forEach((person) => {
       person.update(time);
     });
     this.magnifier.update(time);
     this.wantedPoster.update(time);
-    this.#checkGameOver();
+    this.#checkGameOver(time);
+    this.#checkGameResult();
   };
 
   end = () => {
@@ -136,23 +144,15 @@ export default class PlayScene implements Scene {
     this.music.stop();
     this.info.remove();
     this.persons.forEach((person) => person.remove());
-    this.#removeEvents();
+
+    canvas.get('layer0').removeEventListener('click', this.#handleClickPerson);
   };
 
-  #addEvents = () => {
-    const layer0 = canvas.get('layer0');
-    layer0.addEventListener('click', this.#handleClickPerson);
-    layer0.addEventListener('click', this.#handleClickSpeacker);
-  };
-  
-  #removeEvents = () => {
-    const layer0 = canvas.get('layer0');
-    layer0.removeEventListener('click', this.#handleClickPerson);
-    layer0.removeEventListener('click', this.#handleClickSpeacker);
-  };
-
-  #checkGameOver = () => {
-    if (!this.info.lifeCount || this.info.timeout < 0) {
+  #checkGameOver = (time: number) => {
+    if (
+      !this.info.lifeCount ||
+      Math.max(this.info.timeout - (time - this.info.startTime)) < 0
+    ) {
       this.music.stop();
       postGlobalEvent({
         type: 'change-scene',
@@ -166,18 +166,19 @@ export default class PlayScene implements Scene {
     }
   };
 
-  #handleClickSpeacker = (e: PointerEvent) => {
-    const { offsetX: x, offsetY: y } = e;
-    const isHit = this.info.speacker.isInside({ x, y });
-    
-    if (!isHit) return;
-
-    const { isSoundOn } = store;
-    setIsSoundOn(!isSoundOn);
-    if (store.isSoundOn) {
-      this.music.play(true);
-    } else {
+  #checkGameResult = () => {
+    if (this.wantedPoster.persons.length === 0) {
       this.music.stop();
+      postGlobalEvent({
+        type: 'change-scene',
+        payload: {
+          type: 'gameResult',
+          state: {
+            stage: this.info.stage,
+            clearTime: this.info.elapsedTime,
+          },
+        },
+      });
     }
   };
 
@@ -189,13 +190,13 @@ export default class PlayScene implements Scene {
     this.persons.forEach((person) => {
       if (person.isHit) return;
 
-      isInsideRect({
-        x: e.offsetX,
-        y: e.offsetY,
-      }, person.hitBoxPosition) && clickedPersons.push(person);
+      const position = getMousePosition(this.layer1, e);
+
+      isInsideRect(position, person.hitBoxPosition) && clickedPersons.push(person);
     })
 
     const [frontPerson] = clickedPersons.sort((a, b) => b.position.y - a.position.y);
+    if (!frontPerson) return;
     frontPerson.isHit = true;
 
     if (frontPerson.isHit) {
@@ -217,13 +218,18 @@ export default class PlayScene implements Scene {
         playEffectSound('correct');
       }
     }
-  }
+  };
 
   // debug
   #drawPersonBarrier = (context: CanvasRenderingContext2D) => {
-    context.resetTransform()
+    context.resetTransform();
     context.beginPath();
-    context.strokeRect(this.barrier.left, this.barrier.top, this.barrier.width, this.barrier.height);
+    context.strokeRect(
+      this.barrier.left,
+      this.barrier.top,
+      this.barrier.width,
+      this.barrier.height,
+    );
     context.closePath();
-  }
+  };
 }

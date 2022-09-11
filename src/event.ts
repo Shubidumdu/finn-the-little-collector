@@ -1,3 +1,4 @@
+import { GameResultSceneState } from './scenes/gameResult';
 import { GameOverSceneState } from './scenes/gameover';
 import { PlaySceneState } from './scenes/play';
 
@@ -17,6 +18,10 @@ export type ChangeSceneEvent = {
     | {
         type: 'title';
         state: null;
+      }
+    | {
+        type: 'gameResult';
+        state: GameResultSceneState;
       };
 };
 

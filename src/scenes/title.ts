@@ -10,6 +10,7 @@ import { setIsSoundOn } from '../store/mutation';
 import {
   degreeToRadian,
   getFont,
+  getMousePosition,
   isInsideRect,
   isMobileSize,
   isTabletSize,
@@ -159,15 +160,15 @@ export default class TitleScene implements Scene {
   };
 
   #handleClickEvent = (e: PointerEvent) => {
-    const { offsetX, offsetY } = e;
+    const position = getMousePosition(e.target as HTMLCanvasElement, e);
 
-    if (isInsideRect({ x: offsetX, y: offsetY }, this.hitBoxes.start)) {
+    if (isInsideRect(position, this.hitBoxes.start)) {
       this.activeMenuIndex = 0;
       const currentMenu = this.menus[this.activeMenuIndex];
       currentMenu.action();
     }
 
-    if (isInsideRect({ x: offsetX, y: offsetY }, this.hitBoxes.sound)) {
+    if (isInsideRect(position, this.hitBoxes.sound)) {
       this.activeMenuIndex = 1;
       const currentMenu = this.menus[this.activeMenuIndex];
       currentMenu.action();
@@ -177,11 +178,7 @@ export default class TitleScene implements Scene {
   };
 
   #pointerEvent = (e: PointerEvent) => {
-    const { offsetX, offsetY } = e;
-    const position = {
-      x: offsetX,
-      y: offsetY,
-    };
+    const position =  getMousePosition(e.target as HTMLCanvasElement, e);
 
     Object.assign(this.magnifier, position);
 
@@ -192,16 +189,6 @@ export default class TitleScene implements Scene {
     if (isInsideRect(position, this.hitBoxes.sound)) {
       this.activeMenuIndex = 1;
     }
-  };
-
-  #changeScene = (sceneType: SceneType) => {
-    window.postMessage(
-      {
-        type: 'change-scene',
-        payload: sceneType,
-      },
-      window.origin,
-    );
   };
 
   #drawLayer0 = drawLayer(canvas.get('layer0'));
