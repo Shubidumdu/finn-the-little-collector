@@ -267,7 +267,7 @@ export default class Person implements GameObject, PersonState {
     const drawLayer2 = drawLayer(layer2);
 
     drawLayer1((context, canvas) => {
-      const sizeRatio = 0.4 + 0.6 * (this.position.y / canvas.offsetHeight);
+      const sizeRatio = 0.6 + 0.6 * (this.position.y / canvas.offsetHeight);
       this.#setHitBoxPosition();
       this.#drawShadow(context, canvas, time, this.position, sizeRatio);
 
@@ -317,7 +317,7 @@ export default class Person implements GameObject, PersonState {
         this.move.direction.y = -1;
       }
 
-      const sizeRatio = 0.2 + 0.3 * (this.position.y / canvas.offsetHeight);
+      const sizeRatio = 0.4 + 0.3 * (this.position.y / canvas.offsetHeight);
 
       this.#drawShadow(context, canvas, time, this.position, sizeRatio);
 
