@@ -17,7 +17,7 @@ export default class Pool implements GameObject {
     this.#draw((context, canvas) => {
       // 하늘
       context.setTransform(1, 0, 0, 1, 0, 0);
-      drawSky(context, canvas);
+      drawSky(context, canvas, this.hueRotate);
 
       // 파도
       context.transform(1, 0, 0, 1, 0, 160);

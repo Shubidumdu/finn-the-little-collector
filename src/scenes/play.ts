@@ -1,7 +1,7 @@
 import { Scene } from '.';
 import canvas from '../canvas';
 import { GameObject } from '../objects';
-import { BackgroundType, Playground, Pool, Road } from '../objects/backgrounds';
+import { Playground, Pool, Road } from '../objects/backgrounds';
 import PlayInfo from '../objects/playInfo';
 import Magnifier from '../objects/magnifier';
 import Person, {
@@ -29,7 +29,6 @@ import { setIsSoundOn } from '../store/mutation';
 import store from '../store';
 
 export type PlaySceneState = {
-  activeBackground: BackgroundType;
   stage: number;
   timeout: number;
   lifeCount: number;
@@ -38,7 +37,6 @@ export type PlaySceneState = {
 };
 
 export default class PlayScene implements Scene {
-  activeBackground: BackgroundType;
   backgrounds: GameObject[];
   info: PlayInfo;
   magnifier: Magnifier;
@@ -69,7 +67,6 @@ export default class PlayScene implements Scene {
 
   start = (
     {
-      activeBackground,
       stage,
       timeout,
       lifeCount,
@@ -77,8 +74,7 @@ export default class PlayScene implements Scene {
       wantedPersonCount,
     }: PlaySceneState = STAGE_STATES[1],
   ) => {
-    this.activeBackground = activeBackground;
-    this.backgrounds[stage].init();
+    this.backgrounds[stage - 1].init();
     this.music.play(true);
     this.info.init({
       stage,
@@ -130,7 +126,7 @@ export default class PlayScene implements Scene {
   };
 
   update = (time: number) => {
-    this.backgrounds[this.info.stage].update(time);
+    this.backgrounds[this.info.stage - 1].update(time);
     this.info.update(time);
     this.persons.sort(
       (person1, person2) => person1.position.y - person2.position.y,
@@ -145,7 +141,7 @@ export default class PlayScene implements Scene {
   };
 
   end = () => {
-    this.backgrounds[this.info.stage].remove();
+    this.backgrounds[this.info.stage - 1].remove();
     this.music.stop();
     this.info.remove();
     this.persons.forEach((person) => person.remove());
