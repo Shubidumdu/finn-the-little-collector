@@ -101,7 +101,9 @@ export default class GameResultScene implements Scene {
     h1.textContent = this.nextStage ? 'Stage Clear' : 'Complete';
 
     const result = document.createElement('h2');
-    result.textContent = `Clear Time: ${this.clearTime}`;
+    const minute = Math.floor(Number(this.clearTime) / 60);
+    const second = Math.floor(Number(this.clearTime) % 60);
+    result.textContent = `Clear Time: ${minute}:${second < 10 ? '0' : ''}${second}`;
 
     container.append(h1);
     container.append(result);
