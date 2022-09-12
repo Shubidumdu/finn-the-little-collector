@@ -25,7 +25,7 @@ import playEffectSound from '../sounds/effects';
 import { Rect } from '../types/rect';
 import { postGlobalEvent } from '../event';
 import { STAGE_STATES } from '../constants';
-import { setIsSoundOn } from '../store/mutation';
+import { setIsSoundOn, setWantedPersons } from '../store/mutation';
 import store from '../store';
 
 export type PlaySceneState = {
@@ -42,8 +42,8 @@ export default class PlayScene implements Scene {
   magnifier: Magnifier;
   layer1: HTMLCanvasElement;
   persons: Person[];
-  wantedPoster: WantedPoster;
   wantedPersonCount: number;
+  wantedPoster: WantedPoster;
   music: Music;
   barrier: Rect;
 
@@ -117,6 +117,7 @@ export default class PlayScene implements Scene {
       (person) => person.id < wantedPersonCount,
     );
 
+    setWantedPersons(wantedPersons);
     this.wantedPoster.init({
       persons: [...wantedPersons],
     });
@@ -147,6 +148,7 @@ export default class PlayScene implements Scene {
     this.persons.forEach((person) => person.remove());
     this.#removeEvents();
 
+    setWantedPersons([]);
     canvas.get('layer0').removeEventListener('click', this.#handleClickPerson);
   };
 
@@ -178,7 +180,6 @@ export default class PlayScene implements Scene {
           state: {
             stage: this.info.stage,
             clearTime: this.info.elapsedTime,
-            wantedPersons: this.wantedPoster.persons,
           },
         },
       });
