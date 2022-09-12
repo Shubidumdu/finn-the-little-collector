@@ -80,13 +80,11 @@ export default class TitleScene implements Scene {
     this.#drawLayer0((context, canvas) => {
       this.#drawMagnifier(context, canvas);
     });
-    
+
     this.#drawLayer1((context, canvas) => {
       context.setTransform(1, 0, 0, 1, 0, 0);
       context.fillStyle = '#000';
       context.fillRect(0, 0, canvas.width, canvas.height);
-
-      // this.#drawRuler(context, canvas);
 
       context.fillStyle = '#fff';
       this.#drawTitle(context, canvas);
@@ -178,7 +176,7 @@ export default class TitleScene implements Scene {
   };
 
   #pointerEvent = (e: PointerEvent) => {
-    const position =  getMousePosition(e.target as HTMLCanvasElement, e);
+    const position = getMousePosition(e.target as HTMLCanvasElement, e);
 
     Object.assign(this.magnifier, position);
 
@@ -303,17 +301,7 @@ export default class TitleScene implements Scene {
       height: soundTextHeight,
     });
 
-    // context.setTransform(1, 0, 0, 1, 0, 0);
-    // this.#drawHitBoxes(context);
-
-    context.setTransform(
-      1,
-      0,
-      0,
-      1,
-      startTextPosition.x,
-      startTextPosition.y,
-    );
+    context.setTransform(1, 0, 0, 1, startTextPosition.x, startTextPosition.y);
     context.font = getFont(fontSize);
     context.fillText('Start', 0, 0);
 
@@ -356,15 +344,7 @@ export default class TitleScene implements Scene {
 
   #drawMagnifier: DrawFunc<[HTMLCanvasElement]> = (context, canvas) => {
     const { x, y, scale } = this.magnifier;
-    context.setTransform(
-      scale,
-      0,
-      0,
-      scale,
-      x + 24,
-      y - 532,
-    );
-    // context.setTransform(scale, 0, 0, scale, canvas.width / 2 + 32, -40);
+    context.setTransform(scale, 0, 0, scale, x + 24, y - 532);
     context.beginPath();
     context.rotate(degreeToRadian(48));
     context.shadowBlur = 4;
@@ -381,32 +361,5 @@ export default class TitleScene implements Scene {
     context.shadowBlur = 0;
     context.shadowOffsetX = 0;
     context.shadowOffsetY = 0;
-  };
-
-  // debuging
-  #drawRuler: DrawFunc<[HTMLCanvasElement]> = (context, canvas) => {
-    context.setTransform(1, 0, 0, 1, 0, 0);
-    context.strokeStyle = '#fff';
-    context.strokeRect(canvas.width / 2 - 1, 0 - 1, 2, canvas.height);
-    context.strokeRect(0, canvas.height / 2 - 1 - 1, canvas.width, 2);
-    context.strokeStyle = '#000';
-  };
-
-  // debug
-  #drawHitBoxes: DrawFunc = (context) => {
-    context.fillStyle = 'white';
-    context.fillRect(
-      this.hitBoxes.start.left,
-      this.hitBoxes.start.top,
-      this.hitBoxes.start.width,
-      this.hitBoxes.start.height,
-    );
-    context.fillRect(
-      this.hitBoxes.sound.left,
-      this.hitBoxes.sound.top,
-      this.hitBoxes.sound.width,
-      this.hitBoxes.sound.height,
-    );
-    context.fillStyle = '#000';
   };
 }

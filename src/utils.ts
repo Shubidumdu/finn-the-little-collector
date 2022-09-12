@@ -30,41 +30,27 @@ export const getFont = (
   type: string = 'Courier New, sans-serif',
 ) => `bold ${size}pt ${type}`;
 
-export const getRandomIntegerFromRange = (min: number, max: number) => Math.round(Math.random() * (max - min) + min);
+export const getRandomIntegerFromRange = (min: number, max: number) =>
+  Math.round(Math.random() * (max - min) + min);
 
 export const getRandomColor = () =>
-  `#${Math.floor(Math.random() * 16777215).toString(16).padEnd(6, '0')}`;
+  `#${Math.floor(Math.random() * 16777215)
+    .toString(16)
+    .padEnd(6, '0')}`;
 
 export const pickRandomOption = <T>(options: T[]) => {
   const randomIndex = getRandomInt(options.length);
   return options[randomIndex];
 };
 
-export const camelToKebab = (str: string): string =>
-  !str ? '' : str.replace(/(^[a-z]*)([A-Z]{1})(\w*)/, (_, $1, $2, $3) => `${$1}-${$2.toLowerCase()}${camelToKebab($3)}`);
-
-type LinearPosition = {
-  x: number,
-  maxWidth: number,
-  time: DOMHighResTimeStamp,
-  offset: number,
-};
-export const getLinearPosition = ({
-  x,
-  maxWidth,
-  time,
-  offset,
-}: LinearPosition) =>
-  (x + time) % (maxWidth + offset) - offset;
-
 export const isMobileSize = (width: number) => width < 480;
 export const isTabletSize = (width: number) => width < 850;
 
 /**
- * 
- * @param start color like #aaaaaa 
+ *
+ * @param start color like #aaaaaa
  * @param delta distance from start
- * @returns 
+ * @returns
  */
 export const calculateHex = (start: string, delta: number) =>
   `#${(parseInt(start.replace('#', '0x')) + delta).toString(16)}`;
@@ -89,8 +75,8 @@ export const barrierRectFactory = (canvas: HTMLCanvasElement) => {
     top: skyHeight,
     width,
     height: canvas.height - skyHeight - posterHeight,
-  })
-}
+  });
+};
 
 export const pickPersonVariations = (): VariationState => {
   const pickEyeWear = () => {
@@ -99,7 +85,7 @@ export const pickPersonVariations = (): VariationState => {
       glasses: randomInt < 2,
       sunglasses: randomInt > 7,
     };
-  }
+  };
   const pickHead = () => {
     const randomInt = getRandomInt(10);
     return {
@@ -108,28 +94,28 @@ export const pickPersonVariations = (): VariationState => {
       cap: randomInt === 2 && getRandomColor(),
       hat: randomInt === 3 && getRandomColor(),
     };
-  }
+  };
   const pickHair = () => {
     const randomInt = getRandomInt(3);
     return {
       longHair: randomInt === 0,
       shortHair: randomInt === 1,
     };
-  }
+  };
   const pickTopWear = () => {
     const randomInt = getRandomInt(3);
     return {
       sleeveless: randomInt === 0,
       shortSleeve: randomInt === 1,
     };
-  }
+  };
   const pickBottomWear = () => {
     const randomInt = getRandomInt(2);
     return {
       shortPants: randomInt === 0,
     };
-  }
-  
+  };
+
   return {
     ...pickEyeWear(),
     ...pickHead(),
@@ -142,7 +128,7 @@ export const pickPersonVariations = (): VariationState => {
 export const getMousePosition = (canvas: HTMLCanvasElement, e: MouseEvent) => {
   const rect = canvas.getBoundingClientRect();
   return {
-      x: (e.clientX - rect.left) / (rect.right - rect.left) * canvas.width,
-      y: (e.clientY - rect.top) / (rect.bottom - rect.top) * canvas.height
+    x: ((e.clientX - rect.left) / (rect.right - rect.left)) * canvas.width,
+    y: ((e.clientY - rect.top) / (rect.bottom - rect.top)) * canvas.height,
   };
-}
+};

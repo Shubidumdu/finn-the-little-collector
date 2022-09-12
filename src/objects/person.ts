@@ -41,7 +41,7 @@ type Variation =
   | 'sleeveless'
   | 'shortSleeve'
   | 'shortPants';
-  
+
 export type VariationState = {
   [key in Variation]: boolean | string;
 };
@@ -269,8 +269,7 @@ export default class Person implements GameObject, PersonState {
     drawLayer1((context, canvas) => {
       const sizeRatio = 0.6 + 0.6 * (this.position.y / canvas.offsetHeight);
       this.#setHitBoxPosition(sizeRatio);
-      // debug
-      // this.#drawHitBox(context, { isRect: true })
+
       this.#drawShadow(context, canvas, time, this.position, sizeRatio);
 
       if (this.correctAt) {
@@ -295,9 +294,6 @@ export default class Person implements GameObject, PersonState {
     });
     drawLayer2((context, canvas) => {
       this.barrier = barrierRectFactory(canvas);
-
-      // debug
-      // this.#drawBarrier(context)
 
       if (this.position.x <= this.barrier.left) {
         this.position.x = this.barrier.left + 1;
@@ -926,46 +922,5 @@ export default class Person implements GameObject, PersonState {
     context.fillStyle = this.variations.hat as string;
     context.fillRect(-18, -58, 36, 6);
     context.fillRect(-12, -67, 24, 10);
-  };
-
-  #drawBarrier = (context: CanvasRenderingContext2D) => {
-    context.resetTransform();
-    context.beginPath();
-    context.strokeRect(
-      this.barrier.left,
-      this.barrier.top,
-      this.barrier.width,
-      this.barrier.height,
-    );
-    context.closePath();
-  };
-
-  #drawHitBox = (
-    context: CanvasRenderingContext2D,
-    { isRect }: { isRect: boolean },
-  ) => {
-    context.fillStyle = '#fff';
-
-    if (isRect) {
-      context.fillRect(
-        this.hitBoxPosition.left,
-        this.hitBoxPosition.top,
-        this.hitBoxPosition.width,
-        this.hitBoxPosition.height,
-      );
-      context.fill();
-      return;
-    }
-
-    context.ellipse(
-      this.position.x,
-      this.position.y - 5,
-      35,
-      55,
-      Math.PI,
-      0,
-      Math.PI * 2,
-    );
-    context.fill();
   };
 }

@@ -33,7 +33,14 @@ export default class WantedPoster implements GameObject, WantedPosterState {
     const paperLayer = canvasMap.get('layer3');
     const drawPaperLayer = drawLayer(paperLayer);
     drawPaperLayer((context, canvas) => {
-      context.setTransform(1, 0, 0, 1, canvas.width - 40 - 100, canvas.height - 170);
+      context.setTransform(
+        1,
+        0,
+        0,
+        1,
+        canvas.width - 40 - 100,
+        canvas.height - 170,
+      );
       this.#drawPoster(context);
 
       if (!this.persons.length) return;
@@ -56,11 +63,32 @@ export default class WantedPoster implements GameObject, WantedPosterState {
           1,
         );
       }
-      context.setTransform(1, 0, 0, 1, canvas.width - 20 - 26, canvas.height - 110);
+      context.setTransform(
+        1,
+        0,
+        0,
+        1,
+        canvas.width - 20 - 26,
+        canvas.height - 110,
+      );
       this.#drawRightArrow(context);
-      context.setTransform(1, 0, 0, 1, canvas.width - 20 - 113, canvas.height - 110);
+      context.setTransform(
+        1,
+        0,
+        0,
+        1,
+        canvas.width - 20 - 113,
+        canvas.height - 110,
+      );
       this.#drawLeftArrow(context);
-      context.setTransform(1, 0, 0, 1, canvas.width - 20 - 74, canvas.height - 180);
+      context.setTransform(
+        1,
+        0,
+        0,
+        1,
+        canvas.width - 20 - 74,
+        canvas.height - 180,
+      );
       this.#drawIndex(context);
     });
   };

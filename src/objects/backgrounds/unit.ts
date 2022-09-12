@@ -6,8 +6,8 @@ export const drawSky = (
   context.beginPath();
   const grad1 = context.createLinearGradient(0, 0, 0, 300);
   grad1.addColorStop(0, '#afe8f8');
-  grad1.addColorStop(.4, '#fff');
-  grad1.addColorStop(.5, '#fff');
+  grad1.addColorStop(0.4, '#fff');
+  grad1.addColorStop(0.5, '#fff');
   grad1.addColorStop(1, '#cff7fd');
   context.filter = `hue-rotate(${hueRotate}deg)`;
   context.fillStyle = grad1;

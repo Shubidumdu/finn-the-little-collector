@@ -24,7 +24,7 @@ export default class GameResultScene implements Scene {
   stage: number;
   music: Music;
   elements: {
-    container: HTMLDivElement,
+    container: HTMLDivElement;
     nextButton: HTMLButtonElement;
   };
   nextStage: number | undefined;
@@ -38,7 +38,7 @@ export default class GameResultScene implements Scene {
     this.stage = stage;
     this.nextStage = this.stage < lastStage ? this.stage + 1 : undefined;
 
-    this.music.play(false);
+    this.music.play(true);
     this.#createContainer();
     this.#addEventListeners();
   };
@@ -49,14 +49,19 @@ export default class GameResultScene implements Scene {
 
     drawLayer1((context, canvas) => {
       store.wantedPersons.forEach((person, index, persons) => {
-        this.#drawPerson(
+        person.move.direction.x = -1;
+
+        person.drawIdle(
           context,
-          person,
+          canvas,
           time,
-          { x: canvas.width / 2 + 208 - (persons.length * 20) + index * 20, y: canvas.height / 2 - 140 },
-          .5,
+          {
+            x: canvas.width / 2 + 208 - persons.length * 20 + index * 20,
+            y: canvas.height / 2 - 140,
+          },
+          0.5,
         );
-      })
+      });
     });
   };
 
@@ -77,7 +82,9 @@ export default class GameResultScene implements Scene {
     const result = document.createElement('h2');
     const minute = Math.floor(Number(this.clearTime) / 60);
     const second = Math.floor(Number(this.clearTime) % 60);
-    result.textContent = `Clear Time: ${minute}:${second < 10 ? '0' : ''}${second}`;
+    result.textContent = `Clear Time: ${minute}:${
+      second < 10 ? '0' : ''
+    }${second}`;
 
     container.append(h1);
     container.append(result);
@@ -127,77 +134,5 @@ export default class GameResultScene implements Scene {
       'click',
       this.#handleClickNext,
     );
-  };
-
-  #drawPerson: DrawFunc<[Person, number, Position, number]> = (
-    context,
-    person,
-    time,
-    position,
-    sizeRatio,
-  ) => {
-    context.setTransform(
-      -sizeRatio * 1,
-      0,
-      0,
-      sizeRatio,
-      position.x + (-2 * 4) * sizeRatio,
-      position.y + (-28 + Math.sin(time / 128)) * sizeRatio,
-    );
-    person.drawArm(context);
-    context.setTransform(
-      -sizeRatio * -1,
-      0,
-      0,
-      sizeRatio,
-      position.x,
-      position.y + (24 + Math.sin(time / 128)) * sizeRatio,
-    );
-    person.drawUpperBody(context);
-    context.setTransform(
-      -sizeRatio * -1,
-      0,
-      0,
-      sizeRatio,
-      position.x,
-      position.y + (63 + Math.sin(time / 128)) * sizeRatio,
-    );
-    person.drawLowerBody(context);
-    context.setTransform(
-      -sizeRatio * -1,
-      0,
-      0,
-      sizeRatio,
-      position.x,
-      position.y + 16 * sizeRatio,
-    );
-    person.drawLeg(context);
-    context.setTransform(
-      -sizeRatio * -1,
-      0,
-      0,
-      sizeRatio,
-      position.x + (14) * sizeRatio,
-      position.y + 16 * sizeRatio,
-    );
-    person.drawLeg(context);
-    context.setTransform(
-      -sizeRatio * -1,
-      0,
-      0,
-      sizeRatio,
-      position.x,
-      position.y + Math.sin(time / 128) * sizeRatio,
-    );
-    person.drawHead(context);
-    context.setTransform(
-      -sizeRatio * -1,
-      0,
-      0,
-      sizeRatio,
-      position.x + (18) * sizeRatio,
-      position.y + (-28 + Math.sin(time / 128)) * sizeRatio,
-    );
-    person.drawArm(context);
   };
 }

@@ -48,15 +48,15 @@ export default class PlayScene implements Scene {
   barrier: Rect;
 
   constructor() {
-    this.backgrounds = [
+    (this.backgrounds = [
       new Playground(),
       new Pool(),
       new Road(),
       new Playground(175),
       new Pool(175),
       new Road(175),
-    ],
-    this.info = new PlayInfo();
+    ]),
+      (this.info = new PlayInfo());
     this.magnifier = new Magnifier();
     this.persons = [];
     this.layer1 = canvas.get('layer1');
@@ -148,7 +148,6 @@ export default class PlayScene implements Scene {
     this.persons.forEach((person) => person.remove());
     this.#removeEvents();
 
-    setWantedPersons([]);
     canvas.get('layer0').removeEventListener('click', this.#handleClickPerson);
   };
 
@@ -189,16 +188,16 @@ export default class PlayScene implements Scene {
   #addEvents = () => {
     const layer0 = canvas.get('layer0');
     layer0.addEventListener('click', this.#handleClickPerson);
-    layer0.addEventListener('click', this.#handleClickSpeacker);
+    layer0.addEventListener('click', this.#handleClickSpeaker);
   };
 
   #removeEvents = () => {
     const layer0 = canvas.get('layer0');
     layer0.removeEventListener('click', this.#handleClickPerson);
-    layer0.removeEventListener('click', this.#handleClickSpeacker);
+    layer0.removeEventListener('click', this.#handleClickSpeaker);
   };
 
-  #handleClickSpeacker = (e: PointerEvent) => {
+  #handleClickSpeaker = (e: PointerEvent) => {
     const layer0 = canvas.get('layer0');
     const position = getMousePosition(layer0, e);
     const isHit = this.info.speaker.isInside(position);
@@ -224,10 +223,13 @@ export default class PlayScene implements Scene {
 
       const position = getMousePosition(this.layer1, e);
 
-      isInsideRect(position, person.hitBoxPosition) && clickedPersons.push(person);
-    })
+      isInsideRect(position, person.hitBoxPosition) &&
+        clickedPersons.push(person);
+    });
 
-    const [frontPerson] = clickedPersons.sort((a, b) => b.position.y - a.position.y);
+    const [frontPerson] = clickedPersons.sort(
+      (a, b) => b.position.y - a.position.y,
+    );
     if (!frontPerson) return;
     frontPerson.isHit = true;
 
@@ -250,18 +252,5 @@ export default class PlayScene implements Scene {
         playEffectSound('correct');
       }
     }
-  };
-
-  // debug
-  #drawPersonBarrier = (context: CanvasRenderingContext2D) => {
-    context.resetTransform();
-    context.beginPath();
-    context.strokeRect(
-      this.barrier.left,
-      this.barrier.top,
-      this.barrier.width,
-      this.barrier.height,
-    );
-    context.closePath();
   };
 }

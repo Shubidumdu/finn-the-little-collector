@@ -88,7 +88,7 @@ button {
       button {
         color: black;
         border: 2px solid black;
-      
+
         &:hover {
           color: white;
           background-color: black;
@@ -103,14 +103,14 @@ button {
     align-items: center;
     gap: 40px;
     margin-top: 24px;
-    
+
     button {
       color: white;
       font-size: 24px;
       border: 2px solid white;
       border-radius: 8px;
       padding: 4px 16px;
-  
+
       &:hover {
         color: black;
         background-color: white;

@@ -9,7 +9,4 @@ export interface Scene {
   end: () => void;
 }
 
-export {
-  PlayScene,
-  TitleScene,
-};
+export { PlayScene, TitleScene };

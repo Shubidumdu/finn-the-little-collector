@@ -14,7 +14,7 @@ export default class PlayInfo implements GameObject, PlayInfoState {
   layer: HTMLCanvasElement;
   speaker = new Rect({
     left: 200,
-    top: 56 - 24,
+    top: 32,
     width: 40,
     height: 32,
   });

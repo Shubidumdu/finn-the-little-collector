@@ -1,8 +1,8 @@
-import { PlaySceneState } from "./scenes/play";
+import { PlaySceneState } from './scenes/play';
 
 export const STAGE_STATES: {
-  [key: number] : PlaySceneState
- } = {
+  [key: number]: PlaySceneState;
+} = {
   1: {
     stage: 1,
     timeout: 40_000,
