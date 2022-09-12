@@ -267,11 +267,11 @@ export default class TitleScene implements Scene {
   };
 
   #drawMenus: DrawFunc<[HTMLCanvasElement]> = (context, canvas) => {
-    const hitBoxpadding = 3;
+    const hitBoxpadding = 6;
     const fontSize = isTabletSize(canvas.width) ? 12 : 16;
-    const startTextWidth = 45 + hitBoxpadding * 2;
+    const startTextWidth = 70 + hitBoxpadding * 2;
     const startTextHeight = fontSize + hitBoxpadding * 2;
-    const soundTextWidth = 104 + hitBoxpadding * 2;
+    const soundTextWidth = 114 + hitBoxpadding * 2;
     const soundTextHeight = fontSize + hitBoxpadding * 2;
 
     const startTextPosition = {
