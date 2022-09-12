@@ -93,7 +93,11 @@ export default class PlayInfo implements GameObject, PlayInfoState {
   #drawTimer: DrawFunc<[number]> = (context, time) => {
     const remainTime =
       Math.max(this.timeout - (time - this.startTime), 0) / 1000;
-    const offset = remainTime < 10 ? 72 : 92;
+    const offset = (
+      remainTime < 10 && 72 ||
+      remainTime < 100 && 92 ||
+      120
+    );
 
     context.transform(1, 0, 0, 1, -offset, 0);
     context.font = getFont(24);
