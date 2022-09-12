@@ -268,7 +268,9 @@ export default class Person implements GameObject, PersonState {
 
     drawLayer1((context, canvas) => {
       const sizeRatio = 0.6 + 0.6 * (this.position.y / canvas.offsetHeight);
-      this.#setHitBoxPosition();
+      this.#setHitBoxPosition(sizeRatio);
+      // debug
+      // this.#drawHitBox(context, { isRect: true })
       this.#drawShadow(context, canvas, time, this.position, sizeRatio);
 
       if (this.correctAt) {
@@ -590,15 +592,15 @@ export default class Person implements GameObject, PersonState {
     }
   };
 
-  #setHitBoxPosition = () => {
-    const width = 27;
-    const height = 70;
+  #setHitBoxPosition = (sizeRatio: number) => {
+    const width = 45 * sizeRatio;
+    const height = 120 * sizeRatio;
 
     this.hitBoxPosition = {
       left: this.position.x - width / 2,
       width,
       right: this.position.x + width / 2,
-      top: this.position.y - height / 2 - 3,
+      top: this.position.y - height / 2 - 10,
       height,
       bottom: this.position.y + height / 2,
     };
@@ -630,35 +632,6 @@ export default class Person implements GameObject, PersonState {
     context.ellipse(0, 0, 10, 5, Math.PI, 0, Math.PI * 2);
     context.lineWidth = 3;
     context.stroke();
-  };
-
-  #drawHitBox = (
-    context: CanvasRenderingContext2D,
-    { isRect }: { isRect: boolean },
-  ) => {
-    context.fillStyle = '#fff';
-
-    if (isRect) {
-      context.fillRect(
-        this.hitBoxPosition.left,
-        this.hitBoxPosition.top,
-        this.hitBoxPosition.width,
-        this.hitBoxPosition.height,
-      );
-      context.fill();
-      return;
-    }
-
-    context.ellipse(
-      this.position.x,
-      this.position.y - 5,
-      35,
-      55,
-      Math.PI,
-      0,
-      Math.PI * 2,
-    );
-    context.fill();
   };
 
   #moveY(delta: number) {
@@ -965,5 +938,34 @@ export default class Person implements GameObject, PersonState {
       this.barrier.height,
     );
     context.closePath();
+  };
+
+  #drawHitBox = (
+    context: CanvasRenderingContext2D,
+    { isRect }: { isRect: boolean },
+  ) => {
+    context.fillStyle = '#fff';
+
+    if (isRect) {
+      context.fillRect(
+        this.hitBoxPosition.left,
+        this.hitBoxPosition.top,
+        this.hitBoxPosition.width,
+        this.hitBoxPosition.height,
+      );
+      context.fill();
+      return;
+    }
+
+    context.ellipse(
+      this.position.x,
+      this.position.y - 5,
+      35,
+      55,
+      Math.PI,
+      0,
+      Math.PI * 2,
+    );
+    context.fill();
   };
 }
