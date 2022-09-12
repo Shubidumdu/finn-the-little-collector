@@ -7,17 +7,17 @@ import { default as state } from './state';
  * 읽기 전용으로만 사용합니다.
  * modules store를 변경하는 경우에 namespaces 내부만을 수정합니다.
  */
-const store = new Proxy({
-  ...state,
-}, {
-  set: (target, key, value) => {
-    Object.assign(
-      target,
-      { [key]: value },
-    );
-
-    return true;
+const store = new Proxy(
+  {
+    ...state,
   },
-});
+  {
+    set: (target, key, value) => {
+      Object.assign(target, { [key]: value });
+
+      return true;
+    },
+  },
+);
 
 export default store;

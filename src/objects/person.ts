@@ -41,7 +41,7 @@ type Variation =
   | 'sleeveless'
   | 'shortSleeve'
   | 'shortPants';
-  
+
 export type VariationState = {
   [key in Variation]: boolean | string;
 };
@@ -56,7 +56,6 @@ export const SKIN_COLORS = [
 ];
 
 export const LOWER_BODY_SIZE = 18;
-const PADDING = 10;
 const SPEED_MAX_MULTIPLE = 0.3;
 const SPEED_MIN_MULTIPLE = -0.7;
 
@@ -76,7 +75,6 @@ export default class Person implements GameObject, PersonState {
     direction: {
       x: -1 | 1;
       y: -1 | 1;
-      z: -1 | 1;
     };
   };
   intervals: number[];
@@ -87,13 +85,10 @@ export default class Person implements GameObject, PersonState {
   colors: ColorState;
   moves: any[];
   barrier: Rect;
-
   hitBoxPosition: RectType;
   isHit: boolean = false;
-
   correctAt: number = 0;
   deadAt: number = 0;
-
   variations: VariationState;
 
   constructor(defaultSpeed: number = DEFAULT_SPEED) {
@@ -108,7 +103,6 @@ export default class Person implements GameObject, PersonState {
       direction: {
         x: Math.round(Math.random()) ? 1 : -1,
         y: Math.round(Math.random()) ? 1 : -1,
-        z: 1,
       },
     };
     this.colors = colors;
@@ -256,21 +250,16 @@ export default class Person implements GameObject, PersonState {
     this.#stayInBarrier();
   };
 
-  remove = () => {
-    return;
-  };
+  remove = () => {};
+
+  #drawLayer1 = drawLayer(canvas.get('layer1')); // 확대
+  #drawLayer2 = drawLayer(canvas.get('layer2')); // 축소
 
   draw = (time: number) => {
-    const layer1 = canvas.get('layer1'); // 확대
-    const drawLayer1 = drawLayer(layer1);
-    const layer2 = canvas.get('layer2'); // 축소
-    const drawLayer2 = drawLayer(layer2);
-
-    drawLayer1((context, canvas) => {
+    this.#drawLayer1((context, canvas) => {
       const sizeRatio = 0.6 + 0.6 * (this.position.y / canvas.offsetHeight);
       this.#setHitBoxPosition(sizeRatio);
-      // debug
-      // this.#drawHitBox(context, { isRect: true })
+
       this.#drawShadow(context, canvas, time, this.position, sizeRatio);
 
       if (this.correctAt) {
@@ -293,11 +282,8 @@ export default class Person implements GameObject, PersonState {
         this.drawIdle(context, canvas, time, this.position, sizeRatio);
       }
     });
-    drawLayer2((context, canvas) => {
+    this.#drawLayer2((context, canvas) => {
       this.barrier = barrierRectFactory(canvas);
-
-      // debug
-      // this.#drawBarrier(context)
 
       if (this.position.x <= this.barrier.left) {
         this.position.x = this.barrier.left + 1;
@@ -362,7 +348,7 @@ export default class Person implements GameObject, PersonState {
       position.x + (-2 + 4 * Number(this.move.direction.x === 1)) * sizeRatio,
       position.y + (-28 + Math.sin(time / 128)) * sizeRatio,
     );
-    this.drawArm(context);
+    this.#drawArm(context);
     context.setTransform(
       -sizeRatio * this.move.direction.x,
       0,
@@ -371,7 +357,7 @@ export default class Person implements GameObject, PersonState {
       position.x,
       position.y + (24 + Math.sin(time / 128)) * sizeRatio,
     );
-    this.drawUpperBody(context);
+    this.#drawUpperBody(context);
     context.setTransform(
       -sizeRatio * this.move.direction.x,
       0,
@@ -380,7 +366,7 @@ export default class Person implements GameObject, PersonState {
       position.x,
       position.y + (63 + Math.sin(time / 128)) * sizeRatio,
     );
-    this.drawLowerBody(context);
+    this.#drawLowerBody(context);
     context.setTransform(
       -sizeRatio * this.move.direction.x,
       0,
@@ -389,7 +375,7 @@ export default class Person implements GameObject, PersonState {
       position.x,
       position.y + 16 * sizeRatio,
     );
-    this.drawLeg(context);
+    this.#drawLeg(context);
     context.setTransform(
       -sizeRatio * this.move.direction.x,
       0,
@@ -398,7 +384,7 @@ export default class Person implements GameObject, PersonState {
       position.x + (14 + -28 * Number(this.move.direction.x === 1)) * sizeRatio,
       position.y + 16 * sizeRatio,
     );
-    this.drawLeg(context);
+    this.#drawLeg(context);
     context.setTransform(
       -sizeRatio * this.move.direction.x,
       0,
@@ -407,7 +393,7 @@ export default class Person implements GameObject, PersonState {
       position.x,
       position.y + Math.sin(time / 128) * sizeRatio,
     );
-    this.drawHead(context);
+    this.#drawHead(context);
     context.setTransform(
       -sizeRatio * this.move.direction.x,
       0,
@@ -416,7 +402,7 @@ export default class Person implements GameObject, PersonState {
       position.x + (18 + -36 * Number(this.move.direction.x === 1)) * sizeRatio,
       position.y + (-28 + Math.sin(time / 128)) * sizeRatio,
     );
-    this.drawArm(context);
+    this.#drawArm(context);
   }
 
   drawMovement(
@@ -435,7 +421,7 @@ export default class Person implements GameObject, PersonState {
       position.y + (-28 + Math.sin(time / 64) * 2) * sizeRatio,
     );
     context.rotate(degreeToRadian(Math.sin(time / 128) * -8));
-    this.drawArm(context);
+    this.#drawArm(context);
     context.setTransform(
       -sizeRatio * this.move.direction.x,
       0,
@@ -444,7 +430,7 @@ export default class Person implements GameObject, PersonState {
       position.x,
       position.y + (24 + Math.sin(time / 128) * 2) * sizeRatio,
     );
-    this.drawUpperBody(context);
+    this.#drawUpperBody(context);
     context.setTransform(
       -sizeRatio * this.move.direction.x,
       0,
@@ -453,7 +439,7 @@ export default class Person implements GameObject, PersonState {
       position.x,
       position.y + (63 + Math.sin(time / 128) * 2) * sizeRatio,
     );
-    this.drawLowerBody(context);
+    this.#drawLowerBody(context);
     context.setTransform(
       -sizeRatio * this.move.direction.x,
       0,
@@ -463,7 +449,7 @@ export default class Person implements GameObject, PersonState {
       position.y + 16 * sizeRatio,
     );
     context.rotate(degreeToRadian(-2 + Math.sin(time / 128) * 14));
-    this.drawLeg(context);
+    this.#drawLeg(context);
     context.setTransform(
       -sizeRatio * this.move.direction.x,
       0,
@@ -473,7 +459,7 @@ export default class Person implements GameObject, PersonState {
       position.y + 16 * sizeRatio,
     );
     context.rotate(degreeToRadian(5 + Math.sin(time / 128) * -14));
-    this.drawLeg(context);
+    this.#drawLeg(context);
     context.setTransform(
       -sizeRatio * this.move.direction.x,
       0,
@@ -482,7 +468,7 @@ export default class Person implements GameObject, PersonState {
       position.x,
       position.y + Math.sin(time / 128) * 2 * sizeRatio,
     );
-    this.drawHead(context);
+    this.#drawHead(context);
     context.setTransform(
       -sizeRatio * this.move.direction.x,
       0,
@@ -492,10 +478,10 @@ export default class Person implements GameObject, PersonState {
       position.y + (-28 + Math.sin(time / 64) * 2) * sizeRatio,
     );
     context.rotate(degreeToRadian(Math.sin(time / 128) * 8));
-    this.drawArm(context);
+    this.#drawArm(context);
   }
 
-  drawHead = (context: CanvasRenderingContext2D) => {
+  #drawHead = (context: CanvasRenderingContext2D) => {
     context.fillStyle = this.colors.skin;
     context.fillRect(-12, -54, 24, 24);
     context.fillStyle = this.colors.eye;
@@ -539,7 +525,7 @@ export default class Person implements GameObject, PersonState {
     }
   };
 
-  drawArm = (context: CanvasRenderingContext2D) => {
+  #drawArm = (context: CanvasRenderingContext2D) => {
     if (this.variations.sleeveless) {
       context.fillStyle = this.colors.skin;
       context.fillRect(-12, 0, 8, 38);
@@ -558,7 +544,7 @@ export default class Person implements GameObject, PersonState {
     }
   };
 
-  drawUpperBody = (context: CanvasRenderingContext2D) => {
+  #drawUpperBody = (context: CanvasRenderingContext2D) => {
     if (this.variations.sleeveless) {
       context.fillStyle = this.colors.top;
       context.fillRect(-12, -54, 24, 40);
@@ -571,12 +557,12 @@ export default class Person implements GameObject, PersonState {
     }
   };
 
-  drawLowerBody = (context: CanvasRenderingContext2D) => {
+  #drawLowerBody = (context: CanvasRenderingContext2D) => {
     context.fillStyle = this.colors.bottom;
     context.fillRect(-12, -54, 24, 12);
   };
 
-  drawLeg = (context: CanvasRenderingContext2D) => {
+  #drawLeg = (context: CanvasRenderingContext2D) => {
     if (this.variations.shortPants) {
       context.fillStyle = this.colors.skin;
       context.fillRect(-10, 6, 8, 20);
@@ -709,7 +695,7 @@ export default class Person implements GameObject, PersonState {
       position.x + (-2 + 4 * Number(this.move.direction.x === 1)) * sizeRatio,
       position.y + (-28 + 80 * curvedProgress) * sizeRatio,
     );
-    this.drawArm(context);
+    this.#drawArm(context);
     context.setTransform(
       -sizeRatio * this.move.direction.x,
       0,
@@ -718,7 +704,7 @@ export default class Person implements GameObject, PersonState {
       position.x,
       position.y + (24 + 28 * curvedProgress) * sizeRatio,
     );
-    this.drawUpperBody(context);
+    this.#drawUpperBody(context);
     context.setTransform(
       -sizeRatio * this.move.direction.x,
       0,
@@ -727,7 +713,7 @@ export default class Person implements GameObject, PersonState {
       position.x,
       position.y + (63 + -11 * curvedProgress) * sizeRatio,
     );
-    this.drawLowerBody(context);
+    this.#drawLowerBody(context);
     context.setTransform(
       -sizeRatio * this.move.direction.x,
       0,
@@ -736,7 +722,7 @@ export default class Person implements GameObject, PersonState {
       position.x,
       position.y + (16 + 36 * curvedProgress) * sizeRatio,
     );
-    this.drawLeg(context);
+    this.#drawLeg(context);
     context.setTransform(
       -sizeRatio * this.move.direction.x,
       0,
@@ -745,7 +731,7 @@ export default class Person implements GameObject, PersonState {
       position.x + (14 + -28 * Number(this.move.direction.x === 1)) * sizeRatio,
       position.y + (16 + 36 * curvedProgress) * sizeRatio,
     );
-    this.drawLeg(context);
+    this.#drawLeg(context);
     context.setTransform(
       -sizeRatio * this.move.direction.x,
       0,
@@ -754,7 +740,7 @@ export default class Person implements GameObject, PersonState {
       position.x,
       position.y + 52 * curvedProgress * sizeRatio,
     );
-    this.drawHead(context);
+    this.#drawHead(context);
     context.setTransform(
       -sizeRatio * this.move.direction.x,
       0,
@@ -763,7 +749,7 @@ export default class Person implements GameObject, PersonState {
       position.x + (18 + -36 * Number(this.move.direction.x === 1)) * sizeRatio,
       position.y + (-28 + 80 * curvedProgress) * sizeRatio,
     );
-    this.drawArm(context);
+    this.#drawArm(context);
   };
 
   #drawDead = (
@@ -798,7 +784,7 @@ export default class Person implements GameObject, PersonState {
       position.x + (-2 + 4 * Number(this.move.direction.x === 1)) * sizeRatio,
       position.y + (-28 + Math.sin(time / 128)) * sizeRatio,
     );
-    this.drawArm(context);
+    this.#drawArm(context);
     context.setTransform(
       -sizeRatio * this.move.direction.x,
       0,
@@ -807,7 +793,7 @@ export default class Person implements GameObject, PersonState {
       position.x,
       position.y + (24 + Math.sin(time / 128)) * sizeRatio,
     );
-    this.drawUpperBody(context);
+    this.#drawUpperBody(context);
     context.setTransform(
       -sizeRatio * this.move.direction.x,
       0,
@@ -816,7 +802,7 @@ export default class Person implements GameObject, PersonState {
       position.x,
       position.y + (63 + Math.sin(time / 128)) * sizeRatio,
     );
-    this.drawLowerBody(context);
+    this.#drawLowerBody(context);
     context.setTransform(
       -sizeRatio * this.move.direction.x,
       0,
@@ -825,7 +811,7 @@ export default class Person implements GameObject, PersonState {
       position.x,
       position.y + 16 * sizeRatio,
     );
-    this.drawLeg(context);
+    this.#drawLeg(context);
     context.setTransform(
       -sizeRatio * this.move.direction.x,
       0,
@@ -834,7 +820,7 @@ export default class Person implements GameObject, PersonState {
       position.x + (14 + -28 * Number(this.move.direction.x === 1)) * sizeRatio,
       position.y + 16 * sizeRatio,
     );
-    this.drawLeg(context);
+    this.#drawLeg(context);
     context.setTransform(
       -sizeRatio * this.move.direction.x,
       0,
@@ -843,7 +829,7 @@ export default class Person implements GameObject, PersonState {
       position.x,
       position.y + Math.sin(time / 128) * sizeRatio,
     );
-    this.drawHead(context);
+    this.#drawHead(context);
     context.setTransform(
       -sizeRatio * this.move.direction.x,
       0,
@@ -852,7 +838,7 @@ export default class Person implements GameObject, PersonState {
       position.x + (18 + -36 * Number(this.move.direction.x === 1)) * sizeRatio,
       position.y + (-28 + Math.sin(time / 128)) * sizeRatio,
     );
-    this.drawArm(context);
+    this.#drawArm(context);
   };
 
   #drawShadow = (
@@ -926,46 +912,5 @@ export default class Person implements GameObject, PersonState {
     context.fillStyle = this.variations.hat as string;
     context.fillRect(-18, -58, 36, 6);
     context.fillRect(-12, -67, 24, 10);
-  };
-
-  #drawBarrier = (context: CanvasRenderingContext2D) => {
-    context.resetTransform();
-    context.beginPath();
-    context.strokeRect(
-      this.barrier.left,
-      this.barrier.top,
-      this.barrier.width,
-      this.barrier.height,
-    );
-    context.closePath();
-  };
-
-  #drawHitBox = (
-    context: CanvasRenderingContext2D,
-    { isRect }: { isRect: boolean },
-  ) => {
-    context.fillStyle = '#fff';
-
-    if (isRect) {
-      context.fillRect(
-        this.hitBoxPosition.left,
-        this.hitBoxPosition.top,
-        this.hitBoxPosition.width,
-        this.hitBoxPosition.height,
-      );
-      context.fill();
-      return;
-    }
-
-    context.ellipse(
-      this.position.x,
-      this.position.y - 5,
-      35,
-      55,
-      Math.PI,
-      0,
-      Math.PI * 2,
-    );
-    context.fill();
   };
 }

@@ -41,6 +41,7 @@ export default class PlayScene implements Scene {
   info: PlayInfo;
   magnifier: Magnifier;
   layer1: HTMLCanvasElement;
+  layer0: HTMLCanvasElement;
   persons: Person[];
   wantedPersonCount: number;
   wantedPoster: WantedPoster;
@@ -48,17 +49,18 @@ export default class PlayScene implements Scene {
   barrier: Rect;
 
   constructor() {
-    this.backgrounds = [
+    (this.backgrounds = [
       new Playground(),
       new Pool(),
       new Road(),
       new Playground(175),
       new Pool(175),
       new Road(175),
-    ],
-    this.info = new PlayInfo();
+    ]),
+      (this.info = new PlayInfo());
     this.magnifier = new Magnifier();
     this.persons = [];
+    this.layer0 = canvas.get('layer0');
     this.layer1 = canvas.get('layer1');
     this.wantedPoster = new WantedPoster();
     this.music = new Music(playMusic);
@@ -123,7 +125,7 @@ export default class PlayScene implements Scene {
     });
 
     this.#addEvents();
-    canvas.get('layer0').addEventListener('click', this.#handleClickPerson);
+    this.layer0.addEventListener('click', this.#handleClickPerson);
   };
 
   update = (time: number) => {
@@ -148,8 +150,7 @@ export default class PlayScene implements Scene {
     this.persons.forEach((person) => person.remove());
     this.#removeEvents();
 
-    setWantedPersons([]);
-    canvas.get('layer0').removeEventListener('click', this.#handleClickPerson);
+    this.layer0.removeEventListener('click', this.#handleClickPerson);
   };
 
   #checkGameOver = (time: number) => {
@@ -187,20 +188,17 @@ export default class PlayScene implements Scene {
   };
 
   #addEvents = () => {
-    const layer0 = canvas.get('layer0');
-    layer0.addEventListener('click', this.#handleClickPerson);
-    layer0.addEventListener('click', this.#handleClickSpeacker);
+    this.layer0.addEventListener('click', this.#handleClickPerson);
+    this.layer0.addEventListener('click', this.#handleClickSpeaker);
   };
 
   #removeEvents = () => {
-    const layer0 = canvas.get('layer0');
-    layer0.removeEventListener('click', this.#handleClickPerson);
-    layer0.removeEventListener('click', this.#handleClickSpeacker);
+    this.layer0.removeEventListener('click', this.#handleClickPerson);
+    this.layer0.removeEventListener('click', this.#handleClickSpeaker);
   };
 
-  #handleClickSpeacker = (e: PointerEvent) => {
-    const layer0 = canvas.get('layer0');
-    const position = getMousePosition(layer0, e);
+  #handleClickSpeaker = (e: PointerEvent) => {
+    const position = getMousePosition(this.layer0, e);
     const isHit = this.info.speaker.isInside(position);
 
     if (!isHit) return;
@@ -224,10 +222,13 @@ export default class PlayScene implements Scene {
 
       const position = getMousePosition(this.layer1, e);
 
-      isInsideRect(position, person.hitBoxPosition) && clickedPersons.push(person);
-    })
+      isInsideRect(position, person.hitBoxPosition) &&
+        clickedPersons.push(person);
+    });
 
-    const [frontPerson] = clickedPersons.sort((a, b) => b.position.y - a.position.y);
+    const [frontPerson] = clickedPersons.sort(
+      (a, b) => b.position.y - a.position.y,
+    );
     if (!frontPerson) return;
     frontPerson.isHit = true;
 
@@ -250,18 +251,5 @@ export default class PlayScene implements Scene {
         playEffectSound('correct');
       }
     }
-  };
-
-  // debug
-  #drawPersonBarrier = (context: CanvasRenderingContext2D) => {
-    context.resetTransform();
-    context.beginPath();
-    context.strokeRect(
-      this.barrier.left,
-      this.barrier.top,
-      this.barrier.width,
-      this.barrier.height,
-    );
-    context.closePath();
   };
 }

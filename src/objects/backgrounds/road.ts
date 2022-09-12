@@ -5,7 +5,7 @@ import { drawSky } from './unit';
 
 export default class Road implements GameObject {
   hueRotate: number;
-  
+
   constructor(hueRotate: number = 0) {
     this.hueRotate = hueRotate;
   }

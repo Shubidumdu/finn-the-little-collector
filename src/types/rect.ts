@@ -1,5 +1,5 @@
 /**
- * @deprecated 
+ * @deprecated
  * Use `Rect` instead. This will be removed when it is no longer used.
  */
 export type RectType = {
@@ -16,7 +16,7 @@ type RectProps = {
   top: number;
   width: number;
   height: number;
-}
+};
 export class Rect {
   left: number;
   top: number;

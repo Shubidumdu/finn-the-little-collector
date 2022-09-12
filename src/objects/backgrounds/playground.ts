@@ -4,7 +4,7 @@ import { drawSky } from './unit';
 
 export default class Playground implements GameObject {
   hueRotate: number;
-  
+
   constructor(hueRotate: number = 0) {
     this.hueRotate = hueRotate;
   }

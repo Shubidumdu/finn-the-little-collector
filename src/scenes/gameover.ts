@@ -28,8 +28,7 @@ export default class GameOverScene implements Scene {
     this.#addEventListeners();
   };
 
-  update = (time: number) => {
-  };
+  update = (time: number) => {};
 
   end = () => {
     this.music.stop();

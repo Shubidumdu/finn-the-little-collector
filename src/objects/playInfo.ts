@@ -14,7 +14,7 @@ export default class PlayInfo implements GameObject, PlayInfoState {
   layer: HTMLCanvasElement;
   speaker = new Rect({
     left: 200,
-    top: 56 - 24,
+    top: 32,
     width: 40,
     height: 32,
   });
@@ -38,9 +38,7 @@ export default class PlayInfo implements GameObject, PlayInfoState {
   remove = () => {};
 
   update = (time: number) => {
-    const draw = drawLayer(this.layer);
-
-    draw((context, canvas) => {
+    this.#draw((context, canvas) => {
       context.setTransform(1, 0, 0, 1, 0, 0);
       this.#drawStage(context);
 
@@ -56,6 +54,8 @@ export default class PlayInfo implements GameObject, PlayInfoState {
       this.#drawLife(context, canvas, 28);
     });
   };
+
+  #draw = drawLayer(canvas.get('layer3'));
 
   #drawStage: DrawFunc = (context) => {
     context.font = getFont(24);
@@ -93,7 +93,11 @@ export default class PlayInfo implements GameObject, PlayInfoState {
   #drawTimer: DrawFunc<[number]> = (context, time) => {
     const remainTime =
       Math.max(this.timeout - (time - this.startTime), 0) / 1000;
-    const offset = remainTime < 10 ? 72 : 92;
+    const offset = (
+      remainTime < 10 && 72 ||
+      remainTime < 100 && 92 ||
+      120
+    );
 
     context.transform(1, 0, 0, 1, -offset, 0);
     context.font = getFont(24);
