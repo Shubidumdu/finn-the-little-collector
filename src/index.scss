@@ -79,24 +79,42 @@ button {
   h2 {
     font-size: 36px;
   }
-}
 
-.buttonContainer {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 40px;
-  margin-top: 24px;
+  &.reverse {
+    background-color: white;
+    color: black;
+
+    .buttonContainer {
+      button {
+        color: black;
+        border: 2px solid black;
+      
+        &:hover {
+          color: white;
+          background-color: black;
+        }
+      }
+    }
+  }
+
+  .buttonContainer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 40px;
+    margin-top: 24px;
+    
+    button {
+      color: white;
+      font-size: 24px;
+      border: 2px solid white;
+      border-radius: 8px;
+      padding: 4px 16px;
   
-  button {
-    font-size: 24px;
-    border: 2px solid white;
-    border-radius: 8px;
-    padding: 4px 16px;
-
-    &:hover {
-      color: black;
-      background-color: white;
+      &:hover {
+        color: black;
+        background-color: white;
+      }
     }
   }
 }
