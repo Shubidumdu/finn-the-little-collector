@@ -38,9 +38,7 @@ export default class PlayInfo implements GameObject, PlayInfoState {
   remove = () => {};
 
   update = (time: number) => {
-    const draw = drawLayer(this.layer);
-
-    draw((context, canvas) => {
+    this.#draw((context, canvas) => {
       context.setTransform(1, 0, 0, 1, 0, 0);
       this.#drawStage(context);
 
@@ -56,6 +54,8 @@ export default class PlayInfo implements GameObject, PlayInfoState {
       this.#drawLife(context, canvas, 28);
     });
   };
+
+  #draw = drawLayer(canvas.get('layer3'));
 
   #drawStage: DrawFunc = (context) => {
     context.font = getFont(24);

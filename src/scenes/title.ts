@@ -70,6 +70,14 @@ export default class TitleScene implements Scene {
     sound: {} as Rect,
   };
 
+  layer0 = canvas.get('layer0');
+  layer1 = canvas.get('layer1');
+  layer2 = canvas.get('layer2');
+
+  #drawLayer0 = drawLayer(this.layer0);
+  #drawLayer1 = drawLayer(this.layer1);
+  #drawLayer2 = drawLayer(this.layer2);
+
   start = () => {
     this.activeMenuIndex = 0;
     this.#addEvents();
@@ -149,12 +157,12 @@ export default class TitleScene implements Scene {
 
   #addEvents = () => {
     window.addEventListener('click', this.#handleClickEvent);
-    canvas.get('layer0').addEventListener('pointermove', this.#pointerEvent);
+    this.layer0.addEventListener('pointermove', this.#pointerEvent);
   };
 
   #removeEvents = () => {
     window.removeEventListener('click', this.#handleClickEvent);
-    canvas.get('layer0').removeEventListener('pointermove', this.#pointerEvent);
+    this.layer0.removeEventListener('pointermove', this.#pointerEvent);
   };
 
   #handleClickEvent = (e: PointerEvent) => {
@@ -188,10 +196,6 @@ export default class TitleScene implements Scene {
       this.activeMenuIndex = 1;
     }
   };
-
-  #drawLayer0 = drawLayer(canvas.get('layer0'));
-  #drawLayer1 = drawLayer(canvas.get('layer1'));
-  #drawLayer2 = drawLayer(canvas.get('layer2'));
 
   #drawTitle: DrawFunc<[HTMLCanvasElement]> = (context, canvas) => {
     if (isMobileSize(canvas.width)) {

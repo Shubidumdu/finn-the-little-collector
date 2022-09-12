@@ -41,6 +41,7 @@ export default class PlayScene implements Scene {
   info: PlayInfo;
   magnifier: Magnifier;
   layer1: HTMLCanvasElement;
+  layer0: HTMLCanvasElement;
   persons: Person[];
   wantedPersonCount: number;
   wantedPoster: WantedPoster;
@@ -59,6 +60,7 @@ export default class PlayScene implements Scene {
       (this.info = new PlayInfo());
     this.magnifier = new Magnifier();
     this.persons = [];
+    this.layer0 = canvas.get('layer0');
     this.layer1 = canvas.get('layer1');
     this.wantedPoster = new WantedPoster();
     this.music = new Music(playMusic);
@@ -123,7 +125,7 @@ export default class PlayScene implements Scene {
     });
 
     this.#addEvents();
-    canvas.get('layer0').addEventListener('click', this.#handleClickPerson);
+    this.layer0.addEventListener('click', this.#handleClickPerson);
   };
 
   update = (time: number) => {
@@ -148,7 +150,7 @@ export default class PlayScene implements Scene {
     this.persons.forEach((person) => person.remove());
     this.#removeEvents();
 
-    canvas.get('layer0').removeEventListener('click', this.#handleClickPerson);
+    this.layer0.removeEventListener('click', this.#handleClickPerson);
   };
 
   #checkGameOver = (time: number) => {
@@ -186,20 +188,17 @@ export default class PlayScene implements Scene {
   };
 
   #addEvents = () => {
-    const layer0 = canvas.get('layer0');
-    layer0.addEventListener('click', this.#handleClickPerson);
-    layer0.addEventListener('click', this.#handleClickSpeaker);
+    this.layer0.addEventListener('click', this.#handleClickPerson);
+    this.layer0.addEventListener('click', this.#handleClickSpeaker);
   };
 
   #removeEvents = () => {
-    const layer0 = canvas.get('layer0');
-    layer0.removeEventListener('click', this.#handleClickPerson);
-    layer0.removeEventListener('click', this.#handleClickSpeaker);
+    this.layer0.removeEventListener('click', this.#handleClickPerson);
+    this.layer0.removeEventListener('click', this.#handleClickSpeaker);
   };
 
   #handleClickSpeaker = (e: PointerEvent) => {
-    const layer0 = canvas.get('layer0');
-    const position = getMousePosition(layer0, e);
+    const position = getMousePosition(this.layer0, e);
     const isHit = this.info.speaker.isInside(position);
 
     if (!isHit) return;

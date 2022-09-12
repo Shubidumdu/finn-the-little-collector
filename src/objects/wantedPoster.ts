@@ -1,5 +1,5 @@
 import { GameObject } from '.';
-import canvasMap, { drawLayer } from '../canvas';
+import canvas, { drawLayer } from '../canvas';
 import playEffectSound from '../sounds/effects';
 import { getFont } from '../utils';
 import Person from './person';
@@ -30,7 +30,7 @@ export default class WantedPoster implements GameObject, WantedPosterState {
   };
 
   draw = (time: number) => {
-    const paperLayer = canvasMap.get('layer3');
+    const paperLayer = canvas.get('layer3');
     const drawPaperLayer = drawLayer(paperLayer);
     drawPaperLayer((context, canvas) => {
       context.setTransform(

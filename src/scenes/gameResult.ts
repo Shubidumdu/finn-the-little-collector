@@ -1,8 +1,7 @@
 import { Scene } from '.';
-import canvasMap, { DrawFunc, drawLayer } from '../canvas';
+import canvasMap, { drawLayer } from '../canvas';
 import { STAGE_STATES } from '../constants';
 import { postGlobalEvent } from '../event';
-import Person from '../objects/person';
 import Music from '../sounds/music';
 import resultMusic from '../sounds/musics/result';
 import store from '../store';
@@ -14,11 +13,6 @@ export type GameResultSceneState = {
   stage: number;
 };
 
-type Position = {
-  x: number;
-  y: number;
-};
-
 export default class GameResultScene implements Scene {
   clearTime: string;
   stage: number;
@@ -28,9 +22,11 @@ export default class GameResultScene implements Scene {
     nextButton: HTMLButtonElement;
   };
   nextStage: number | undefined;
+  layer1: HTMLCanvasElement;
 
   constructor() {
     this.music = new Music(resultMusic);
+    this.layer1 = canvasMap.get('layer1');
   }
 
   start = ({ stage, clearTime }: GameResultSceneState) => {
@@ -44,8 +40,7 @@ export default class GameResultScene implements Scene {
   };
 
   update = (time: number) => {
-    const layer1 = canvasMap.get('layer1');
-    const drawLayer1 = drawLayer(layer1);
+    const drawLayer1 = drawLayer(this.layer1);
 
     drawLayer1((context, canvas) => {
       store.wantedPersons.forEach((person, index, persons) => {
