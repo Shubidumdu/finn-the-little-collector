@@ -20,31 +20,31 @@
 ## 설치 및 실행
 
 ```bash
-// 원격 저장소를 복제
+# 원격 저장소를 복제
 git clone https://github.com/Shubidumdu/finn-the-little-collector.git
 
-// 프로젝트 폴더로 이동
+# 프로젝트 폴더로 이동
 cd finn-the-little-collector
 
-// 패키지 설치
+# 패키지 설치
 yarn install
 
-// 실행
+# 실행
 yarn start
 ```
 
 ## 빌드 (`.zip`으로 압축)
 
 ```bash
-// 원격 저장소를 복제
+# 원격 저장소를 복제
 git clone https://github.com/Shubidumdu/finn-the-little-collector.git
 
-// 프로젝트 폴더로 이동
+# 프로젝트 폴더로 이동
 cd finn-the-little-collector
 
-// 패키지 설치
+# 패키지 설치
 yarn install
 
-// 빌드
+# 빌드
 yarn build
 ```
