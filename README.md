@@ -20,31 +20,31 @@ Find persons that are in the right-bottom box within the time limit!
 ## Install & Start
 
 ```bash
-// Clone the remote repository
+# Clone the remote repository
 git clone https://github.com/Shubidumdu/finn-the-little-collector.git
 
-// Move to project folder
+# Move to project folder
 cd finn-the-little-collector
 
-// Install packages
+# Install packages
 yarn install
 
-// Start
+# Start
 yarn start
 ```
 
 ## Build (Compress to `.zip`)
 
 ```bash
-// Clone the remote repository
+# Clone the remote repository
 git clone https://github.com/Shubidumdu/finn-the-little-collector.git
 
-// Move to project folder
+# Move to project folder
 cd finn-the-little-collector
 
-// Install packages
+# Install packages
 yarn install
 
-// Build
+# Build
 yarn build
 ```
