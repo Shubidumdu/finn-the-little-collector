@@ -2,7 +2,7 @@ import { Scene } from '.';
 import { STAGE_STATES } from '../constants';
 import { postGlobalEvent } from '../event';
 import Music from '../sounds/music';
-import gameoverMusic from '../sounds/musics/gameover';
+import gameOverMusic from '../sounds/musics/gameOver';
 
 export type GameOverSceneState = {
   stage: number;
@@ -18,7 +18,7 @@ export default class GameOverScene implements Scene {
   };
 
   constructor() {
-    this.music = new Music(gameoverMusic);
+    this.music = new Music(gameOverMusic);
   }
 
   start = ({ stage }: GameOverSceneState) => {
