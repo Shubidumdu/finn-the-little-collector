@@ -1,4 +1,4 @@
-const gameoverMusic = [
+const gameOverMusic = [
   [[0.5, 0, 320, , 0.1, 0.5, , , , , 20]],
   [
     [
@@ -41,4 +41,4 @@ const gameoverMusic = [
   96,
 ];
 
-export default gameoverMusic;
+export default gameOverMusic;
